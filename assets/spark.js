@@ -257,6 +257,24 @@ const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitM
     return escapeHtml(name);
 };
 
+const forgeRemappingFunction = function (node, mcpMappings) {
+    const name = node["name"];
+
+    // extract class and method names from the node
+    const className = node["className"];
+    const methodName = node["methodName"];
+    if (!className || !methodName) {
+        return escapeHtml(name);
+    }
+
+    const mcpMethodName = mcpMappings["methods"][methodName];
+    if (mcpMethodName && $.type(mcpMethodName) === "string") {
+        return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mcpMethodName) + '</span>()';
+    }
+
+    return escapeHtml(name);
+};
+
 // listen for mapping selections
 $("#mappings-selector").find("select").change(function(e) {
     applyRemapping(this.value);
@@ -287,5 +305,20 @@ function applyRemapping(type) {
                 });
             });
         });
+    } else if (type.startsWith("forge")) {
+        const version = type.substring("forge-".length);
+
+        $(".stack").hide();
+        $(".loading").show().html("Remapping data; please wait...");
+
+        $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
+            const remappingFunction = function(node, parentNode) {
+                return forgeRemappingFunction(node, mcpMappings);
+            };
+
+            loadData(profile, remappingFunction)
+        });
+    } else {
+        loadData(profile, NO_REMAPPING)
     }
 }
