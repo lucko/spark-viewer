@@ -18,10 +18,20 @@
 <!-- load theme before rendering page -->
 <script src="assets/theme.js"></script>
 
-<h1>
-	spark
-	<span id="theme-selector"></span>
-</h1>
+<div class="header">
+	<h1>spark</h1>
+	<span class="section" id="theme-selector"></span>
+	<span class="section" id="mappings-selector">
+		<select title="mappings">
+			<optgroup label="None">
+				<option value="none">No mappings</option>
+			</optgroup>
+			<optgroup label="Bukkit">
+				<option value="bukkit-1_12_2">Bukkit -> MCP (1.12.2)</option>
+			</optgroup>
+		</select>
+	</span>
+</div>
 
 <div class="intro">
 	<h3>Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.</h3>
@@ -32,12 +42,6 @@
 
 <div class="stack" style="display: none"></div>
 
-<!--
-<p class="legend">Legend: 
-	<span class="matched">Mapped</span> 
-	<span class="multiple-matches">Multiple Mappings</span> 
-</p>
--->
 <div id="overlay"></div>
 
 <p class="footer">

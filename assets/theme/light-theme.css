@@ -11,6 +11,7 @@
   --theme-name-hover-list-bg: #efefef;
   --theme-name-hover-list-box-shadow: rgba(0, 0, 0, 0.4);
   --theme-percent-color: #6b98ff;
+  --theme-remapped-color: #d8d8d8;
   --theme-bar-border-color: #ccc;
   --theme-bar-bgcolor: #fff;
   --theme-bar-inner-bgcolor: #6b98ff;
@@ -19,6 +20,9 @@
   --theme-h1-bgcolor: #fff;
   --theme-h1-color: #111;
   --theme-h1-box-shadow: rgba(0, 0, 0, 0.4);
+  --theme-mappings-bgcolor: inherit;
+  --theme-mappings-border-color: #676161;
+  --theme-mappings-color: #111;
   --theme-footer-color: #333;
   --theme-loading-color: initial;
   --theme-loading-bgcolor: #efefef;
