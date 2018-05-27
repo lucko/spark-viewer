@@ -216,16 +216,17 @@ const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitM
             parentClassMethods = {};
         }
         const outgoingCalls = parentClassMethods[parentMethod];
-
-        for (const call of outgoingCalls) {
-            if (call["class"] === className) {
-                for (const otherMatch of otherMatches) {
-                    if (call["description"] === otherMatch["description"]) {
-                        const mappedMethodName = otherMatch["mcpName"];
-                        if (mappedMethodName !== methodName) {
-                            console.log("[MAPPING] Mapped " + name + " --> " + className + "." + mappedMethodName + "()");
+        if (outgoingCalls) {
+            for (const call of outgoingCalls) {
+                if (call["class"] === className) {
+                    for (const otherMatch of otherMatches) {
+                        if (call["description"] === otherMatch["description"]) {
+                            const mappedMethodName = otherMatch["mcpName"];
+                            if (mappedMethodName !== methodName) {
+                                console.log("[MAPPING] Mapped " + name + " --> " + className + "." + mappedMethodName + "()");
+                            }
+                            return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
                         }
-                        return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
                     }
                 }
             }
@@ -267,6 +268,9 @@ function applyRemapping(type) {
         let nmsVersion;
         if (version === "1_12_2") {
             nmsVersion = "v1_12_R1";
+        }
+        if (version === "1_8_8") {
+            nmsVersion = "v1_8_R3";
         }
 
         $(".stack").hide();
