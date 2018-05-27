@@ -10,7 +10,7 @@ function applyTheme() {
     const head = $("head");
 
     head.find("#theme").first().remove();
-    head.append('<link id="theme" rel="stylesheet" type="text/css" href="assets/theme/' + theme + '-theme.css">');
+    head.append('<link id="theme" rel="stylesheet" type="text/css" href="assets/theme/' + theme.toLowerCase() + '-theme.css">');
 
     drawSelector();
 }
