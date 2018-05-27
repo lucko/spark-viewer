@@ -4,14 +4,24 @@
 <head>
 	<meta charset="utf-8">
 	<title>spark</title>
-	<link rel="stylesheet" type="text/css" href="assets/style.css">
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous" defer></script>
-  <script src="assets/spark.js" defer></script>
+	<!-- load base style sheet, default to dark theme -->
+	<link rel="stylesheet" type="text/css" href="assets/style.css">
+	<link rel="stylesheet" type="text/css" href="assets/theme/dark-theme.css" id="theme">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js" integrity="sha256-9Nt2r+tJnSd2A2CRUvnjgsD+ES1ExvjbjBNqidm9doI=" crossorigin="anonymous"></script>
+	<script src="assets/spark.js" defer></script>
 </head>
 
 <body>
-<h1>spark</h1>
+<!-- load theme before rendering page -->
+<script src="assets/theme.js"></script>
+
+<h1>
+	spark
+	<span id="theme-selector"></span>
+</h1>
 
 <div class="intro">
 	<h3>Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.</h3>

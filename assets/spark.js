@@ -60,10 +60,15 @@ function nodeToHtml(node, totalTime) {
 }
 
 function loadData(data) {
-    let html = "";
-    for (const thread of data["threads"]) {
-        html += nodeToHtml(thread["rootNode"], thread["totalTime"]);
-        html += '\n';
+    let html;
+    if (!data["threads"]) {
+        html = '<p class="no-results">There are no results. (Thread filter does not match thread?)</p>';
+    } else {
+        html = "";
+        for (const thread of data["threads"]) {
+            html += nodeToHtml(thread["rootNode"], thread["totalTime"]);
+            html += '\n';
+        }
     }
 
     const stack = $(".stack");
