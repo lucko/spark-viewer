@@ -141,6 +141,7 @@ ul {
 .header > .section {
     vertical-align: 70%;
     padding: 0 3px 0 3px;
+    display: inline-block;
 }
 
 .header img {
