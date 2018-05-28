@@ -67,7 +67,14 @@ function nodeToHtml(node, parentNode, totalTime, remappingFunction) {
 }
 
 const NO_REMAPPING = function(node, parentNode) {
-    return escapeHtml(node["name"]);
+    // extract class and method names from the node
+    const className = node["className"];
+    const methodName = node["methodName"];
+    if (!className || !methodName) {
+        return escapeHtml(node["name"]);
+    }
+
+    return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 };
 
 function loadData(data, remappingFunction) {
