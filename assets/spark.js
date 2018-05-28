@@ -94,18 +94,18 @@ function loadData(data, remappingFunction) {
 $(loadContent);
 
 const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitMappings, methodCalls, nmsVersion) {
-    const name = node["name"];
-
     // extract class and method names from the node
     const className = node["className"];
     const methodName = node["methodName"];
     if (!className || !methodName) {
-        return escapeHtml(name);
+        return escapeHtml(node["name"]);
     }
+
+    const name = escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 
     // only remap nms classes
     if (!className.startsWith("net.minecraft.server." + nmsVersion + ".")) {
-        return escapeHtml(name);
+        return name;
     }
 
     // get the nms name of the class
@@ -118,7 +118,7 @@ const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitM
     }
 
     if (!bukkitMappingData) {
-        return escapeHtml(name);
+        return name;
     }
 
     // get the obfuscated name of the class
@@ -127,7 +127,7 @@ const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitM
     // try to obtain mcp mappings for the now obfuscated class
     const mcpData = mcpMappings["classes"][obfuscatedClassName];
     if (!mcpData) {
-        return escapeHtml(name);
+        return name;
     }
 
     // we have a mcp name for the class
@@ -136,7 +136,7 @@ const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitM
     // if bukkit has already provided a mapping for this method, just return.
     for (const method of bukkitMappingData["methods"]) {
         if (method["bukkitName"] === methodName) {
-            return escapeHtml(name);
+            return name;
         }
     }
 
@@ -207,17 +207,15 @@ const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitM
         return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
     }
 
-    return escapeHtml(name);
+    return name;
 };
 
 const forgeRemappingFunction = function (node, mcpMappings) {
-    const name = node["name"];
-
     // extract class and method names from the node
     const className = node["className"];
     const methodName = node["methodName"];
     if (!className || !methodName) {
-        return escapeHtml(name);
+        return escapeHtml(node["name"]);
     }
 
     const mcpMethodName = mcpMappings["methods"][methodName];
@@ -225,7 +223,8 @@ const forgeRemappingFunction = function (node, mcpMappings) {
         return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mcpMethodName) + '</span>()';
     }
 
-    return escapeHtml(name);
+    const name = escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
+    return name;
 };
 
 // listen for mapping selections
