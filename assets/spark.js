@@ -88,58 +88,10 @@ function loadData(data, remappingFunction) {
     stack.html(html);
     loading.hide();
     stack.show();
-
-    setupListeners();
 }
 
 // Do things when page has loaded
 $(loadContent);
-
-function extractTime(el) {
-    const text = el.children(".name").children(".time").text().replace(/[^0-9]/, "");
-    return parseInt(text);
-}
-
-// sets up the page listeners
-function setupListeners() {
-    const nameClass = $(".name");
-    const overlay = $("#overlay");
-
-    nameClass.on("click", function(e) {
-        const parent = $(this).parent();
-        if (parent.hasClass("collapsed")) {
-            parent.removeClass("collapsed");
-            parent.children("ul").slideDown(50);
-        } else {
-            parent.addClass("collapsed");
-            parent.children("ul").slideUp(50);
-        }
-    });
-
-    nameClass.on("mouseenter", function(e) {
-        const $this = $(this);
-        let thisTime = null;
-
-        overlay.empty();
-
-        $this.parents(".node").each(function(i, parent) {
-            const $parent = $(parent);
-            const time = extractTime($parent);
-
-            if (thisTime == null) {
-                thisTime = time;
-            } else {
-                const $el = $(document.createElement("span"));
-                const pos = $parent.position();
-                $el.text(((thisTime / time) * 100).toFixed(2) + "%");
-                $el.css({
-                    top: pos.top + "px"
-                });
-                overlay.append($el);
-            }
-        });
-    });
-}
 
 const bukkitRemappingFunction = function (node, parentNode, mcpMappings, bukkitMappings, methodCalls, nmsVersion) {
     const name = node["name"];
@@ -334,3 +286,48 @@ function applyRemapping(type) {
         }, 10);
     }
 }
+
+function extractTime(el) {
+    const text = el.children(".name").children(".time").text().replace(/[^0-9]/, "");
+    return parseInt(text);
+}
+
+
+// setup page listeners
+const stack = $(".stack");
+const overlay = $("#overlay");
+
+stack.on("click", ".name", function(e) {
+    const parent = $(this).parent();
+    if (parent.hasClass("collapsed")) {
+        parent.removeClass("collapsed");
+        parent.children("ul").slideDown(50);
+    } else {
+        parent.addClass("collapsed");
+        parent.children("ul").slideUp(50);
+    }
+});
+
+stack.on("mouseenter", ".name", function(e) {
+    const $this = $(this);
+    let thisTime = null;
+
+    overlay.empty();
+
+    $this.parents(".node").each(function(i, parent) {
+        const $parent = $(parent);
+        const time = extractTime($parent);
+
+        if (thisTime == null) {
+            thisTime = time;
+        } else {
+            const $el = $(document.createElement("span"));
+            const pos = $parent.position();
+            $el.text(((thisTime / time) * 100).toFixed(2) + "%");
+            $el.css({
+                top: pos.top + "px"
+            });
+            overlay.append($el);
+        }
+    });
+});
