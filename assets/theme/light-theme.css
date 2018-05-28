@@ -17,6 +17,7 @@
   --theme-bar-inner-bgcolor: #6b98ff;
   --theme-overlay-span-color: #6b98ff;
   --theme-time-color: #888;
+  --theme-img-filter: invert(0%);
   --theme-h1-bgcolor: #fff;
   --theme-h1-color: #111;
   --theme-h1-box-shadow: rgba(0, 0, 0, 0.4);

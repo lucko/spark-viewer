@@ -129,20 +129,26 @@ ul {
     top: 0;
     left: 0;
     right: 0;
-    padding: 10px 20px;
+    padding: 5px 20px;
     margin: 0;
     font-weight: normal;
     box-shadow: 0 0 4px var(--theme-h1-box-shadow);
     z-index: 20;
+    line-height: 100%;
+    min-width: 500px;
 }
 
 .header > .section {
-    padding: 0 10px 0 10px;
+    vertical-align: 70%;
+    padding: 0 3px 0 3px;
+}
+
+.header img {
+    filter: var(--theme-img-filter);
 }
 
 h1 {
     font-size: 14pt;
-    padding: 10px 0 0 0;
     margin: 0;
     font-weight: normal;
     vertical-align: middle;
@@ -152,18 +158,21 @@ h1 {
 #theme-selector {
     float: right;
     font-size: 10pt;
+    margin-top: 11px;
 }
 
 #mappings-selector {
     float: right;
+    padding-right: 15px;
 }
 
 #mappings-selector > select {
     background-color: var(--theme-mappings-bgcolor);
     border-color: var(--theme-mappings-border-color);
     color: var(--theme-mappings-color);
-    padding: 2px;
     border-radius: 3px;
+    padding: 3px;
+    margin-top: 5px;
 }
 
 #mappings-selector >select:focus {
