@@ -41,29 +41,62 @@ function escapeHtml(text) {
     });
 }
 
-function nodeToHtml(node, parentNode, totalTime, remappingFunction) {
-    const timePercent = ((node["totalTime"] / totalTime) * 100).toFixed(2) + "%";
+function renderStackToHtml(root, totalTime, remappingFunction) {
     let html = "";
 
-    html += '<div class="node collapsed">';
+    // init a new stack, and push the root element
+    let stack = [{
+        node: root,
+        parentNode: null,
+        status: "start"
+    }];
 
-    html += '<div class="name">';
-    html += remappingFunction(node, parentNode);
-    html += '<span class="percent">' + timePercent + '</span>';
-    html += '<span class="time">' + node["totalTime"] + 'ms</span>';
-    html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';
-    html += '</div>';
+    // perform a iterative traversal of the call stack
+    while (stack.length !== 0) {
+        const element = stack.pop();
+        const status = element.status;
 
-    html += '<ul class="children">';
-    if (node["children"]) {
-        for (const child of node["children"]) {
-            html += '<li>' + nodeToHtml(child, node, totalTime, remappingFunction) + '</li>';
+        if (status === "start") {
+            const node = element.node;
+            const parentNode = element.parentNode;
+
+            // push a marker to "end" this node
+            stack.push({
+                status: "end"
+            });
+
+            // push this nodes children in reverse
+            if (node["children"]) {
+                for (const child of node.children.slice().reverse()) {
+                    stack.push({
+                        node: child,
+                        parentNode: node,
+                        status: "start"
+                    });
+                }
+            }
+
+            // print start
+            const timePercent = ((node["totalTime"] / totalTime) * 100).toFixed(2) + "%";
+            html += '<li>';
+            html += '<div class="node collapsed">';
+            html += '<div class="name">';
+            html += remappingFunction(node, parentNode);
+            html += '<span class="percent">' + timePercent + '</span>';
+            html += '<span class="time">' + node["totalTime"] + 'ms</span>';
+            html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';
+            html += '</div>';
+            html += '<ul class="children">';
+        } else {
+            // print end
+            html += '</ul>';
+            html += '</div>';
+            html += '</li>';
         }
     }
-    html += '</ul>';
 
-    html += '</div>';
-    return html;
+    // remove outer the <li> </li>
+    return html.slice(4, -5);
 }
 
 const NO_REMAPPING = function(node, parentNode) {
@@ -84,7 +117,7 @@ function loadData(data, remappingFunction) {
     } else {
         html = "";
         for (const thread of data["threads"]) {
-            html += nodeToHtml(thread["rootNode"], null, thread["totalTime"], remappingFunction);
+            html += renderStackToHtml(thread["rootNode"], thread["totalTime"], remappingFunction);
             html += '\n';
         }
     }
