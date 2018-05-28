@@ -19,6 +19,7 @@ function loadContent() {
         $.getJSON(url, function(data) {
             profile = data;
             loadData(data, NO_REMAPPING);
+            $("#mappings-selector").show();
         }).fail(showLoadingError)
     }
 }
@@ -287,6 +288,12 @@ function applyRemapping(type) {
         if (version === "1_12_2") {
             nmsVersion = "v1_12_R1";
         }
+        if (version === "1_11_2") {
+            nmsVersion = "v1_11_R1";
+        }
+        if (version === "1_10_2") {
+            nmsVersion = "v1_10_R1";
+        }
         if (version === "1_8_8") {
             nmsVersion = "v1_8_R3";
         }
@@ -319,6 +326,11 @@ function applyRemapping(type) {
             loadData(profile, remappingFunction)
         });
     } else {
-        loadData(profile, NO_REMAPPING)
+        $(".stack").hide();
+        $(".loading").show().html("Remapping data; please wait...");
+
+        setTimeout(function() {
+            loadData(profile, NO_REMAPPING);
+        }, 10);
     }
 }
