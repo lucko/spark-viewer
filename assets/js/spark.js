@@ -336,11 +336,24 @@ function extractTime(el) {
 const stack = $(".stack");
 const overlay = $("#overlay");
 
+function expandTree(parent) {
+    parent.removeClass("collapsed");
+    parent.children("ul").slideDown(50);
+
+    // if the element we've just expanded only has one child, expand that too (recursively)
+    const len = parent.children("ul").children("li").length;
+    if (len === 1) {
+        const onlyChild = parent.children("ul").children("li").children(".node");
+        if (onlyChild.hasClass("collapsed")) {
+            expandTree(onlyChild);
+        }
+    }
+}
+
 stack.on("click", ".name", function(e) {
     const parent = $(this).parent();
     if (parent.hasClass("collapsed")) {
-        parent.removeClass("collapsed");
-        parent.children("ul").slideDown(50);
+        expandTree(parent);
     } else {
         parent.addClass("collapsed");
         parent.children("ul").slideUp(50);

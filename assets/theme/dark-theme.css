@@ -2,9 +2,9 @@
   --theme-background-color: #202020;
   --theme-body-color: #ccc;
   --theme-spacer-color: #484848;
-  --theme-link-color: #ff743a;
-  --theme-border-color: #ccc;
-  --theme-hover-color: #000;
+  --theme-link-color: #e0855c;
+  --theme-border-color: #868686;
+  --theme-hover-color: #ccc;
   --theme-hover-border-color: black;
   --theme-name-color: #b5b5b5;
   --theme-name-hover-bgcolor: #484848;
@@ -17,7 +17,7 @@
   --theme-bar-inner-bgcolor: #6b98ff;
   --theme-overlay-span-color: #6b98ff;
   --theme-time-color: #888;
-  --theme-img-filter: invert(100%);
+  --theme-img-filter: invert(0%);
   --theme-h1-bgcolor: #181818;
   --theme-h1-color: #ccc;
   --theme-h1-box-shadow: #343434;
