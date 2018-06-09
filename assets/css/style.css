@@ -162,12 +162,12 @@ h1 {
     margin-top: 11px;
 }
 
-#mappings-selector {
+.dropdown {
     float: right;
     padding-right: 15px;
 }
 
-#mappings-selector > select {
+.dropdown > select {
     background-color: var(--theme-mappings-bgcolor);
     border-color: var(--theme-mappings-border-color);
     color: var(--theme-mappings-color);
@@ -176,7 +176,7 @@ h1 {
     margin-top: 5px;
 }
 
-#mappings-selector >select:focus {
+.dropdown >select:focus {
     outline: none;
 }
 

@@ -1,5 +1,20 @@
 let profile;
 
+function renameKeys(obj, newKeys) {
+    const keyValues = Object.keys(obj).map(key => {
+        const newKey = newKeys[key] || key;
+        return { [newKey]: obj[key] };
+    });
+    return Object.assign({}, ...keyValues);
+}
+
+// expand shorthand key names
+const SHORTHAND_KEYS = {
+    c: "children",
+    t: "totalTime",
+    cl: "className",
+    m: "methodName"
+};
 
 // try to load the page from the url parameters when the page loads
 function loadContent() {
@@ -16,11 +31,20 @@ function loadContent() {
         const url = "https://bytebin.lucko.me/" + params;
         console.log("Loading from URL: " + url);
 
-        $.getJSON(url, function(data) {
-            profile = data;
-            loadData(data, NO_REMAPPING);
-            $("#mappings-selector").show();
-        }).fail(showLoadingError)
+        $.ajax({
+            dataType: "text",
+            url: url,
+            success: function(raw) {
+                profile = JSON.parse(raw, function(key, value) {
+                    if (typeof value === "object" && !Array.isArray(value)) {
+                        return renameKeys(value, SHORTHAND_KEYS);
+                    }
+                    return value;
+                });
+                loadData(profile, NO_REMAPPING);
+                $("#mappings-selector").show();
+            }
+        }).fail(showLoadingError);
     }
 }
 
