@@ -1,4 +1,4 @@
-let profile;
+let loaded;
 
 function renameKeys(obj, newKeys) {
     const keyValues = Object.keys(obj).map(key => {
@@ -9,11 +9,17 @@ function renameKeys(obj, newKeys) {
 }
 
 // expand shorthand key names
-const SHORTHAND_KEYS = {
+const SAMPLER_SHORTHAND_KEYS = {
     c: "children",
     t: "totalTime",
     cl: "className",
     m: "methodName"
+};
+const HEAP_SHORTHAND_KEYS = {
+    "#": "order",
+    i: "instances",
+    s: "size",
+    t: "type"
 };
 
 // try to load the page from the url parameters when the page loads
@@ -35,14 +41,22 @@ function loadContent() {
             dataType: "text",
             url: url,
             success: function(raw) {
-                profile = JSON.parse(raw, function(key, value) {
+                const isSample = JSON.parse(raw)["type"] !== "heap";
+
+                // we have to load twice here, but meh
+                loaded = JSON.parse(raw, function(key, value) {
                     if (typeof value === "object" && !Array.isArray(value)) {
-                        return renameKeys(value, SHORTHAND_KEYS);
+                        return renameKeys(value, isSample ? SAMPLER_SHORTHAND_KEYS : HEAP_SHORTHAND_KEYS);
                     }
                     return value;
                 });
-                loadData(profile, NO_REMAPPING);
-                $("#mappings-selector").show();
+
+                if (isSample) {
+                    loadSampleData(loaded, NO_REMAPPING);
+                    $("#mappings-selector").show();
+                } else {
+                    loadHeapData(loaded);
+                }
             }
         }).fail(showLoadingError);
     }
@@ -63,6 +77,34 @@ function escapeHtml(text) {
             '>': '&gt;'
         }[a];
     });
+}
+
+function loadHeapData(data) {
+    let content = "";
+    content += '<table style="    border-spacing: 20px 0;">';
+    content += '<tr>';
+    for (const col of ["#", "Instances", "Bytes", "Type"]) {
+        content += '<th style="text-align: left">' + col + '</th>';
+    }
+    content += '</tr>';
+
+    for (const entry of data["entries"]) {
+        content += '<tr>';
+        content += '<td>#' + entry["order"] + '</td>';
+        content += '<td>' + entry["instances"] + '</td>';
+        content += '<td>' + entry["size"] + '</td>';
+        content += '<td>' + entry["type"] + '</td>';
+        content += '</tr>';
+    }
+
+    content += '</table>';
+
+    const heap = $(".heap");
+    const loading = $(".loading");
+
+    heap.html(content);
+    loading.hide();
+    heap.show();
 }
 
 function renderStackToHtml(root, totalTime, remappingFunction) {
@@ -134,7 +176,7 @@ const NO_REMAPPING = function(node, parentNode) {
     return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 };
 
-function loadData(data, remappingFunction) {
+function loadSampleData(data, remappingFunction) {
     let html;
     if (!data["threads"]) {
         html = '<p class="no-results">There are no results. (Thread filter does not match thread?)</p>';
@@ -323,7 +365,7 @@ function applyRemapping(type) {
                         return bukkitRemappingFunction(node, parentNode, mcpMappings, bukkitMappings, methodCalls, nmsVersion);
                     };
 
-                    loadData(profile, remappingFunction)
+                    loadData(loaded, remappingFunction)
                 });
             });
         });
@@ -338,14 +380,14 @@ function applyRemapping(type) {
                 return forgeRemappingFunction(node, mcpMappings);
             };
 
-            loadData(profile, remappingFunction)
+            loadData(loaded, remappingFunction)
         });
     } else {
         $(".stack").hide();
         $(".loading").show().html("Remapping data; please wait...");
 
         setTimeout(function() {
-            loadData(profile, NO_REMAPPING);
+            loadData(loaded, NO_REMAPPING);
         }, 10);
     }
 }
