@@ -19,8 +19,7 @@ ul {
 }
 
 li {
-    margin: 0;
-    margin-left: -10px;
+    margin: 0 0 0 -10px;
     padding: 0;
     list-style: none;
     border-left: 1px solid var(--theme-spacer-color);

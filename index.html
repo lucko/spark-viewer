@@ -27,7 +27,7 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js" integrity="sha256-9Nt2r+tJnSd2A2CRUvnjgsD+ES1ExvjbjBNqidm9doI=" crossorigin="anonymous"></script>
-	<script src="assets/js/spark.js" defer></script>
+	<script src="assets/js/app.js" defer></script>
 </head>
 
 <body>
@@ -60,16 +60,20 @@
 	</span>
 </div>
 
+<!-- shown when no data view is open -->
 <div class="intro">
 	<h3>Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.</h3>
 	<p>To start profiling, download the <a href="https://github.com/lucko/spark">spark</a> plugin for your server, and run <code>/profiler start</code>.</p>
 </div>
 
+<!-- shown when data is being loaded -->
 <div class="loading" style="display: none"></div>
 
+<!-- containers for content views -->
 <div class="stack" style="display: none"></div>
 <div class="heap" style="display: none"></div>
 
+<!-- used to hold overlay content in the stack view -->
 <div id="overlay"></div>
 
 <p class="footer">
