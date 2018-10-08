@@ -254,13 +254,13 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, method
 }
 
 /**
- * Does the remapping work for the Forge rendering function.
+ * Does the remapping work for the MCP rendering function.
  *
  * @param node the node
  * @param mcpMappings mcp mapping data
  * @returns {string}
  */
-function doForgeRemapping(node, mcpMappings) {
+function doMcpRemapping(node, mcpMappings) {
     // extract class and method names from the node
     const className = node["className"];
     const methodName = node["methodName"];
@@ -284,19 +284,14 @@ $("#mappings-selector").find("select").change(function(e) {
 function applyRemapping(type) {
     if (type.startsWith("bukkit")) {
         const version = type.substring("bukkit-".length);
-        let nmsVersion;
-        if (version === "1_12_2") {
-            nmsVersion = "v1_12_R1";
-        }
-        if (version === "1_11_2") {
-            nmsVersion = "v1_11_R1";
-        }
-        if (version === "1_10_2") {
-            nmsVersion = "v1_10_R1";
-        }
-        if (version === "1_8_8") {
-            nmsVersion = "v1_8_R3";
-        }
+        const nmsVersion = {
+            "1_13_1": "1_13_R2",
+            "1_13": "1_13_R1",
+            "1_12_2": "v1_12_R1",
+            "1_11_2": "v1_11_R1",
+            "1_10_2": "v1_10_R1",
+            "1_8_8": "v1_8_R3"
+        }[version];
 
         $(".stack").hide();
         $(".loading").show().html("Remapping data; please wait...");
@@ -312,15 +307,15 @@ function applyRemapping(type) {
                 });
             });
         });
-    } else if (type.startsWith("forge")) {
-        const version = type.substring("forge-".length);
+    } else if (type.startsWith("mcp")) {
+        const version = type.substring("mcp-".length);
 
         $(".stack").hide();
         $(".loading").show().html("Remapping data; please wait...");
 
         $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
             const renderingFunction = function(node, parentNode) {
-                return doForgeRemapping(node, mcpMappings);
+                return doMcpRemapping(node, mcpMappings);
             };
 
             renderData(activeData, renderingFunction)
