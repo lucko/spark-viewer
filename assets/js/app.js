@@ -1,38 +1,36 @@
 let type;
 
 function determineType(typeName) {
-    switch (typeName) {
-        case "sampler":
-            return {
-                shorthandKeys: {
-                    c: "children",
-                    t: "totalTime",
-                    cl: "className",
-                    m: "methodName"
-                },
+    return {
+        "sampler": {
+            shorthandKeys: {
+                c: "children",
+                t: "totalTime",
+                cl: "className",
+                m: "methodName"
+            },
 
-                load: function(data) {
-                    $.getScript("assets/js/types/sampler.js", function() {
-                        loadSampleData(data);
-                    });
-                }
-            };
-        case "heap":
-            return {
-                shorthandKeys: {
-                    "#": "order",
-                    i: "instances",
-                    s: "size",
-                    t: "type"
-                },
+            load: function(data) {
+                $.getScript("assets/js/types/sampler.js", function() {
+                    loadSampleData(data);
+                });
+            }
+        },
+        "heap": {
+            shorthandKeys: {
+                "#": "order",
+                i: "instances",
+                s: "size",
+                t: "type"
+            },
 
-                load: function(data) {
-                    $.getScript("assets/js/types/heap.js", function() {
-                        loadHeapData(data);
-                    });
-                }
-            };
-    }
+            load: function(data) {
+                $.getScript("assets/js/types/heap.js", function() {
+                    loadHeapData(data);
+                });
+            }
+        }
+    }[typeName];
 }
 
 function createRemappingFunction() {
