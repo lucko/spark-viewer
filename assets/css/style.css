@@ -59,6 +59,11 @@ a:hover, a:active {
     border-radius: 3px;
 }
 
+.lineNumber {
+    color: var(--theme-linenumber-color);
+    padding-left: 2px;
+}
+
 .remapped {
     background: var(--theme-remapped-color);
     border-radius: 3px;

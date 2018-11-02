@@ -87,6 +87,10 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
             html += '<div class="node collapsed" data-name="' + simpleRender(node, parentNode) + '">';
             html += '<div class="name">';
             html += renderingFunction(node, parentNode);
+            const parentLineNumber = node["parentLineNumber"];
+            if (parentLineNumber) {
+                html += '<span class="lineNumber" title="Invoked on line ' + parentLineNumber + ' of ' + parentNode["methodName"] + '()">:' + parentLineNumber + '</span>';
+            }
             html += '<span class="percent">' + timePercent + '</span>';
             html += '<span class="time">' + node["totalTime"] + 'ms</span>';
             html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';

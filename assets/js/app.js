@@ -8,7 +8,8 @@ function determineType(typeName) {
                 c: "children",
                 t: "totalTime",
                 cl: "className",
-                m: "methodName"
+                m: "methodName",
+                ln: "parentLineNumber"
             },
 
             load: function(data) {
