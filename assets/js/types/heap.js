@@ -60,13 +60,9 @@ function renderData(data, filter) {
     content += tableEntries;
     content += '</table>';
 
-    const heap = $("#heap");
-    const heapContent = $("#heap-content");
-    const loading = $("#loading");
-
-    heapContent.html(content);
-    loading.hide();
-    heap.show();
+    $("#heap-content").html(content);
+    $("#loading").hide();
+    $("#heap").show();
 }
 
 function formatBytes(bytes) {

@@ -33,13 +33,9 @@ function renderData(data, renderingFunction) {
         }
     }
 
-    const sampler = $("#sampler");
-    const stack = $("#stack");
-    const loading = $("#loading");
-
-    stack.html(html);
-    loading.hide();
-    sampler.show();
+    $("#stack").html(html);
+    $("#loading").hide();
+    $("#sampler").show();
 }
 
 /**
@@ -284,6 +280,8 @@ $("#mappings-selector").find("select").change(function(e) {
 });
 
 function applyRemapping(type) {
+    $("#sampler").hide();
+    $("#loading").show().html("Remapping data; please wait...");
     if (type.startsWith("bukkit")) {
         const version = type.substring("bukkit-".length);
         const nmsVersion = {
@@ -294,9 +292,6 @@ function applyRemapping(type) {
             "1_10_2": "v1_10_R1",
             "1_8_8": "v1_8_R3"
         }[version];
-
-        $("#stack").hide();
-        $("#loading").show().html("Remapping data; please wait...");
 
         $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
             $.getJSON("mappingdata/" + version + "/bukkit.json", function(bukkitMappings) {
@@ -312,9 +307,6 @@ function applyRemapping(type) {
     } else if (type.startsWith("mcp")) {
         const version = type.substring("mcp-".length);
 
-        $("#stack").hide();
-        $("#loading").show().html("Remapping data; please wait...");
-
         $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
             const renderingFunction = function(node, parentNode) {
                 return doMcpRemapping(node, mcpMappings);
@@ -323,12 +315,9 @@ function applyRemapping(type) {
             renderData(activeData, renderingFunction)
         });
     } else {
-        $("#stack").hide();
-        $("#loading").show().html("Remapping data; please wait...");
-
         setTimeout(function() {
             renderData(activeData, simpleRender);
-        }, 10);
+        }, 0);
     }
 }
 
@@ -411,10 +400,17 @@ function extractTime(el) {
 }
 
 function applyFilters(filter) {
-    const stacks = $("#stack > .node");
-    for (const stack of stacks) {
-        applyFilter(filter, $(stack));
-    }
+    $("#sampler").hide();
+    $("#loading").show().html("Applying filter; please wait...");
+
+    setTimeout(function() {
+        const stacks = $("#stack > .node");
+        for (const stack of stacks) {
+            applyFilter(filter, $(stack));
+        }
+        $("#sampler").show();
+        $("#loading").hide();
+    }, 0);
 }
 
 function applyFilter(filter, element) {
