@@ -83,11 +83,10 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
 
             // print start
             const timePercent = ((node["totalTime"] / totalTime) * 100).toFixed(2) + "%";
-            const name = renderingFunction(node, parentNode);
             html += '<li>';
-            html += '<div class="node collapsed" data-name="' + name + '">';
+            html += '<div class="node collapsed" data-name="' + simpleRender(node, parentNode) + '">';
             html += '<div class="name">';
-            html += name;
+            html += renderingFunction(node, parentNode);
             html += '<span class="percent">' + timePercent + '</span>';
             html += '<span class="time">' + node["totalTime"] + 'ms</span>';
             html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';
