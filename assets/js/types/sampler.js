@@ -33,12 +33,13 @@ function renderData(data, renderingFunction) {
         }
     }
 
-    const stack = $(".stack");
-    const loading = $(".loading");
+    const sampler = $("#sampler");
+    const stack = $("#stack");
+    const loading = $("#loading");
 
     stack.html(html);
     loading.hide();
-    stack.show();
+    sampler.show();
 }
 
 /**
@@ -86,10 +87,11 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
 
             // print start
             const timePercent = ((node["totalTime"] / totalTime) * 100).toFixed(2) + "%";
+            const name = renderingFunction(node, parentNode);
             html += '<li>';
-            html += '<div class="node collapsed">';
+            html += '<div class="node collapsed" data-name="' + name + '">';
             html += '<div class="name">';
-            html += renderingFunction(node, parentNode);
+            html += name;
             html += '<span class="percent">' + timePercent + '</span>';
             html += '<span class="time">' + node["totalTime"] + 'ms</span>';
             html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';
@@ -293,8 +295,8 @@ function applyRemapping(type) {
             "1_8_8": "v1_8_R3"
         }[version];
 
-        $(".stack").hide();
-        $(".loading").show().html("Remapping data; please wait...");
+        $("#stack").hide();
+        $("#loading").show().html("Remapping data; please wait...");
 
         $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
             $.getJSON("mappingdata/" + version + "/bukkit.json", function(bukkitMappings) {
@@ -310,8 +312,8 @@ function applyRemapping(type) {
     } else if (type.startsWith("mcp")) {
         const version = type.substring("mcp-".length);
 
-        $(".stack").hide();
-        $(".loading").show().html("Remapping data; please wait...");
+        $("#stack").hide();
+        $("#loading").show().html("Remapping data; please wait...");
 
         $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
             const renderingFunction = function(node, parentNode) {
@@ -321,8 +323,8 @@ function applyRemapping(type) {
             renderData(activeData, renderingFunction)
         });
     } else {
-        $(".stack").hide();
-        $(".loading").show().html("Remapping data; please wait...");
+        $("#stack").hide();
+        $("#loading").show().html("Remapping data; please wait...");
 
         setTimeout(function() {
             renderData(activeData, simpleRender);
@@ -335,7 +337,7 @@ function applyRemapping(type) {
  * These will be evaluated before any content has actually been rendered and added to the page.
  */
 
-const stack = $(".stack");
+const stack = $("#stack");
 const overlay = $("#overlay");
 
 /**
@@ -393,7 +395,59 @@ stack.on("mouseenter", ".name", function(e) {
     });
 });
 
+$("#sampler > .filter-input-box").keyup(function(e) {
+    if (e.keyCode === 13) {
+        let value = $(this).val();
+        if (value === "") {
+            value = null;
+        }
+        applyFilters(value);
+    }
+});
+
 function extractTime(el) {
     const text = el.children(".name").children(".time").text().replace(/[^0-9]/, "");
     return parseInt(text);
+}
+
+function applyFilters(filter) {
+    const stacks = $("#stack > .node");
+    for (const stack of stacks) {
+        applyFilter(filter, $(stack));
+    }
+}
+
+function applyFilter(filter, element) {
+    // element is a div, with class "node"
+    const children = element.children("ul").children("li").children(".node");
+
+    // check if "this" element should be shown.
+    let show = filter === null || element.attr("data-name").includes(filter);
+
+    if (show) {
+        // if this element should be shown, pass that onto all children & make them shown.
+        for (const child of children) {
+            applyFilter(null, $(child));
+        }
+    } else {
+        // check to see if any of our children match the filter
+        for (const child of children) {
+            if (applyFilter(filter, $(child))) {
+                show = true;
+            }
+        }
+    }
+
+    // show the element if necessary.
+    let parent = element.parent();
+    if (parent.attr("id") === "stack") {
+        parent = element;
+    }
+    if (show) {
+        parent.show();
+    } else {
+        parent.hide();
+    }
+
+    return show;
 }

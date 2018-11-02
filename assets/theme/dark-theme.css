@@ -10,8 +10,8 @@
   --theme-name-hover-bgcolor: #484848;
   --theme-name-hover-list-bg: #2c2c2c;
   --theme-name-hover-list-box-shadow: rgba(0, 0, 0, 0.4);
-  --theme-remapped-color: #3e3e3e;
   --theme-percent-color: #6b98ff;
+  --theme-remapped-color: #3e3e3e;
   --theme-bar-border-color: #484848;
   --theme-bar-bgcolor: #b5b5b5;
   --theme-bar-inner-bgcolor: #6b98ff;
@@ -21,9 +21,9 @@
   --theme-h1-bgcolor: #181818;
   --theme-h1-color: #ccc;
   --theme-h1-box-shadow: #343434;
-  --theme-mappings-bgcolor: #2d2d2d;
-  --theme-mappings-border-color: #676161;
-  --theme-mappings-color: #ccc;
+  --theme-input-bgcolor: #2d2d2d;
+  --theme-input-border-color: #676161;
+  --theme-input-color: #ccc;
   --theme-footer-color: #888;
   --theme-loading-color: #b5b5b5;
   --theme-loading-bgcolor: #2c2c2c;

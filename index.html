@@ -4,20 +4,20 @@
 <head>
 	<meta charset="utf-8">
 
-	<title>spark profiler</title>
-	<meta name="description" content="Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.">
+	<title>spark</title>
+	<meta name="description" content="spark is a performance profiling plugin based on sk89q's WarmRoast profiler.">
 
 	<meta name="twitter:card" content="summary">
-	<meta name="twitter:title" content="spark profiler">
-	<meta name="twitter:description" content="Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.">
+	<meta name="twitter:title" content="spark">
+	<meta name="twitter:description" content="spark is a performance profiling plugin based on sk89q's WarmRoast profiler.">
 	<meta name="twitter:image" content="https://sparkprofiler.github.io/assets/img/spark-160.png">
 
-	<meta property="og:title" content="spark profiler">
-	<meta property="og:description" content="Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.">
+	<meta property="og:title" content="spark">
+	<meta property="og:description" content="spark is a performance profiling plugin based on sk89q's WarmRoast profiler.">
 	<meta property="og:type" content="product">
 	<meta property="og:image" content="https://sparkprofiler.github.io/assets/img/spark-160.png">
 	<meta property="og:url" content="https://sparkprofiler.github.io/">
-	<meta property="og:site_name" content="spark profiler">
+	<meta property="og:site_name" content="spark">
 
 	<link href="assets/img/spark-128.png" rel="shortcut icon" sizes="128x128" type="image/png">
 
@@ -34,9 +34,9 @@
 <!-- load theme before rendering page -->
 <script src="assets/js/theme.js"></script>
 
-<div class="header">
+<div id="header">
 	<img src="assets/img/spark-160.png" alt="" width="32px" height="32px">
-	<h1 class="section">spark profiler</h1>
+	<h1 class="section">spark</h1>
 	<span class="section" id="theme-selector"></span>
 	<span class="section dropdown" id="mappings-selector" style="display: none">
 		<select title="mappings">
@@ -65,22 +65,28 @@
 </div>
 
 <!-- shown when no data view is open -->
-<div class="intro">
-	<h3>Spark is a CPU profiling plugin based on sk89q's WarmRoast profiler.</h3>
-	<p>To start profiling, download the <a href="https://github.com/lucko/spark">spark</a> plugin for your server, and run <code>/profiler start</code>.</p>
+<div id="intro" style="text-align: center">
+	<p>To get started, download the <a href="https://github.com/lucko/spark">spark</a> plugin for your server, and run <code>/spark</code>.</p>
+	<p>The latest versions of the plugin are <a href="https://ci.lucko.me/job/spark/">available on Jenkins</a>.</p>
 </div>
 
 <!-- shown when data is being loaded -->
-<div class="loading" style="display: none"></div>
+<div id="loading" style="display: none"></div>
 
 <!-- containers for content views -->
-<div class="stack" style="display: none"></div>
-<div class="heap" style="display: none"></div>
+<div id="sampler" style="display: none">
+	<input class="filter-input-box" type="text" name="filter" placeholder="filter">
+	<div id="stack"></div>
+</div>
+<div id="heap" style="display: none">
+	<input class="filter-input-box" type="text" name="filter" placeholder="filter">
+	<div id="heap-content"></div>
+</div>
 
 <!-- used to hold overlay content in the stack view -->
 <div id="overlay"></div>
 
-<p class="footer">
+<p id="footer">
 	<a href="https://github.com/lucko/spark">spark</a> and <a href="https://github.com/lucko/spark-web">spark-web</a> are based on <a href="http://github.com/sk89q/WarmRoast">WarmRoast</a> by sk89q.
 </p>
 

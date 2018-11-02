@@ -21,9 +21,9 @@
   --theme-h1-bgcolor: #fff;
   --theme-h1-color: #111;
   --theme-h1-box-shadow: rgba(0, 0, 0, 0.4);
-  --theme-mappings-bgcolor: inherit;
-  --theme-mappings-border-color: #676161;
-  --theme-mappings-color: #111;
+  --theme-input-bgcolor: inherit;
+  --theme-input-border-color: #676161;
+  --theme-input-color: #111;
   --theme-footer-color: #333;
   --theme-loading-color: initial;
   --theme-loading-bgcolor: #efefef;

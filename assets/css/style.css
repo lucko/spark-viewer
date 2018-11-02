@@ -37,8 +37,9 @@ a:hover, a:active {
     text-decoration: none;
 }
 
-.stack {
+#stack {
     margin-left: 60px;
+    padding-top: 30px;
 }
 
 .name {
@@ -120,7 +121,7 @@ ul {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA7ElEQVR4Xt1TzYrCQAxOYo8z0GeRZY+eBPGkryGIZ4UeC/Yx/EHvnqTssot/9XF2YUHXQyd2RtuC2OnBg2AgJF/CfJkvwyAzwyNGiT+XwLktBMHwRyl270lDRCDCRb8/aBcSqFi59UYTiuwzXLasEtR18nYbQRTt4f2tqqPGad8uIb2641TyKUSJp307gbH/0wl63U4Ks3y925e/AibOMcN4OofRZKZLOmps6lj2CoBodAohspKUMtePaCcgQqNZCGlw+PFt8nwXWLZE+NttviQrBr6RhoRwOBxXVgLP82pJqECx/fq+n4EX+ExnBI9csQQ1hIoAAAAASUVORK5CYII=);
 }
 
-.header {
+#header {
     display: block;
     background: var(--theme-h1-bgcolor);
     color: var(--theme-h1-color);
@@ -137,13 +138,13 @@ ul {
     min-width: 500px;
 }
 
-.header > .section {
+#header > .section {
     vertical-align: 70%;
     padding: 0 3px 0 3px;
     display: inline-block;
 }
 
-.header img {
+#header img {
     filter: var(--theme-img-filter);
 }
 
@@ -167,9 +168,9 @@ h1 {
 }
 
 .dropdown > select {
-    background-color: var(--theme-mappings-bgcolor);
-    border-color: var(--theme-mappings-border-color);
-    color: var(--theme-mappings-color);
+    background-color: var(--theme-input-bgcolor);
+    border-color: var(--theme-input-border-color);
+    color: var(--theme-input-color);
     border-radius: 3px;
     padding: 3px;
     margin-top: 5px;
@@ -179,7 +180,7 @@ h1 {
     outline: none;
 }
 
-.footer {
+#footer {
     /*background: var(--theme-footer-bgcolor);*/
     color: var(--theme-footer-color);
     margin: 100px 0 0 0;
@@ -188,7 +189,7 @@ h1 {
     text-align: right;
 }
 
-.loading {
+#loading {
     font-size: 130%;
     color: var(--theme-loading-color);
     background: var(--theme-loading-bgcolor);
@@ -200,4 +201,17 @@ h1 {
 .no-results {
     font-size: 130%;
     color: var(--theme-no-results-color);
+}
+
+#heap-content {
+    font-size: 1.1em;
+}
+
+.filter-input-box {
+    float: right;
+    width: 350px;
+    background-color: var(--theme-input-bgcolor);
+    border: 1px solid var(--theme-input-border-color);
+    color: var(--theme-input-color);
+    font-size: 14px;
 }

@@ -1,3 +1,4 @@
+const BYTEBIN_URL = "https://bytebin.lucko.me/";
 let type;
 
 function determineType(typeName) {
@@ -49,17 +50,17 @@ function createRemappingFunction() {
 
 // try to load the page from the url parameters when the page loads
 function loadContent() {
-    let params = document.location.search;
+    let params = document.location.search || window.location.hash;
     if (params) {
-        if (params.startsWith("?")) {
+        if (params.startsWith("?") || params.startsWith("#")) {
             params = params.substring(1);
         }
 
-        $(".intro").hide();
-        $(".loading").show().html("Loading data; please wait...");
+        $("#intro").hide();
+        $("#loading").show().html("Loading data; please wait...");
 
         // get data
-        const url = "https://bytebin.lucko.me/" + params;
+        const url = BYTEBIN_URL + params;
         console.log("Loading from URL: " + url);
 
         $.ajax({
@@ -78,7 +79,7 @@ function loadContent() {
 }
 
 function showLoadingError() {
-    $(".loading").html("An error occurred whilst loading. Perhaps the data has expired?");
+    $("#loading").html("An error occurred whilst loading. Perhaps the data has expired?");
 }
 
 function escapeHtml(text) {
