@@ -73,6 +73,16 @@
 <!-- shown when data is being loaded -->
 <div id="loading" style="display: none"></div>
 
+<!-- stack context menu - rendered at an absolute position on the page when opened. -->
+<div id="stack-context-menu" class="context-menu" style="display: none">
+	<ul>
+		<li data-action="expand">Expand recursively</li>
+		<li data-action="collapse">Collapse recursively</li>
+		<li data-action="expand-all">Expand all</li>
+		<li data-action="collapse-all">Collapse all</li>
+	</ul>
+</div>
+
 <!-- containers for content views -->
 <div id="sampler" style="display: none">
 	<input class="filter-input-box" type="text" name="filter" placeholder="filter">

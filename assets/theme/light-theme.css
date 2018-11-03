@@ -30,4 +30,7 @@
   --theme-loading-bgcolor: #efefef;
   --theme-loading-border-color: #ccc;
   --theme-no-results-color: #800000;
+  --theme-context-menu-bgcolor: #efefef;
+  --theme-context-menu-color: #111;
+  --theme-context-menu-hover-bgcolor: #ffffff;
 }

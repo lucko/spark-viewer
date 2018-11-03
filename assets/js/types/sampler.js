@@ -1,5 +1,10 @@
 let activeData;
 
+const $stack = $("#stack");
+const $overlay = $("#overlay");
+const $loading = $("#loading");
+const $sampler = $("#sampler");
+
 /**
  * Called by the application to initialise the sampler view.
  *
@@ -33,9 +38,9 @@ function renderData(data, renderingFunction) {
         }
     }
 
-    $("#stack").html(html);
-    $("#loading").hide();
-    $("#sampler").show();
+    $stack.html(html);
+    $loading.hide();
+    $sampler.show();
 }
 
 /**
@@ -277,14 +282,10 @@ function doMcpRemapping(node, mcpMappings) {
     return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 }
 
-// listen for mapping selections
-$("#mappings-selector").find("select").change(function(e) {
-    applyRemapping(this.value);
-});
-
 function applyRemapping(type) {
-    $("#sampler").hide();
-    $("#loading").show().html("Remapping data; please wait...");
+    $sampler.hide();
+    $overlay.empty();
+    $loading.show().html("Remapping data; please wait...");
     if (type.startsWith("bukkit")) {
         const version = type.substring("bukkit-".length);
         const nmsVersion = {
@@ -324,95 +325,18 @@ function applyRemapping(type) {
     }
 }
 
-/*
- * Define page listeners.
- * These will be evaluated before any content has actually been rendered and added to the page.
- */
-
-const stack = $("#stack");
-const overlay = $("#overlay");
-
-/**
- * Function to recursively expand the node tree.
- *
- * @param parent the parent element
- */
-function expandTree(parent) {
-    parent.removeClass("collapsed");
-    parent.children("ul").slideDown(50);
-
-    // if the element we've just expanded only has one child, expand that too (recursively)
-    const len = parent.children("ul").children("li").length;
-    if (len === 1) {
-        const onlyChild = parent.children("ul").children("li").children(".node");
-        if (onlyChild.hasClass("collapsed")) {
-            expandTree(onlyChild); // recursive call
-        }
-    }
-}
-
-// click node --> expand/collapse
-stack.on("click", ".name", function(e) {
-    const parent = $(this).parent();
-    if (parent.hasClass("collapsed")) {
-        expandTree(parent);
-    } else {
-        parent.addClass("collapsed");
-        parent.children("ul").slideUp(50);
-    }
-});
-
-// hover over node --> highlight and show time
-stack.on("mouseenter", ".name", function(e) {
-    const $this = $(this);
-    let thisTime = null;
-
-    overlay.empty();
-
-    $this.parents(".node").each(function(i, parent) {
-        const $parent = $(parent);
-        const time = extractTime($parent);
-
-        if (thisTime == null) {
-            thisTime = time;
-        } else {
-            const $el = $(document.createElement("span"));
-            const pos = $parent.position();
-            $el.text(((thisTime / time) * 100).toFixed(2) + "%");
-            $el.css({
-                top: pos.top + "px"
-            });
-            overlay.append($el);
-        }
-    });
-});
-
-$("#sampler > .filter-input-box").keyup(function(e) {
-    if (e.keyCode === 13) {
-        let value = $(this).val();
-        if (value === "") {
-            value = null;
-        }
-        applyFilters(value);
-    }
-});
-
-function extractTime(el) {
-    const text = el.children(".name").children(".time").text().replace(/[^0-9]/, "");
-    return parseInt(text);
-}
-
 function applyFilters(filter) {
-    $("#sampler").hide();
-    $("#loading").show().html("Applying filter; please wait...");
+    $sampler.hide();
+    $overlay.empty();
+    $loading.show().html("Applying filter; please wait...");
 
     setTimeout(function() {
         const stacks = $("#stack > .node");
         for (const stack of stacks) {
             applyFilter(filter, $(stack));
         }
-        $("#sampler").show();
-        $("#loading").hide();
+        $sampler.show();
+        $loading.hide();
     }, 0);
 }
 
@@ -421,7 +345,7 @@ function applyFilter(filter, element) {
     const children = element.children("ul").children("li").children(".node");
 
     // check if "this" element should be shown.
-    let show = filter === null || element.attr("data-name").includes(filter);
+    let show = filter === null || element.attr("data-name").toLowerCase().includes(filter.toLowerCase());
 
     if (show) {
         // if this element should be shown, pass that onto all children & make them shown.
@@ -450,3 +374,174 @@ function applyFilter(filter, element) {
 
     return show;
 }
+
+
+/*
+ * Define page listeners.
+ * These will be evaluated before any content has actually been rendered and added to the page.
+ */
+
+// utility functions for manipulating the stack view.
+function expandTree(parent) {
+    parent.removeClass("collapsed");
+    const list = parent.children("ul");
+    list.slideDown(50);
+
+    // if the element we've just expanded only has one child, expand that too (recursively)
+    const children = list.children("li");
+    if (children.length === 1) {
+        const onlyChild = children.children(".node");
+        expandTree(onlyChild); // recursive call
+    }
+}
+function expandEntireTree(node) {
+    node.find("ul").show();
+    node.find(".node").addBack().removeClass("collapsed");
+}
+function collapseEntireTree(node) {
+    node.find("ul").hide();
+    node.find(".node").addBack().addClass("collapsed");
+    $overlay.empty();
+}
+function expandAll() {
+    expandEntireTree($stack);
+}
+function collapseAll() {
+    collapseEntireTree($stack);
+}
+
+// click node --> expand/collapse
+$stack.on("click", ".name", function(e) {
+    const parent = $(this).parent();
+    if (parent.hasClass("collapsed")) {
+        expandTree(parent);
+    } else {
+        parent.addClass("collapsed");
+        parent.children("ul").slideUp(50);
+    }
+});
+
+// hover over node --> highlight and show time
+$stack.on("mouseenter", ".name", function(e) {
+    // ignore hover changes when the context menu is active
+    if (contextMenuActive()) {
+        return;
+    }
+
+    // mark the current element as hovered
+    $(this).addClass("hovered");
+
+    // clear the overlay
+    $overlay.empty();
+
+    // render updated overlay
+    let totalTime = null;
+    $(this).parents(".node").each(function(i, element) {
+        const parent = $(element);
+        const time = parseInt(parent.children(".name").children(".time").text().replace(/[^0-9]/, ""));
+        
+        if (totalTime == null) {
+            totalTime = time;
+        } else {
+            const span = $(document.createElement("span"));
+            const pos = parent.position();
+            span.text(((totalTime / time) * 100).toFixed(2) + "%");
+            span.css({
+                top: pos.top + "px"
+            });
+            $overlay.append(span);
+        }
+    });
+});
+$stack.on("mouseleave", ".name", function(e) {
+    // if the parent node is the context menu target, don't remove the hover yet.
+    if (this.parentNode === contextMenuTarget) {
+        return;
+    }
+    $(this).removeClass("hovered");
+});
+
+// context menu handling
+const contextMenu = $("#stack-context-menu");
+let contextMenuTarget;
+
+function hideContextMenu() {
+    if (contextMenuActive()) {
+        contextMenu.hide();
+        $(contextMenuTarget).children(".name").removeClass("hovered");
+        contextMenuTarget = null;
+        return true;
+    }
+    return false;
+}
+
+function contextMenuActive() {
+    return contextMenu.css("display") !== "none";
+}
+
+// listen for context menu open
+$stack.contextmenu(function(e) {
+    // if the context menu is already open, close it & return.
+    if (hideContextMenu()) {
+        e.preventDefault();
+        return;
+    }
+
+    // determine the target of the context menu
+    contextMenuTarget = $(e.target).closest(".node");
+    contextMenuTarget.addClass("hovered");
+    contextMenuTarget = contextMenuTarget.get()[0];
+
+    // if no target was found, return
+    if (!contextMenuTarget) {
+        return;
+    }
+    
+    // cancel the default action & render our custom menu
+    e.preventDefault();
+    contextMenu.css({
+        left: `${e.pageX}px`,
+        top: `${e.pageY}px`
+    });
+    contextMenu.toggle(300);
+});
+// handle click events within the context menu
+contextMenu.click(function(e) {
+    const target = $(e.target);
+    const action = target.attr("data-action");
+    if (action === "expand") {
+        expandEntireTree($(contextMenuTarget));
+    } else if (action === "collapse") {
+        collapseEntireTree($(contextMenuTarget));
+    } else if (action === "expand-all") {
+        expandAll();
+    } else if (action === "collapse-all") {
+        collapseAll();
+    }
+});
+// close the menu when the cursor is clicked elsewhere.
+$(window).click(function(e) {
+    hideContextMenu();
+});
+// close the menu when the escape key is pressed.
+$(document).keyup(function(e) {
+    if (e.key === "Escape") {
+        hideContextMenu();
+    }
+});
+
+// listen for mapping selections
+$("#mappings-selector > select").change(function(e) {
+    applyRemapping(this.value);
+});
+
+// listen for filter box submissions
+$("#sampler > .filter-input-box").keyup(function(e) {
+    if (e.keyCode === 13) {
+        let value = this.value;
+        if (value === "") {
+            value = null;
+        }
+        applyFilters(value);
+    }
+});
