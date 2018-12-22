@@ -58,7 +58,8 @@ function loadContent() {
         }
 
         $("#intro").hide();
-        $("#loading").show().html("Loading data; please wait...");
+        const $loading = $("#loading");
+        $loading.show().html("Loading data; please wait...");
 
         // get data
         const url = BYTEBIN_URL + params;
@@ -68,6 +69,7 @@ function loadContent() {
             dataType: "text",
             url: url,
             success: function(raw) {
+                $loading.html("Rendering data; please wait...");
                 // we have to parse the data twice, first without any remapping to determine the type,
                 // and then again with remapping, once we know which rules to use.
                 type = determineType(JSON.parse(raw)["type"] || "sampler");
