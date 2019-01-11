@@ -185,7 +185,9 @@ h1 {
     font-size: 1.1em;
 }
 
-#heap-content td:nth-child(1), td:nth-child(2), td:nth-child(3) {
+#heap-content td:nth-child(1),
+#heap-content td:nth-child(2),
+#heap-content td:nth-child(3) {
     white-space: nowrap;
 }
 
