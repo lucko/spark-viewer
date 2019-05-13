@@ -39,7 +39,10 @@ function drawSelector() {
 }
 
 function readThemePreference() {
-    const themeRead = Cookies.get("theme");
+    let themeRead = Cookies.get("theme");
+    if (themeRead) {
+        themeRead = themeRead.toLowerCase();
+    }
     if (themeRead !== theme) {
         theme = themeRead;
         applyTheme();
