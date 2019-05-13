@@ -1,36 +1,47 @@
-let theme = "Dark";
+let theme = "dark";
 
 function setTheme(t) {
     theme = t;
     Cookies.set("theme", theme);
     applyTheme();
+    drawSelector();
 }
 
 function applyTheme() {
     const head = $("head");
 
     head.find("#theme").first().remove();
-    head.append('<link id="theme" rel="stylesheet" type="text/css" href="assets/theme/' + theme.toLowerCase() + '-theme.css">');
+    head.append('<link id="theme" rel="stylesheet" type="text/css" href="assets/theme/' + theme + '-theme.css">');
+}
+
+// listen for mapping selections
+function setup() {
+    $("#header").on("change", "#theme-selector > select", function(e) {
+        setTheme(this.value);
+    });
 
     drawSelector();
 }
 
-function makeToggleElement(t, active) {
-    if (active) {
-        return t;
-    } else {
-        return '<span style="cursor: pointer" onclick=\'setTheme("' + t +'")\'>' + t + '</span>';
-    }
-}
-
 function drawSelector() {
-    const lightIsActive = theme === "Light";
-    $("#theme-selector").html(makeToggleElement("Light", lightIsActive) + "/" + makeToggleElement("Dark", !lightIsActive));
+    let html = '<select title="theme">';
+    for (const option of ["Dark", "Light", "Solarized Dark", "Solarized Light"]) {
+        const id = option.toLowerCase().replace(" ", "-");
+        if (theme === id) {
+            html += '<option selected value="' + id + '">' + option + '</option>';
+        } else {
+            html += '<option value="' + id + '">' + option + '</option>';
+        }
+    }
+    html += '</select>';
+
+    $("#theme-selector").html(html);
 }
 
 function readThemePreference() {
-    if (Cookies.get("theme") === "Light") {
-        theme = "Light";
+    const themeRead = Cookies.get("theme");
+    if (themeRead !== theme) {
+        theme = themeRead;
         applyTheme();
     }
 }
@@ -39,4 +50,4 @@ function readThemePreference() {
 readThemePreference();
 
 // draw the selector
-$(drawSelector);
+$(setup);
