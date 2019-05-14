@@ -40,9 +40,11 @@ function drawSelector() {
 
 function readThemePreference() {
     let themeRead = Cookies.get("theme");
-    if (themeRead) {
-        themeRead = themeRead.toLowerCase();
+    if (!themeRead) {
+        return
     }
+
+    themeRead = themeRead.toLowerCase();
     if (themeRead !== theme) {
         theme = themeRead;
         applyTheme();
