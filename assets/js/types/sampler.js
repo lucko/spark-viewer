@@ -28,12 +28,13 @@ function loadSampleData(data) {
  */
 function renderData(data, renderingFunction) {
     let html;
-    if (!data["threads"]) {
+    if (!data["threads"] || !data["threads"].length) {
         html = '<p class="no-results">There are no results. (Thread filter does not match thread?)</p>';
     } else {
         html = "";
         for (const thread of data["threads"]) {
-            html += renderStackToHtml(thread["rootNode"], thread["totalTime"], renderingFunction);
+            const threadNode = thread["rootNode"] || thread;
+            html += renderStackToHtml(threadNode, threadNode["time"], renderingFunction);
             html += '\n';
         }
     }
@@ -87,17 +88,17 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
             }
 
             // print start
-            const timePercent = ((node["totalTime"] / totalTime) * 100).toFixed(2) + "%";
+            const timePercent = ((node["time"] / totalTime) * 100).toFixed(2) + "%";
             html += '<li>';
             html += '<div class="node collapsed" data-name="' + simpleRender(node, parentNode) + '">';
             html += '<div class="name">';
             html += renderingFunction(node, parentNode);
-            const parentLineNumber = node["parentLineNumber"];
+            const parentLineNumber = node["lineNumber"];
             if (parentLineNumber) {
                 html += '<span class="lineNumber" title="Invoked on line ' + parentLineNumber + ' of ' + parentNode["methodName"] + '()">:' + parentLineNumber + '</span>';
             }
             html += '<span class="percent">' + timePercent + '</span>';
-            html += '<span class="time">' + node["totalTime"] + 'ms</span>';
+            html += '<span class="time">' + node["time"] + 'ms</span>';
             html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';
             html += '</div>';
             html += '<ul class="children">';
