@@ -89,16 +89,13 @@ function loadContent() {
 
                 type = getType("heap");
                 type.load(data);
-            } else if (contentType === "application/json") {
+            } else {
                 const raw = new TextDecoder("utf-8").decode(buf);
                 // we have to parse the data twice, first without any remapping to determine the type,
                 // and then again with remapping, once we know which rules to use.
                 type = getType(JSON.parse(raw)["type"] || "sampler");
                 const data = JSON.parse(raw, createLegacyRemappingFunction());
                 type.load(data);
-            } else {
-                console.log("Unable to parse from content type: " + contentType);
-                showLoadingError();
             }
         };
         req.onerror = showLoadingError;
