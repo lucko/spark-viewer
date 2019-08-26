@@ -283,6 +283,41 @@ function doMcpRemapping(node, mcpMappings) {
     return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 }
 
+/**
+ * Does the remapping work for the Yarn rendering function.
+ *
+ * @param node the node
+ * @param yarnMappings yarn mapping data
+ * @returns {string}
+ */
+function doYarnRemapping(node, yarnMappings) {
+    // extract class and method names from the node
+    const className = node["className"];
+    const methodName = node["methodName"];
+    if (!className || !methodName) {
+        return escapeHtml(node["name"]);
+    }
+
+    const yarnClassName = yarnMappings["classes"][className];
+    const yarnMethodName = yarnMappings["methods"][methodName];
+
+    let out = "";
+
+    if (yarnClassName) {
+        out += '<span class="remapped" title="' + className + '">' + escapeHtml(yarnClassName) + '</span>';
+    } else {
+        out += escapeHtml(className);
+    }
+    out += ".";
+    if (yarnMethodName) {
+        out += '<span class="remapped" title="' + methodName + '">' + escapeHtml(yarnMethodName) + '</span>';
+    } else {
+        out += escapeHtml(yarnMethodName);
+    }
+
+    return out + "()";
+}
+
 function applyRemapping(type) {
     $sampler.hide();
     $overlay.empty();
@@ -315,6 +350,16 @@ function applyRemapping(type) {
         $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
             const renderingFunction = function(node, parentNode) {
                 return doMcpRemapping(node, mcpMappings);
+            };
+
+            renderData(activeData, renderingFunction)
+        });
+    } else if (type.startsWith("yarn")) {
+        const version = type.substring("yarn-".length);
+
+        $.getJSON("mappingdata/" + version + "/yarn.json", function(yarnMappings) {
+            const renderingFunction = function(node, parentNode) {
+                return doYarnRemapping(node, yarnMappings);
             };
 
             renderData(activeData, renderingFunction)
