@@ -303,13 +303,13 @@ function doYarnRemapping(node, yarnMappings) {
 
     let out = "";
 
-    if (yarnClassName) {
+    if (yarnClassName && typeof(yarnClassName) === "string") {
         out += '<span class="remapped" title="' + className + '">' + escapeHtml(yarnClassName) + '</span>';
     } else {
         out += escapeHtml(className);
     }
     out += ".";
-    if (yarnMethodName) {
+    if (yarnMethodName && typeof(yarnMethodName) === "string") {
         out += '<span class="remapped" title="' + methodName + '">' + escapeHtml(yarnMethodName) + '</span>';
     } else {
         out += escapeHtml(methodName);
