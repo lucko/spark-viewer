@@ -312,7 +312,7 @@ function doYarnRemapping(node, yarnMappings) {
     if (yarnMethodName) {
         out += '<span class="remapped" title="' + methodName + '">' + escapeHtml(yarnMethodName) + '</span>';
     } else {
-        out += escapeHtml(yarnMethodName);
+        out += escapeHtml(methodName);
     }
 
     return out + "()";
