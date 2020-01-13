@@ -325,7 +325,7 @@ function applyRemapping(type) {
     if (type.startsWith("bukkit")) {
         const version = type.substring("bukkit-".length);
         const nmsVersion = {
-            "1_15": "v1_15_R1",
+            "1_15_1": "v1_15_R1",
             "1_14_4": "v1_14_R1",
             "1_13_2": "v1_13_R2",
             "1_12_2": "v1_12_R1",
