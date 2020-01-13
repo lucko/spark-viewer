@@ -34,7 +34,6 @@ function renderData(data, renderingFunction) {
         html = "";
         for (const thread of data["threads"]) {
             const threadNode = thread["rootNode"] || thread;
-            console.log(threadNode);
             html += renderStackToHtml(threadNode, threadNode["time"], renderingFunction);
             html += '\n';
         }
