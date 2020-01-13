@@ -78,14 +78,14 @@ function loadContent() {
             const buf = req.response;
 
             if (contentType === "application/x-spark-sampler") {
-                const SamplerData = proto.roots.default.spark.SamplerData;
-                const data = SamplerData.decode(new Uint8Array(buf));
+                const pbf = new Pbf(new Uint8Array(buf));
+                const data = SamplerData.read(pbf);
 
                 type = getType("sampler");
                 type.load(data);
             } else if (contentType === "application/x-spark-heap") {
-                const HeapData = proto.roots.default.spark.HeapData;
-                const data = HeapData.decode(new Uint8Array(buf));
+                const pbf = new Pbf(new Uint8Array(buf));
+                const data = HeapData.read(pbf);
 
                 type = getType("heap");
                 type.load(data);

@@ -5,7 +5,7 @@ package spark;
 message CommandSenderData {
   Type type = 1;
   string name = 2;
-  string unique_id = 3;
+  string uniqueId = 3;
 
   enum Type {
     OTHER = 0;
@@ -36,10 +36,10 @@ message SamplerData {
 
 message SamplerMetadata {
   CommandSenderData user = 1;
-  int64 start_time = 2;
+  int64 startTime = 2;
   int32 interval = 3;
-  ThreadDumper thread_dumper = 4;
-  DataAggregator data_aggregator = 5;
+  ThreadDumper threadDumper = 4;
+  DataAggregator dataAggregator = 5;
 
   message ThreadDumper {
     Type type = 1;
@@ -55,8 +55,8 @@ message SamplerMetadata {
 
   message DataAggregator {
     Type type = 1;
-    ThreadGrouper thread_grouper = 2;
-    int64 tick_length_threshold = 3; // optional
+    ThreadGrouper threadGrouper = 2;
+    int64 tickLengthThreshold = 3; // optional
 
     enum Type {
       SIMPLE = 0;
@@ -74,9 +74,9 @@ message SamplerMetadata {
 message StackTraceNode {
   double time = 1;
   repeated StackTraceNode children = 2;
-  string class_name = 3;
-  string method_name = 4;
-  int32 line_number = 5; // optional
+  string className = 3;
+  string methodName = 4;
+  int32 lineNumber = 5; // optional
 }
 
 message ThreadNode {

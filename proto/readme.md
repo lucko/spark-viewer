@@ -1,15 +1,10 @@
-The .proto files are compiled to Javascript using:
+The `.proto` file is compiled to Javascript using:
 
 ```bash
-sudo npm install protobufjs
-sudo npm install -g browserify
-
-pbjs -t static-module -w commonjs -o proto-module.js spark.proto
-browserify ./proto-module.js -o protos.js
+sudo npm install -g pbf
+pbf spark.proto --browser --no-write >> protos.js
 ```
 
 Resultant JavaScript file is `protos.js`.
 
-We then make one small change to this file to expose the protobuf object in the global scope.
-
-![](https://i.imgur.com/ntj2utA.png)
+Note that field names in the `.proto` file have been changed to `camelCase` (this is [considered bad style](https://developers.google.com/protocol-buffers/docs/style#message-and-field-names)) to create variable names in JavaScript which are also camel case.
