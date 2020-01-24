@@ -1,4 +1,7 @@
+const MAPPING_DATA_URL = "https://sparkmappings.lucko.me/";
+
 let activeData;
+let mappingsInfo;
 
 const $stack = $("#stack");
 const $overlay = $("#overlay");
@@ -12,10 +15,20 @@ const $sampler = $("#sampler");
  */
 function loadSampleData(data) {
     renderData(data, simpleRender);
-    $("#mappings-selector").show();
 
     // store so we can re-use later, if remapping is applied, for example.
     activeData = data;
+
+    // load mappings data info
+    $.getJSON(MAPPING_DATA_URL + "mappings.json", function(mappings) {
+        mappingsInfo = mappings["types"];
+        $("#mappings-selector").html(renderMappingsSelector(mappingsInfo)).show();
+
+        // listen for mapping selections
+        $("#mappings-selector > select").change(function(e) {
+            applyRemapping(this.value);
+        });
+    });
 }
 
 /**
@@ -322,21 +335,14 @@ function applyRemapping(type) {
     $sampler.hide();
     $overlay.empty();
     $loading.show().html("Remapping data; please wait...");
+
     if (type.startsWith("bukkit")) {
         const version = type.substring("bukkit-".length);
-        const nmsVersion = {
-            "1_15_1": "v1_15_R1",
-            "1_14_4": "v1_14_R1",
-            "1_13_2": "v1_13_R2",
-            "1_12_2": "v1_12_R1",
-            "1_11_2": "v1_11_R1",
-            "1_10_2": "v1_10_R1",
-            "1_8_8": "v1_8_R3"
-        }[version];
+        const nmsVersion = mappingsInfo["bukkit"]["versions"][version]["nmsVersion"];
 
-        $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
-            $.getJSON("mappingdata/" + version + "/bukkit.json", function(bukkitMappings) {
-                $.getJSON("mappingdata/" + version + "/methodcalls.json", function(methodCalls) {
+        $.getJSON(MAPPING_DATA_URL + version + "/mcp.json", function(mcpMappings) {
+            $.getJSON(MAPPING_DATA_URL + version + "/bukkit.json", function(bukkitMappings) {
+                $.getJSON(MAPPING_DATA_URL + version + "/methodcalls.json", function(methodCalls) {
                     const renderingFunction = function(node, parentNode) {
                         return doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, methodCalls, nmsVersion);
                     };
@@ -348,7 +354,7 @@ function applyRemapping(type) {
     } else if (type.startsWith("mcp")) {
         const version = type.substring("mcp-".length);
 
-        $.getJSON("mappingdata/" + version + "/mcp.json", function(mcpMappings) {
+        $.getJSON(MAPPING_DATA_URL + version + "/mcp.json", function(mcpMappings) {
             const renderingFunction = function(node, parentNode) {
                 return doMcpRemapping(node, mcpMappings);
             };
@@ -358,7 +364,7 @@ function applyRemapping(type) {
     } else if (type.startsWith("yarn")) {
         const version = type.substring("yarn-".length);
 
-        $.getJSON("mappingdata/" + version + "/yarn.json", function(yarnMappings) {
+        $.getJSON(MAPPING_DATA_URL + version + "/yarn.json", function(yarnMappings) {
             const renderingFunction = function(node, parentNode) {
                 return doYarnRemapping(node, yarnMappings);
             };
@@ -370,6 +376,30 @@ function applyRemapping(type) {
             renderData(activeData, simpleRender);
         }, 0);
     }
+}
+
+function renderMappingsSelector(mappings) {
+    let html = '<select title="mappings">';
+    html += '<optgroup label="None"><option value="none">No mappings</option></optgroup>';
+
+    for (const mappingId in mappings) {
+        const mapping = mappings[mappingId];
+        const name = mapping["name"];
+        const format = mapping["format"];
+
+        html += '<optgroup label="' + name + '">';
+        const versions = mapping["versions"];
+        for (const versionId in versions) {
+            const version = versions[versionId];
+            const name = version["name"];
+            const display = format.replace("%s", name);
+            html += '<option value="' + mappingId + '-' + versionId + '">' + display + '</option>';
+        }
+        html += '</optgroup>';
+    }
+
+    html += '</select>';
+    return html;
 }
 
 function applyFilters(filter) {
@@ -575,11 +605,6 @@ $(document).keyup(function(e) {
     if (e.key === "Escape") {
         hideContextMenu();
     }
-});
-
-// listen for mapping selections
-$("#mappings-selector > select").change(function(e) {
-    applyRemapping(this.value);
 });
 
 // listen for filter box submissions
