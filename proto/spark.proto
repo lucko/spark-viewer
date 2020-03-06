@@ -76,7 +76,9 @@ message StackTraceNode {
   repeated StackTraceNode children = 2;
   string className = 3;
   string methodName = 4;
-  int32 lineNumber = 5; // optional
+  int32 parentLineNumber = 5; // optional
+  int32 lineNumber = 6; // optional
+  string methodDesc = 7; // optional
 }
 
 message ThreadNode {

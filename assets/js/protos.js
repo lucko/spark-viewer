@@ -160,14 +160,16 @@ SamplerMetadata.DataAggregator.ThreadGrouper = {
 var StackTraceNode = self.StackTraceNode = {};
 
 StackTraceNode.read = function (pbf, end) {
-    return pbf.readFields(StackTraceNode._readField, {time: 0, children: [], className: "", methodName: "", lineNumber: 0}, end);
+    return pbf.readFields(StackTraceNode._readField, {time: 0, children: [], className: "", methodName: "", parentLineNumber: 0, lineNumber: 0, methodDesc: ""}, end);
 };
 StackTraceNode._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.time = pbf.readDouble();
     else if (tag === 2) obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
     else if (tag === 3) obj.className = pbf.readString();
     else if (tag === 4) obj.methodName = pbf.readString();
-    else if (tag === 5) obj.lineNumber = pbf.readVarint(true);
+    else if (tag === 5) obj.parentLineNumber = pbf.readVarint(true);
+    else if (tag === 6) obj.lineNumber = pbf.readVarint(true);
+    else if (tag === 7) obj.methodDesc = pbf.readString();
 };
 
 // ThreadNode ========================================

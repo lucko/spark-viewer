@@ -106,7 +106,7 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
             html += '<div class="node collapsed" data-name="' + simpleRender(node, parentNode) + '">';
             html += '<div class="name">';
             html += renderingFunction(node, parentNode);
-            const parentLineNumber = node["lineNumber"];
+            const parentLineNumber = node["parentLineNumber"];
             if (parentLineNumber) {
                 html += '<span class="lineNumber" title="Invoked on line ' + parentLineNumber + ' of ' + parentNode["methodName"] + '()">:' + parentLineNumber + '</span>';
             }
@@ -152,11 +152,10 @@ function simpleRender(node, parentNode) {
  * @param parentNode the parent node
  * @param mcpMappings mcp mapping data
  * @param bukkitMappings bukkit mapping data
- * @param methodCalls method call data
  * @param nmsVersion the nms version used
  * @returns {string}
  */
-function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, methodCalls, nmsVersion) {
+function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVersion) {
     // extract class and method names from the node
     const className = node["className"];
     const methodName = node["methodName"];
@@ -164,6 +163,7 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, method
         return escapeHtml(node["name"]);
     }
 
+    // define a fallback name to describe the method in case we can't remap it.
     const name = escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 
     // only remap nms classes
@@ -175,21 +175,21 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, method
     const nmsClassName = className.substring(("net.minecraft.server." + nmsVersion + ".").length);
 
     // try to find bukkit mapping data for the class
-    let bukkitMappingData = bukkitMappings["classes"][nmsClassName];
+    let bukkitClassData = bukkitMappings["classes"][nmsClassName];
     if (nmsClassName === "MinecraftServer") {
-        bukkitMappingData = bukkitMappings["classes"]["net.minecraft.server.MinecraftServer"];
+        bukkitClassData = bukkitMappings["classes"]["net.minecraft.server.MinecraftServer"];
     }
 
-    if (!bukkitMappingData) {
+    if (!bukkitClassData) {
         return name;
     }
 
     // get the obfuscated name of the class
-    const obfuscatedClassName = bukkitMappingData["obfuscated"];
+    const obfuscatedClassName = bukkitClassData["obfuscated"];
 
     // try to obtain mcp mappings for the now obfuscated class
-    const mcpData = mcpMappings["classes"][obfuscatedClassName];
-    if (!mcpData) {
+    const mcpClassData = mcpMappings["classes"][obfuscatedClassName];
+    if (!mcpClassData) {
         return name;
     }
 
@@ -197,77 +197,73 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, method
     // now attempt to remap the method
 
     // if bukkit has already provided a mapping for this method, just return.
-    for (const method of bukkitMappingData["methods"]) {
+    for (const method of bukkitClassData["methods"]) {
         if (method["bukkitName"] === methodName) {
             return name;
         }
     }
 
-    // attempt to determine the method name
-    let otherMatches = [];
-    for (const other of mcpData["methods"]) {
-        if (other["obfuscated"] === methodName) {
-            otherMatches.push(other);
+    // find MCP methods where the obfuscated name matches the method we're trying to remap.
+    let mcpMethods = [];
+    for (const mcpMethod of mcpClassData["methods"]) {
+        if (mcpMethod["obfuscated"] === methodName) {
+            mcpMethods.push(mcpMethod);
         }
     }
 
-    if (otherMatches.length === 1) {
-        // we got lucky ;>
-        const mappedMethodName = otherMatches[0]["mcpName"];
+    // didn't find anything...
+    if (!mcpMethods) {
+        return name;
+    }
 
-        if (mappedMethodName !== methodName) {
-            console.log("[MAPPING] Mapped " + name + " --> " + className + "." + mappedMethodName + "()");
-        }
-
+    if (mcpMethods.length === 1) {
+        // we got lucky - there was only one MCP method with the same name ;>
+        const mappedMethodName = mcpMethods[0]["mcpName"];
         return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
     }
 
-    // try to infer which method was called
-    if (otherMatches.length > 1 && parentNode && parentNode["className"] && parentNode["methodName"]) {
-        const parentClass = parentNode["className"];
-        const parentMethod = parentNode["methodName"];
+    // ok, so at this point:
+    // we have a number of candidate deobfuscated MCP methods (all having the same obfuscated method name
+    // as the method we're trying to remap) - we just don't know which to choose.
+    // e.g. 'setValue(String val)' and 'setValue(int val)' have the same method name, but are different methods.
+    // we can attempt to work out which one we want by matching the method descriptions.
 
-        let parentClassMethods = methodCalls["outgoingMethodCalls"][parentClass];
-        if (!parentClassMethods) {
-            parentClassMethods = {};
-        }
-        const outgoingCalls = parentClassMethods[parentMethod];
-        if (outgoingCalls) {
-            for (const call of outgoingCalls) {
-                if (call["class"] === className) {
-                    for (const otherMatch of otherMatches) {
-                        if (call["description"] === otherMatch["description"]) {
-                            const mappedMethodName = otherMatch["mcpName"];
-                            if (mappedMethodName !== methodName) {
-                                console.log("[MAPPING] Mapped " + name + " --> " + className + "." + mappedMethodName + "()");
-                            }
-                            return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
-                        }
-                    }
+    // if method description info isn't available, give up.
+    const methodDesc = node["methodDesc"];
+    if (!methodDesc) {
+        return name;
+    }
+
+    // iterate through our candicate methods
+    for (const mcpMethod of mcpMethods) {
+        // get the obfuscated description of the method
+        const obfucsatedDesc = mcpMethod["description"];
+
+        // generate the deobfucscated description for the method (obf mojang --> bukkit)
+        const deobfucsatedDesc = obfucsatedDesc.replace(/L([^;]+);/g, function(match) {
+            // the obfuscated type name
+            const obfType = match.substring(1, match.length - 1);
+
+            // find the mapped bukkit class for the obf'd type.
+            const classes = bukkitMappings["classes"];
+            for (const mappedClass in classes) {
+                if (!classes.hasOwnProperty(mappedClass)) {
+                    continue;
+                }
+                const bukkitMapping = bukkitMappings["classes"][mappedClass];
+                if (bukkitMapping["obfuscated"] === obfType) {
+                    return "L" + "net/minecraft/server/" + nmsVersion + "/" + mappedClass + ";";
                 }
             }
+            return match;
+        });
+
+        // if the description of the method we're trying to remap matches the converted
+        // description of the MCP method, we have a match...
+        if (methodDesc === deobfucsatedDesc) {
+            const mappedMethodName = mcpMethod["mcpName"];
+            return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
         }
-    }
-
-    // maybe just some with the same name?
-    const otherMatchesNames = otherMatches.map(function(e) { return e["mcpName"] });
-    const otherUniqueMatches = otherMatchesNames.filter(function(item, pos) {
-        return otherMatchesNames.indexOf(item) === pos;
-    });
-
-    if (otherUniqueMatches.length === 1 || otherUniqueMatches.length === 2) {
-        let mappedMethodName;
-        if (otherUniqueMatches.length === 1) {
-            mappedMethodName = otherUniqueMatches[0];
-        } else {
-            mappedMethodName = otherUniqueMatches[0] + " or " + otherUniqueMatches[1];
-        }
-
-        if (mappedMethodName !== methodName) {
-            console.log("[MAPPING] Mapped " + name + " --> " + className + "." + mappedMethodName + "()");
-        }
-
-        return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
     }
 
     return name;
@@ -292,7 +288,6 @@ function doMcpRemapping(node, mcpMappings) {
     if (mcpMethodName && $.type(mcpMethodName) === "string") {
         return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mcpMethodName) + '</span>()';
     }
-
     return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 }
 
@@ -342,13 +337,11 @@ function applyRemapping(type) {
 
         $.getJSON(MAPPING_DATA_URL + version + "/mcp.json", function(mcpMappings) {
             $.getJSON(MAPPING_DATA_URL + version + "/bukkit.json", function(bukkitMappings) {
-                $.getJSON(MAPPING_DATA_URL + version + "/methodcalls.json", function(methodCalls) {
-                    const renderingFunction = function(node, parentNode) {
-                        return doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, methodCalls, nmsVersion);
-                    };
+                const renderingFunction = function(node, parentNode) {
+                    return doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVersion);
+                };
 
-                    renderData(activeData, renderingFunction)
-                });
+                renderData(activeData, renderingFunction)
             });
         });
     } else if (type.startsWith("mcp")) {
