@@ -245,16 +245,11 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
             const obfType = match.substring(1, match.length - 1);
 
             // find the mapped bukkit class for the obf'd type.
-            const classes = bukkitMappings["classes"];
-            for (const mappedClass in classes) {
-                if (!classes.hasOwnProperty(mappedClass)) {
-                    continue;
-                }
-                const bukkitMapping = bukkitMappings["classes"][mappedClass];
-                if (bukkitMapping["obfuscated"] === obfType) {
-                    return "L" + "net/minecraft/server/" + nmsVersion + "/" + mappedClass + ";";
-                }
+            const bukkitMapping = bukkitMappings["classesObfuscated"][obfType];
+            if (bukkitMapping) {
+                return "L" + "net/minecraft/server/" + nmsVersion + "/" + bukkitMapping["mapped"] + ";";
             }
+
             return match;
         });
 
@@ -337,6 +332,18 @@ function applyRemapping(type) {
 
         $.getJSON(MAPPING_DATA_URL + version + "/mcp.json", function(mcpMappings) {
             $.getJSON(MAPPING_DATA_URL + version + "/bukkit.json", function(bukkitMappings) {
+                // create reverse index for classes by obfuscated name
+                const classesObfuscated = {};
+                const classes = bukkitMappings["classes"];
+                for (const bukkitName in classes) {
+                    if (!classes.hasOwnProperty(bukkitName)) {
+                        continue;
+                    }
+                    const mapping = bukkitMappings["classes"][bukkitName];
+                    classesObfuscated[mapping["obfuscated"]] = mapping;
+                }
+                bukkitMappings.classesObfuscated = classesObfuscated;
+
                 const renderingFunction = function(node, parentNode) {
                     return doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVersion);
                 };
@@ -509,7 +516,7 @@ $stack.on("mouseenter", ".name", function(e) {
     $(this).parents(".node").each(function(i, element) {
         const parent = $(element);
         const time = parseInt(parent.children(".name").children(".time").text().replace(/[^0-9]/, ""));
-        
+
         if (totalTime == null) {
             totalTime = time;
         } else {
