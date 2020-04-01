@@ -546,6 +546,15 @@ function collapseAll() {
     collapseEntireTree($stack);
 }
 
+function toggleBookmark(node) {
+    const child = node.children(".name");
+    if (child.hasClass("bookmarked")) {
+        child.removeClass("bookmarked");
+    } else {
+        child.addClass("bookmarked");
+    }
+}
+
 // click node --> expand/collapse
 $stack.on("click", ".name", function(e) {
     const parent = $(this).parent();
@@ -585,6 +594,12 @@ $stack.on("mouseenter", ".name", function(e) {
             span.css({
                 top: pos.top + "px"
             });
+
+            const parentName = parent.children(".name");
+            if (parentName.hasClass("bookmarked")) {
+                span.addClass("bookmarked");
+            }
+
             $overlay.append(span);
         }
     });
@@ -645,7 +660,9 @@ $stack.contextmenu(function(e) {
 contextMenu.click(function(e) {
     const target = $(e.target);
     const action = target.attr("data-action");
-    if (action === "expand") {
+    if (action === "bookmark") {
+        toggleBookmark($(contextMenuTarget));
+    } else if (action === "expand") {
         expandEntireTree($(contextMenuTarget));
     } else if (action === "collapse") {
         collapseEntireTree($(contextMenuTarget));
