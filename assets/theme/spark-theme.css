@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+:root {
+  --theme-background-color: #1e2527;
+  --theme-body-color: #E0E2E4;
+  --theme-spacer-color: #3C3F41;
+  --theme-link-color: #F77669;
+  --theme-border-color: #909090;
+  --theme-hover-color: #F77669;
+  --theme-hover-border-color: #ccc;
+  --theme-name-color: #BCBCBC;
+  --theme-name-unimportant-color: #5a5a5a;
+  --theme-name-hover-bgcolor: #2E383E;
+  --theme-name-hover-list-bg: #242b2f;
+  --theme-name-hover-list-box-shadow: rgba(0, 0, 0, 0.4);
+  --theme-name-remapped-color: #293134;
+  --theme-percent-color: #FFCD22;
+  --theme-linenumber-color: #5f5f5f;
+  --theme-bar-border-color: #484848;
+  --theme-bar-bgcolor: #293134;
+  --theme-bar-inner-bgcolor: #E2B671;
+  --theme-overlay-span-color: #E2B671;
+  --theme-time-color: #888;
+  --theme-img-filter: invert(0%);
+  --theme-h1-bgcolor: #181d1f;
+  --theme-h1-color: #ccc;
+  --theme-h1-box-shadow: #130b00;
+  --theme-input-bgcolor: #252b2d;
+  --theme-input-border-color: #676161;
+  --theme-input-color: #ccc;
+  --theme-footer-color: #888;
+  --theme-loading-color: #b5b5b5;
+  --theme-loading-bgcolor: #252b2d;
+  --theme-loading-border-color: #676161;
+  --theme-no-results-color: #800000;
+  --theme-context-menu-bgcolor: #181d1f;
+  --theme-context-menu-color: #ccc;
+  --theme-context-menu-hover-bgcolor: #2E383E;
+}

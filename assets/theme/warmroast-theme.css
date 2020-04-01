@@ -7,11 +7,12 @@
   --theme-hover-color: #000;
   --theme-hover-border-color: black;
   --theme-name-color: initial;
+  --theme-name-unimportant-color: initial;
   --theme-name-hover-bgcolor: #ccc;
   --theme-name-hover-list-bg: #efefef;
   --theme-name-hover-list-box-shadow: rgba(0, 0, 0, 0.4);
+  --theme-name-remapped-color: #d8d8d8;
   --theme-percent-color: #6b98ff;
-  --theme-remapped-color: #d8d8d8;
   --theme-linenumber-color: #949494;
   --theme-bar-border-color: #ccc;
   --theme-bar-bgcolor: #fff;

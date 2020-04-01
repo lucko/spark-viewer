@@ -107,18 +107,5 @@ function showLoadingError() {
     $("#loading").html("An error occurred whilst loading. Perhaps the data has expired?");
 }
 
-function escapeHtml(text) {
-    return text.replace(/[\"&'\/<>]/g, function(a) {
-        return {
-            '"': '&quot;',
-            '&': '&amp;',
-            "'": '&#39;',
-            '/': '&#47;',
-            '<': '&lt;',
-            '>': '&gt;'
-        }[a];
-    });
-}
-
 // Do things when page has loaded
 $(loadContent);

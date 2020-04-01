@@ -40,6 +40,7 @@ message SamplerMetadata {
   int32 interval = 3;
   ThreadDumper threadDumper = 4;
   DataAggregator dataAggregator = 5;
+  string comment = 6;
 
   message ThreadDumper {
     Type type = 1;

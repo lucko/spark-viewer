@@ -112,13 +112,21 @@ h1 {
     border-radius: 3px;
 }
 
+#stack .package-part {
+    color: var(--theme-name-unimportant-color);
+}
+
+#stack .lambdadesc-part {
+    color: var(--theme-name-unimportant-color);
+}
+
 #stack .lineNumber {
     color: var(--theme-linenumber-color);
     padding-left: 2px;
 }
 
 #stack .remapped {
-    background: var(--theme-remapped-color);
+    background: var(--theme-name-remapped-color);
     border-radius: 3px;
     padding: 0 4px;
 }
@@ -134,6 +142,7 @@ h1 {
     display: inline-block;
     width: 100px;
     height: 15px;
+    margin-top: 2px;
     margin-left: 20px;
     border: 1px solid var(--theme-bar-border-color);
     position: absolute;
@@ -143,7 +152,7 @@ h1 {
 
 #stack .bar-inner {
     display: inline-block;
-    height: 16px;
+    height: 15px;
     background: var(--theme-bar-inner-bgcolor);
 }
 
@@ -218,6 +227,19 @@ h1 {
     border: 1px solid var(--theme-loading-border-color);
     padding: 8px;
     border-radius: 3px;
+}
+
+#description {
+    font-size: 130%;
+    color: var(--theme-loading-color);
+    background: var(--theme-loading-bgcolor);
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+#description img {
+    vertical-align: top;
+    padding-left: 5px;
 }
 
 .no-results {

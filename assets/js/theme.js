@@ -1,4 +1,6 @@
-let theme = "dark";
+const THEMES = ["spark", "WarmRoast", "Solarized Dark", "Solarized Light"];
+const THEME_IDS = ["spark", "warmroast", "solarized-dark", "solarized-light"];
+let theme = "spark";
 
 function setTheme(t) {
     theme = t;
@@ -24,8 +26,8 @@ function setup() {
 }
 
 function drawSelector() {
-    let html = '<select title="theme">';
-    for (const option of ["Dark", "Light", "Solarized Dark", "Solarized Light"]) {
+    let html = '<select title="theme"><optgroup label="Theme">';
+    for (const option of THEMES) {
         const id = option.toLowerCase().replace(" ", "-");
         if (theme === id) {
             html += '<option selected value="' + id + '">' + option + '</option>';
@@ -33,7 +35,7 @@ function drawSelector() {
             html += '<option value="' + id + '">' + option + '</option>';
         }
     }
-    html += '</select>';
+    html += '</optgroup></select>';
 
     $("#theme-selector").html(html);
 }
@@ -42,6 +44,10 @@ function readThemePreference() {
     let themeRead = Cookies.get("theme");
     if (!themeRead) {
         return
+    }
+
+    if (THEME_IDS.indexOf(themeRead) === -1) {
+        return;
     }
 
     themeRead = themeRead.toLowerCase();

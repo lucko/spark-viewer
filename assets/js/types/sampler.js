@@ -5,6 +5,7 @@ let mappingsInfo;
 
 const $stack = $("#stack");
 const $overlay = $("#overlay");
+const $description = $("#description");
 const $loading = $("#loading");
 const $sampler = $("#sampler");
 
@@ -55,6 +56,33 @@ function renderData(data, renderingFunction) {
     $stack.html(html);
     $loading.hide();
     $sampler.show();
+
+    // display title
+    if (data["metadata"] && data["metadata"]["user"] && data["metadata"]["startTime"] && data["metadata"]["interval"]) {
+        const user = data["metadata"]["user"];
+        const start = new Date(data["metadata"]["startTime"]);
+        const startTime = start.toLocaleTimeString([], {hour12: true, hour: '2-digit', minute: '2-digit'})
+        const startDate = start.toLocaleDateString();
+        const interval = data["metadata"]["interval"] / 1000;
+
+        let comment = '';
+        if (data["metadata"]["comment"]) {
+            comment = ' "' + data["metadata"]["comment"] + '"';
+        }
+
+        let title;
+        if (user["type"] === 1) { // player
+            const uuid = user["uniqueId"].replace(/\-/g, "");
+            const username = user["name"];
+            title = 'Profile' + comment + ' created by <img src="https://minotar.net/avatar/' + uuid + '/20.png" alt=""> ' + username + ' at ' + startTime + ' on ' + startDate + ', interval=' + interval + 'ms';
+        } else { // assume console
+            const name = user["name"];
+            title = 'Profile' + comment + ' created by <img src="https://minotar.net/avatar/Console/20.png" alt=""> ' + name + ' at ' + startTime + ' on ' + startDate + ', interval=' + interval + 'ms';
+        }
+
+        $description.html(title);
+        $description.show();
+    }
 }
 
 /**
@@ -103,7 +131,7 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
             // print start
             const timePercent = ((node["time"] / totalTime) * 100).toFixed(2) + "%";
             html += '<li>';
-            html += '<div class="node collapsed" data-name="' + simpleRender(node, parentNode) + '">';
+            html += '<div class="node collapsed" data-name="' + nodeAsString(node) + '">';
             html += '<div class="name">';
             html += renderingFunction(node, parentNode);
             const parentLineNumber = node["parentLineNumber"];
@@ -139,10 +167,46 @@ function simpleRender(node, parentNode) {
     const className = node["className"];
     const methodName = node["methodName"];
     if (!className || !methodName) {
-        return escapeHtml(node["name"]);
+        return node["name"];
     }
 
-    return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
+    return render(className, methodName);
+}
+
+function nodeAsString(node) {
+    const className = node["className"];
+    const methodName = node["methodName"];
+    if (!className || !methodName) {
+        return node["name"];
+    }
+    return className + '.' + methodName + '()';
+}
+
+function renderPart(content, type, originalContent) {
+    if (originalContent) {
+        return '<span class="' + type + '-part remapped" title="' + originalContent + '">' + content + '</span>';
+    }
+    return '<span class="' + type + '-part">' + content + '</span>';
+}
+
+function renderClassPart(className, originalClassName) {
+    const lambdaSplit = className.indexOf("$$Lambda");
+    if (lambdaSplit !== -1) {
+        const lambdaDesc = className.substring(lambdaSplit);
+        className = className.substring(0, lambdaSplit);
+        return renderPart(className, "class", originalClassName) + renderPart(lambdaDesc, "lambdadesc", originalClassName);
+    }
+    return renderPart(className, "class")
+}
+
+function render(className, methodName, originalMethodName, originalClassName) {
+    const packageSplit = className.lastIndexOf('.');
+    if (packageSplit !== -1) {
+        const packageName = className.substring(0, packageSplit + 1);
+        className = className.substring(packageSplit + 1);
+        return renderPart(packageName, "package") + renderClassPart(className, originalClassName) + '.' + renderPart(methodName, "method", originalMethodName) + '()';
+    }
+    return renderClassPart(className) + '.' + renderPart(methodName, "method") + '()';
 }
 
 /**
@@ -160,15 +224,12 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
     const className = node["className"];
     const methodName = node["methodName"];
     if (!className || !methodName) {
-        return escapeHtml(node["name"]);
+        return node["name"];
     }
-
-    // define a fallback name to describe the method in case we can't remap it.
-    const name = escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
 
     // only remap nms classes
     if (!className.startsWith("net.minecraft.server." + nmsVersion + ".")) {
-        return name;
+        return render(className, methodName);
     }
 
     // get the nms name of the class
@@ -181,7 +242,7 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
     }
 
     if (!bukkitClassData) {
-        return name;
+        return render(className, methodName);
     }
 
     // get the obfuscated name of the class
@@ -199,7 +260,7 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
     // if bukkit has already provided a mapping for this method, just return.
     for (const method of bukkitClassData["methods"]) {
         if (method["bukkitName"] === methodName) {
-            return name;
+            return render(className, methodName);
         }
     }
 
@@ -213,13 +274,13 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
 
     // didn't find anything...
     if (!mcpMethods) {
-        return name;
+        return render(className, methodName);
     }
 
     if (mcpMethods.length === 1) {
         // we got lucky - there was only one MCP method with the same name ;>
         const mappedMethodName = mcpMethods[0]["mcpName"];
-        return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
+        return render(className, mappedMethodName, methodName);
     }
 
     // ok, so at this point:
@@ -231,7 +292,7 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
     // if method description info isn't available, give up.
     const methodDesc = node["methodDesc"];
     if (!methodDesc) {
-        return name;
+        return render(className, methodName);
     }
 
     // iterate through our candicate methods
@@ -257,11 +318,11 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
         // description of the MCP method, we have a match...
         if (methodDesc === deobfucsatedDesc) {
             const mappedMethodName = mcpMethod["mcpName"];
-            return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mappedMethodName) + '</span>()';
+            return render(className, mappedMethodName, methodName);
         }
     }
 
-    return name;
+    return render(className, methodName);
 }
 
 /**
@@ -276,14 +337,14 @@ function doMcpRemapping(node, mcpMappings) {
     const className = node["className"];
     const methodName = node["methodName"];
     if (!className || !methodName) {
-        return escapeHtml(node["name"]);
+        return node["name"];
     }
 
     const mcpMethodName = mcpMappings["methods"][methodName];
-    if (mcpMethodName && $.type(mcpMethodName) === "string") {
-        return escapeHtml(className) + '.<span class="remapped" title="' + methodName + '">' + escapeHtml(mcpMethodName) + '</span>()';
+    if (mcpMethodName && typeof(mcpMethodName) === "string") {
+        return render(className, mcpMethodName, methodName);
     }
-    return escapeHtml(className) + '.' + escapeHtml(methodName) + '()';
+    return render(className, methodName);
 }
 
 /**
@@ -295,30 +356,27 @@ function doMcpRemapping(node, mcpMappings) {
  */
 function doYarnRemapping(node, yarnMappings) {
     // extract class and method names from the node
-    const className = node["className"];
-    const methodName = node["methodName"];
+    let className = node["className"];
+    let methodName = node["methodName"];
     if (!className || !methodName) {
-        return escapeHtml(node["name"]);
+        return node["name"];
     }
 
+    let originalClassName;
+    let originalMethodName;
     const yarnClassName = yarnMappings["classes"][className];
     const yarnMethodName = yarnMappings["methods"][methodName];
 
-    let out = "";
-
     if (yarnClassName && typeof(yarnClassName) === "string") {
-        out += '<span class="remapped" title="' + className + '">' + escapeHtml(yarnClassName) + '</span>';
-    } else {
-        out += escapeHtml(className);
+        originalClassName = className;
+        className = yarnClassName;
     }
-    out += ".";
-    if (yarnMethodName && typeof(yarnMethodName) === "string") {
-        out += '<span class="remapped" title="' + methodName + '">' + escapeHtml(yarnMethodName) + '</span>';
-    } else {
-        out += escapeHtml(methodName);
+    if (yarnMethodName && typeof(yarnMethodName) !== "string") {
+        originalMethodName = methodName;
+        methodName = yarnMethodName;
     }
 
-    return out + "()";
+    return render(className, methodName, originalMethodName, originalClassName);
 }
 
 function applyRemapping(type) {

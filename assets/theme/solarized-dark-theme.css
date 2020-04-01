@@ -7,11 +7,12 @@
   --theme-hover-color: #839496; /* base0 */
   --theme-hover-border-color: #657b83; /* base00 */
   --theme-name-color: #839496; /* base0 */
+  --theme-name-unimportant-color: #839496; /* base0 */
   --theme-name-hover-bgcolor: #586e75; /* base01 */
   --theme-name-hover-list-bg: #073642; /* base02 */
   --theme-name-hover-list-box-shadow: rgba(0, 0, 0, 0.4);
+  --theme-name-remapped-color: #073642; /* base02 */
   --theme-percent-color: #268bd2; /* blue */
-  --theme-remapped-color: #073642; /* base02 */
   --theme-linenumber-color: #586e75; /* base01 */
   --theme-bar-border-color: #839496; /* base0 */
   --theme-bar-bgcolor: #657b83; /* base00 */

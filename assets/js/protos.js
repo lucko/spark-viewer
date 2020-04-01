@@ -78,7 +78,7 @@ SamplerData._readField = function (tag, obj, pbf) {
 var SamplerMetadata = self.SamplerMetadata = {};
 
 SamplerMetadata.read = function (pbf, end) {
-    return pbf.readFields(SamplerMetadata._readField, {user: null, startTime: 0, interval: 0, threadDumper: null, dataAggregator: null}, end);
+    return pbf.readFields(SamplerMetadata._readField, {user: null, startTime: 0, interval: 0, threadDumper: null, dataAggregator: null, comment: ""}, end);
 };
 SamplerMetadata._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
@@ -86,6 +86,7 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
     else if (tag === 3) obj.interval = pbf.readVarint(true);
     else if (tag === 4) obj.threadDumper = SamplerMetadata.ThreadDumper.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 5) obj.dataAggregator = SamplerMetadata.DataAggregator.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 6) obj.comment = pbf.readString();
 };
 
 // SamplerMetadata.ThreadDumper ========================================
