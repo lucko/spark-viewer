@@ -9,6 +9,13 @@ const $description = $("#description");
 const $loading = $("#loading");
 const $sampler = $("#sampler");
 
+const escaper = document.createElement('p');
+
+function escapeHTML(text) {
+    escaper.innerText = text;
+    return escaper.innerHTML;
+}
+
 /**
  * Called by the application to initialise the sampler view.
  *
@@ -132,12 +139,12 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
             const time = node["time"];
             const timePercent = ((time / totalTime) * 100).toFixed(2) + "%";
             html += '<li>';
-            html += '<div class="node collapsed" data-name="' + nodeAsString(node) + '" data-time="' + time + '">';
+            html += '<div class="node collapsed" data-name="' + escapeHTML(nodeAsString(node)) + '" data-time="' + time + '">';
             html += '<div class="name">';
             html += renderingFunction(node, parentNode);
             const parentLineNumber = node["parentLineNumber"];
             if (parentLineNumber) {
-                html += '<span class="lineNumber" title="Invoked on line ' + parentLineNumber + ' of ' + parentNode["methodName"] + '()">:' + parentLineNumber + '</span>';
+                html += '<span class="lineNumber" title="Invoked on line ' + parentLineNumber + ' of ' + escapeHTML(parentNode["methodName"]) + '()">:' + parentLineNumber + '</span>';
             }
             html += '<span class="percent">' + timePercent + '</span>';
             html += '<span class="time">' + time + 'ms</span>';
@@ -185,9 +192,9 @@ function nodeAsString(node) {
 
 function renderPart(content, type, originalContent) {
     if (originalContent) {
-        return '<span class="' + type + '-part remapped" title="' + originalContent + '">' + content + '</span>';
+        return '<span class="' + type + '-part remapped" title="' + escapeHTML(originalContent) + '">' + escapeHTML(content) + '</span>';
     }
-    return '<span class="' + type + '-part">' + content + '</span>';
+    return '<span class="' + type + '-part">' + escapeHTML(content) + '</span>';
 }
 
 function renderClassPart(className, originalClassName) {
