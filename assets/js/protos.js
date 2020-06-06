@@ -24,6 +24,35 @@ CommandSenderData.Type = {
     }
 };
 
+// PlatformData ========================================
+
+var PlatformData = self.PlatformData = {};
+
+PlatformData.read = function (pbf, end) {
+    return pbf.readFields(PlatformData._readField, {type: 0, name: "", version: "", minecraftVersion: ""}, end);
+};
+PlatformData._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.type = pbf.readVarint();
+    else if (tag === 2) obj.name = pbf.readString();
+    else if (tag === 3) obj.version = pbf.readString();
+    else if (tag === 4) obj.minecraftVersion = pbf.readString();
+};
+
+PlatformData.Type = {
+    "SERVER": {
+        "value": 0,
+        "options": {}
+    },
+    "CLIENT": {
+        "value": 1,
+        "options": {}
+    },
+    "PROXY": {
+        "value": 2,
+        "options": {}
+    }
+};
+
 // HeapData ========================================
 
 var HeapData = self.HeapData = {};
@@ -41,10 +70,11 @@ HeapData._readField = function (tag, obj, pbf) {
 var HeapMetadata = self.HeapMetadata = {};
 
 HeapMetadata.read = function (pbf, end) {
-    return pbf.readFields(HeapMetadata._readField, {user: null}, end);
+    return pbf.readFields(HeapMetadata._readField, {user: null, platform: null}, end);
 };
 HeapMetadata._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2) obj.platform = PlatformData.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // HeapEntry ========================================
@@ -78,7 +108,7 @@ SamplerData._readField = function (tag, obj, pbf) {
 var SamplerMetadata = self.SamplerMetadata = {};
 
 SamplerMetadata.read = function (pbf, end) {
-    return pbf.readFields(SamplerMetadata._readField, {user: null, startTime: 0, interval: 0, threadDumper: null, dataAggregator: null, comment: ""}, end);
+    return pbf.readFields(SamplerMetadata._readField, {user: null, startTime: 0, interval: 0, threadDumper: null, dataAggregator: null, comment: "", platform: null}, end);
 };
 SamplerMetadata._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
@@ -87,6 +117,7 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
     else if (tag === 4) obj.threadDumper = SamplerMetadata.ThreadDumper.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 5) obj.dataAggregator = SamplerMetadata.DataAggregator.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 6) obj.comment = pbf.readString();
+    else if (tag === 7) obj.platform = PlatformData.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // SamplerMetadata.ThreadDumper ========================================
