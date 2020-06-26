@@ -13,7 +13,7 @@ function applyTheme() {
     const head = $("head");
 
     head.find("#theme").first().remove();
-    head.append('<link id="theme" rel="stylesheet" type="text/css" href="assets/theme/' + theme + '-theme.css">');
+    head.append(`<link id="theme" rel="stylesheet" type="text/css" href="assets/theme/${theme}-theme.css">`);
 }
 
 // listen for mapping selections
@@ -30,9 +30,9 @@ function drawSelector() {
     for (const option of THEMES) {
         const id = option.toLowerCase().replace(" ", "-");
         if (theme === id) {
-            html += '<option selected value="' + id + '">' + option + '</option>';
+            html += `<option selected value="${id}">${option}</option>`;
         } else {
-            html += '<option value="' + id + '">' + option + '</option>';
+            html += `<option value="${id}">${option}</option>`;
         }
     }
     html += '</optgroup></select>';

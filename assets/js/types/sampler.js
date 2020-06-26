@@ -28,7 +28,7 @@ function loadSampleData(data) {
     activeData = data;
 
     // load mappings data info
-    $.getJSON(MAPPING_DATA_URL + "mappings.json", function(mappings) {
+    $.getJSON(`${MAPPING_DATA_URL}mappings.json`, function(mappings) {
         mappingsInfo = mappings["types"];
         $("#mappings-selector").html(renderMappingsSelector(mappingsInfo)).show();
 
@@ -74,17 +74,17 @@ function renderData(data, renderingFunction) {
 
         let comment = '';
         if (data["metadata"]["comment"]) {
-            comment = ' "' + data["metadata"]["comment"] + '"';
+            comment = ` "${data["metadata"]["comment"]}"`;
         }
 
         let title;
         if (user["type"] === 1) { // player
             const uuid = user["uniqueId"].replace(/\-/g, "");
             const username = user["name"];
-            title = 'Profile' + comment + ' created by <img src="https://minotar.net/avatar/' + uuid + '/20.png" alt=""> ' + username + ' at ' + startTime + ' on ' + startDate + ', interval=' + interval + 'ms';
+            title = `Profile${comment} created by <img src="https://minotar.net/avatar/${uuid}/20.png" alt=""> ${username} at ${startTime} on ${startDate}, interval=${interval}ms`;
         } else { // assume console
             const name = user["name"];
-            title = 'Profile' + comment + ' created by <img src="https://minotar.net/avatar/Console/20.png" alt=""> ' + name + ' at ' + startTime + ' on ' + startDate + ', interval=' + interval + 'ms';
+            title = `Profile${comment} created by <img src="https://minotar.net/avatar/Console/20.png" alt=""> ${name} at ${startTime} on ${startDate}, interval=${interval}ms`;
         }
 
         $description.html(title);
@@ -137,18 +137,18 @@ function renderStackToHtml(root, totalTime, renderingFunction) {
 
             // print start
             const time = node["time"];
-            const timePercent = ((time / totalTime) * 100).toFixed(2) + "%";
+            const timePercent = `${((time / totalTime) * 100).toFixed(2)}%`;
             html += '<li>';
-            html += '<div class="node collapsed" data-name="' + escapeHTML(nodeAsString(node)) + '" data-time="' + time + '">';
+            html += `<div class="node collapsed" data-name="${escapeHTML(nodeAsString(node))}" data-time="${time}">`;
             html += '<div class="name">';
             html += renderingFunction(node, parentNode);
             const parentLineNumber = node["parentLineNumber"];
             if (parentLineNumber) {
-                html += '<span class="lineNumber" title="Invoked on line ' + parentLineNumber + ' of ' + escapeHTML(parentNode["methodName"]) + '()">:' + parentLineNumber + '</span>';
+                html += `<span class="lineNumber" title="Invoked on line ${parentLineNumber} of ${escapeHTML(parentNode["methodName"])}()">:${parentLineNumber}</span>`;
             }
-            html += '<span class="percent">' + timePercent + '</span>';
-            html += '<span class="time">' + time + 'ms</span>';
-            html += '<span class="bar"><span class="bar-inner" style="width: ' + timePercent + '"></span></span>';
+            html += `<span class="percent">${timePercent}</span>`;
+            html += `<span class="time">${time}ms</span>`;
+            html += `<span class="bar"><span class="bar-inner" style="width: ${timePercent}"></span></span>`;
             html += '</div>';
             html += '<ul class="children">';
         } else {
@@ -187,14 +187,14 @@ function nodeAsString(node) {
     if (!className || !methodName) {
         return node["name"];
     }
-    return className + '.' + methodName + '()';
+    return `${className}.${methodName}()`;
 }
 
 function renderPart(content, type, originalContent) {
     if (originalContent) {
-        return '<span class="' + type + '-part remapped" title="' + escapeHTML(originalContent) + '">' + escapeHTML(content) + '</span>';
+        return `<span class="${type}-part remapped" title="${escapeHTML(originalContent)}">${escapeHTML(content)}</span>`;
     }
-    return '<span class="' + type + '-part">' + escapeHTML(content) + '</span>';
+    return `<span class="${type}-part">${escapeHTML(content)}</span>`;
 }
 
 function renderClassPart(className, originalClassName) {
@@ -202,7 +202,7 @@ function renderClassPart(className, originalClassName) {
     if (lambdaSplit !== -1) {
         const lambdaDesc = className.substring(lambdaSplit);
         className = className.substring(0, lambdaSplit);
-        return renderPart(className, "class", originalClassName) + renderPart(lambdaDesc, "lambdadesc", originalClassName);
+        return `${renderPart(className, "class", originalClassName)}${renderPart(lambdaDesc, "lambdadesc", originalClassName)}`;
     }
     return renderPart(className, "class")
 }
@@ -212,9 +212,9 @@ function render(className, methodName, originalMethodName, originalClassName) {
     if (packageSplit !== -1) {
         const packageName = className.substring(0, packageSplit + 1);
         className = className.substring(packageSplit + 1);
-        return renderPart(packageName, "package") + renderClassPart(className, originalClassName) + '.' + renderPart(methodName, "method", originalMethodName) + '()';
+        return `${renderPart(packageName, "package")}${renderClassPart(className, originalClassName)}.${renderPart(methodName, "method", originalMethodName)}()`;
     }
-    return renderClassPart(className) + '.' + renderPart(methodName, "method") + '()';
+    return `${renderClassPart(className)}.${renderPart(methodName, "method")}()`;
 }
 
 /**
@@ -236,12 +236,12 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
     }
 
     // only remap nms classes
-    if (!className.startsWith("net.minecraft.server." + nmsVersion + ".")) {
+    if (!className.startsWith(`net.minecraft.server.${nmsVersion}.`)) {
         return render(className, methodName);
     }
 
     // get the nms name of the class
-    const nmsClassName = className.substring(("net.minecraft.server." + nmsVersion + ".").length);
+    const nmsClassName = className.substring((`net.minecraft.server.${nmsVersion}.`).length);
 
     // try to find bukkit mapping data for the class
     let bukkitClassData = bukkitMappings["classes"][nmsClassName];
@@ -316,7 +316,7 @@ function doBukkitRemapping(node, parentNode, mcpMappings, bukkitMappings, nmsVer
             // find the mapped bukkit class for the obf'd type.
             const bukkitMapping = bukkitMappings["classesObfuscated"][obfType];
             if (bukkitMapping) {
-                return "L" + "net/minecraft/server/" + nmsVersion + "/" + bukkitMapping["mapped"] + ";";
+                return `Lnet/minecraft/server/${nmsVersion}/${bukkitMapping["mapped"]};`;
             }
 
             return match;
@@ -396,8 +396,8 @@ function applyRemapping(type) {
         const version = type.substring("bukkit-".length);
         const nmsVersion = mappingsInfo["bukkit"]["versions"][version]["nmsVersion"];
 
-        $.getJSON(MAPPING_DATA_URL + version + "/mcp.json", function(mcpMappings) {
-            $.getJSON(MAPPING_DATA_URL + version + "/bukkit.json", function(bukkitMappings) {
+        $.getJSON(`${MAPPING_DATA_URL}${version}/mcp.json`, function(mcpMappings) {
+            $.getJSON(`${MAPPING_DATA_URL}${version}"/bukkit.json`, function(bukkitMappings) {
                 // create reverse index for classes by obfuscated name
                 const classesObfuscated = {};
                 const classes = bukkitMappings["classes"];
@@ -420,7 +420,7 @@ function applyRemapping(type) {
     } else if (type.startsWith("mcp")) {
         const version = type.substring("mcp-".length);
 
-        $.getJSON(MAPPING_DATA_URL + version + "/mcp.json", function(mcpMappings) {
+        $.getJSON(`${MAPPING_DATA_URL}${version}/mcp.json`, function(mcpMappings) {
             const renderingFunction = function(node, parentNode) {
                 return doMcpRemapping(node, mcpMappings);
             };
@@ -430,7 +430,7 @@ function applyRemapping(type) {
     } else if (type.startsWith("yarn")) {
         const version = type.substring("yarn-".length);
 
-        $.getJSON(MAPPING_DATA_URL + version + "/yarn.json", function(yarnMappings) {
+        $.getJSON(`${MAPPING_DATA_URL}${version}/yarn.json`, function(yarnMappings) {
             const renderingFunction = function(node, parentNode) {
                 return doYarnRemapping(node, yarnMappings);
             };
@@ -453,13 +453,13 @@ function renderMappingsSelector(mappings) {
         const name = mapping["name"];
         const format = mapping["format"];
 
-        html += '<optgroup label="' + name + '">';
+        html += `<optgroup label="${name}">`;
         const versions = mapping["versions"];
         for (const versionId in versions) {
             const version = versions[versionId];
             const name = version["name"];
             const display = format.replace("%s", name);
-            html += '<option value="' + mappingId + '-' + versionId + '">' + display + '</option>';
+            html += `<option value="${mappingId}-${versionId}">${display}</option>`;
         }
         html += '</optgroup>';
     }
@@ -597,9 +597,9 @@ $stack.on("mouseenter", ".name", function(e) {
         } else {
             const span = $(document.createElement("span"));
             const pos = parent.position();
-            span.text(((totalTime / time) * 100).toFixed(2) + "%");
+            span.text(`${((totalTime / time) * 100).toFixed(2)}%`);
             span.css({
-                top: pos.top + "px"
+                top: `${pos.top}px`
             });
 
             const parentName = parent.children(".name");
@@ -654,7 +654,7 @@ $stack.contextmenu(function(e) {
     if (!contextMenuTarget) {
         return;
     }
-    
+
     // cancel the default action & render our custom menu
     e.preventDefault();
     contextMenu.css({

@@ -28,7 +28,7 @@ function renderData(data, filter) {
     content += '<table style="border-spacing: 20px 0;">';
     content += '<tr>';
     for (const col of ["Rank", "Instances", "Size", "Type"]) {
-        content += '<th style="text-align: left">' + col + '</th>';
+        content += `<th style="text-align: left">${col}</th>`;
     }
     content += '</tr>';
 
@@ -48,14 +48,14 @@ function renderData(data, filter) {
         totalSize += size;
 
         tableEntries += '<tr>';
-        tableEntries += '<td>#' + entry["order"] + '</td>';
-        tableEntries += '<td>' + instances.toLocaleString() + '</td>';
-        tableEntries += '<td>' + formatBytes(size) + '</td>';
-        tableEntries += '<td>' + entry["type"] + '</td>';
+        tableEntries += `<td>#${entry["order"]}</td>`;
+        tableEntries += `<td>${instances.toLocaleString()}</td>`;
+        tableEntries += `<td>${formatBytes(size)}</td>`;
+        tableEntries += `<td>${entry["type"]}</td>`;
         tableEntries += '</tr>';
     }
 
-    content += '<tr><td>Total</td><td>' + totalInstances.toLocaleString() + '</td><td>' + formatBytes(totalSize) + '</td><td>n/a</td></tr>';
+    content += `<tr><td>Total</td><td>${totalInstances.toLocaleString()}</td><td>${formatBytes(totalSize)}</td><td>n/a</td></tr>`;
     content += '<tr><td>&nbsp;</td><td></td><td></td><td></td></tr>'; // blank line.
     content += tableEntries;
     content += '</table>';
@@ -71,7 +71,7 @@ function formatBytes(bytes) {
     }
     const sizes = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
     const sizeIndex = Math.floor(Math.log(bytes) / Math.log(1024));
-    return parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(2)) + " " + sizes[sizeIndex];
+    return `${parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(2))} ${sizes[sizeIndex]}`;
 }
 
 $("#heap > .filter-input-box").keyup(function(e) {

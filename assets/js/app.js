@@ -60,8 +60,8 @@ function loadContent() {
         $loading.show().html("Loading data; please wait...");
 
         // get data
-        const url = BYTEBIN_URL + params;
-        console.log("Loading from URL: " + url);
+        const url = `${BYTEBIN_URL}params`;
+        console.log(`Loading from URL: ${url}`);
 
         const req = new XMLHttpRequest();
         req.open("GET", url, true);
