@@ -89,6 +89,9 @@ function renderData(data, renderingFunction) {
         }
 
         titleLines.push(title);
+
+        const windowTitle = 'Profile' + comment + ' at ' +  startTime + ' ' + startDate;
+        $("head title").text(windowTitle);
     }
 
     if (data["metadata"] && data["metadata"]["platform"]) {
@@ -102,17 +105,14 @@ function renderData(data, renderingFunction) {
         titleLines.push(title);
     }
 
-    if (titleLines.length > 1) {
+    if (titleLines.length === 1) {
+        $description.html(titleLines[0]);
+        $description.show();
+    } else if (titleLines.length > 1) {
         let inner = "<details><summary>" + titleLines[0] + "</summary>" + titleLines.slice(1).join("<br />") + "</details>";
 
         $description.html(inner);
         $description.show();
-    } else if (titleLines.length == 1) {
-        $description.html(titleLines[0]);
-        $description.show();
-
-        const windowTitle = 'Profile' + comment + ' at ' +  startTime + ' ' + startDate;
-        $("head title").text(windowTitle);
     }
 }
 
