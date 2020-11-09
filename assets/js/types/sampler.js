@@ -379,7 +379,7 @@ function doYarnRemapping(node, yarnMappings) {
         originalClassName = className;
         className = yarnClassName;
     }
-    if (yarnMethodName && typeof(yarnMethodName) !== "string") {
+    if (yarnMethodName && typeof(yarnMethodName) === "string") {
         originalMethodName = methodName;
         methodName = yarnMethodName;
     }
