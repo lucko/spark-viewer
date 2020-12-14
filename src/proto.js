@@ -2,7 +2,7 @@
 
 // CommandSenderData ========================================
 
-var CommandSenderData = self.CommandSenderData = {};
+var CommandSenderData = exports.CommandSenderData = {};
 
 CommandSenderData.read = function (pbf, end) {
     return pbf.readFields(CommandSenderData._readField, {type: 0, name: "", uniqueId: ""}, end);
@@ -26,7 +26,7 @@ CommandSenderData.Type = {
 
 // PlatformData ========================================
 
-var PlatformData = self.PlatformData = {};
+var PlatformData = exports.PlatformData = {};
 
 PlatformData.read = function (pbf, end) {
     return pbf.readFields(PlatformData._readField, {type: 0, name: "", version: "", minecraftVersion: ""}, end);
@@ -55,7 +55,7 @@ PlatformData.Type = {
 
 // HeapData ========================================
 
-var HeapData = self.HeapData = {};
+var HeapData = exports.HeapData = {};
 
 HeapData.read = function (pbf, end) {
     return pbf.readFields(HeapData._readField, {metadata: null, entries: []}, end);
@@ -67,7 +67,7 @@ HeapData._readField = function (tag, obj, pbf) {
 
 // HeapMetadata ========================================
 
-var HeapMetadata = self.HeapMetadata = {};
+var HeapMetadata = exports.HeapMetadata = {};
 
 HeapMetadata.read = function (pbf, end) {
     return pbf.readFields(HeapMetadata._readField, {user: null, platform: null}, end);
@@ -79,7 +79,7 @@ HeapMetadata._readField = function (tag, obj, pbf) {
 
 // HeapEntry ========================================
 
-var HeapEntry = self.HeapEntry = {};
+var HeapEntry = exports.HeapEntry = {};
 
 HeapEntry.read = function (pbf, end) {
     return pbf.readFields(HeapEntry._readField, {order: 0, instances: 0, size: 0, type: ""}, end);
@@ -93,7 +93,7 @@ HeapEntry._readField = function (tag, obj, pbf) {
 
 // SamplerData ========================================
 
-var SamplerData = self.SamplerData = {};
+var SamplerData = exports.SamplerData = {};
 
 SamplerData.read = function (pbf, end) {
     return pbf.readFields(SamplerData._readField, {metadata: null, threads: []}, end);
@@ -105,7 +105,7 @@ SamplerData._readField = function (tag, obj, pbf) {
 
 // SamplerMetadata ========================================
 
-var SamplerMetadata = self.SamplerMetadata = {};
+var SamplerMetadata = exports.SamplerMetadata = {};
 
 SamplerMetadata.read = function (pbf, end) {
     return pbf.readFields(SamplerMetadata._readField, {user: null, startTime: 0, interval: 0, threadDumper: null, dataAggregator: null, comment: "", platform: null}, end);
@@ -189,7 +189,7 @@ SamplerMetadata.DataAggregator.ThreadGrouper = {
 
 // StackTraceNode ========================================
 
-var StackTraceNode = self.StackTraceNode = {};
+var StackTraceNode = exports.StackTraceNode = {};
 
 StackTraceNode.read = function (pbf, end) {
     return pbf.readFields(StackTraceNode._readField, {time: 0, children: [], className: "", methodName: "", parentLineNumber: 0, lineNumber: 0, methodDesc: ""}, end);
@@ -206,7 +206,7 @@ StackTraceNode._readField = function (tag, obj, pbf) {
 
 // ThreadNode ========================================
 
-var ThreadNode = self.ThreadNode = {};
+var ThreadNode = exports.ThreadNode = {};
 
 ThreadNode.read = function (pbf, end) {
     return pbf.readFields(ThreadNode._readField, {name: "", time: 0, children: []}, end);

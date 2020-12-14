@@ -73,6 +73,11 @@ h1 {
     text-align: right;
 }
 
+.ignition-beta {
+    color: var(--theme-link-color);
+    font-style: italic;
+}
+
 
 
 /* STACK VIEW */
@@ -85,7 +90,6 @@ h1 {
 #stack ul {
     margin: 0;
     padding: 0 0 0 18px;
-    display: none;
 }
 
 #stack li {
@@ -95,6 +99,10 @@ h1 {
     border-left: 1px solid var(--theme-spacer-color);
 }
 
+#stack li.parent {
+    border: 0;
+}
+
 #stack .name {
     color: var(--theme-name-color);
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA10lEQVR4Xt2Tu8rCQBSEzzlJmYBvYJ7EShArfQ1BrPNDyoB5DRHsrUQQQc3lcfxBiKbIHjfiCuayKSwEB6ZYPpjdGVhkZvhEJP3dALMMgmB+FoI7ddUQEYhw7bp/48YAkYtOfzCEJu22m5G2gnjeHIYxxHGiXJwV11dQTzdN4w0QKa4JULplGcymkwo4Rkn7iCjNOcNiuVK3vQZ0ug5gWwAgPnpalgW1+yDqA4hQmmSADVVGBW8bES7RaW+zYOBSNSSENL0etAGe5/UkMKBZ/77vv8APfKY7cvZVTt7VqzwAAAAASUVORK5CYII=) center left no-repeat;
@@ -102,11 +110,11 @@ h1 {
     cursor: pointer;
 }
 
-#stack .name.hovered {
+#stack .name:hover {
     background-color: var(--theme-name-hover-bgcolor);
 }
 
-#stack .name.hovered + ul {
+#stack .name:hover + ul {
     background: var(--theme-name-hover-list-bg);
     box-shadow: 0 2px 4px var(--theme-name-hover-list-box-shadow);
     border-radius: 3px;
@@ -169,11 +177,11 @@ h1 {
     padding: 0 4px;
 }
 
-#stack .name.hovered .time {
+#stack .name:hover .time {
     display: inline;
 }
 
-#stack .collapsed > .name {
+#stack .collapsed .name {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA7ElEQVR4Xt1TzYrCQAxOYo8z0GeRZY+eBPGkryGIZ4UeC/Yx/EHvnqTssot/9XF2YUHXQyd2RtuC2OnBg2AgJF/CfJkvwyAzwyNGiT+XwLktBMHwRyl270lDRCDCRb8/aBcSqFi59UYTiuwzXLasEtR18nYbQRTt4f2tqqPGad8uIb2641TyKUSJp307gbH/0wl63U4Ks3y925e/AibOMcN4OofRZKZLOmps6lj2CoBodAohspKUMtePaCcgQqNZCGlw+PFt8nwXWLZE+NttviQrBr6RhoRwOBxXVgLP82pJqECx/fq+n4EX+ExnBI9csQQ1hIoAAAAASUVORK5CYII=);
 }
 
