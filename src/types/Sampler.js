@@ -1,23 +1,23 @@
 import React, {useState, useMemo, useEffect} from 'react';
-import {humanFriendlyPercentage} from '../util'
+import {humanFriendlyPercentage} from '../misc/util'
 import withHoverDetection from '../hoc/withHoverDetection'
 import classnames from 'classnames'
 import {CommandSenderData, PlatformData} from '../proto';
 
-export function Sampler({ data }) {
-    const { metadata, threads } = data
+export function Sampler({ data, mappings }) {
+    const { metadata, threads } = data;
     return <div id="sampler">
         {!!metadata &&
             <Metadata metadata={metadata} />
         }
         <div id="stack">
-            {threads.map(thread => <BaseNode parents={[]} node={thread} key={thread.name} />)}
+            {threads.map(thread => <BaseNode parents={[]} node={thread} mappings={mappings} key={thread.name} />)}
         </div>
     </div>
 }
 
 const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHoverChanged, toggleExpand }) => {
-    useEffect(() => onHoverChanged(hovered), [onHoverChanged, hovered])
+    useEffect(() => onHoverChanged(hovered), [onHoverChanged, hovered]);
     return <div onClick={toggleExpand}>
         {children}
         <span className="percent">{humanFriendlyPercentage(time / threadTime)}</span>
@@ -31,122 +31,181 @@ const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHo
 })
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
-const BaseNode = React.memo(({ parents, node }) => {
-    const [ expanded, setExpanded ] = useState(node.children.length <= 1)
-    const [ hovered, setHovered ] = useState(false)
+const BaseNode = React.memo(({ parents, node, mappings }) => {
+    const [ expanded, setExpanded ] = useState(parents.length === 0 ? false : parents[parents.length - 1].children.length === 1);
+    const [ hovered, setHovered ] = useState(false);
     const classNames = classnames({
         'node': true,
         'collapsed': !expanded,
         'parent': parents.length === 0
-    })
-    const nodeInfoClassNames = 'name'
-    const basicName = node.name ? node.name : node.className + "." + node.methodName + "()"
-    const parentsForChildren = useMemo(() => parents.concat([ node ]), [parents, node])
-    const parentTime = parents.length === 0 ? node.time : parents[0].time
+    });
+    const nodeInfoClassNames = 'name';
+    const parentsForChildren = useMemo(() => parents.concat([ node ]), [parents, node]);
+    const parentTime = parents.length === 0 ? node.time : parents[0].time;
 
     function toggleExpand() {
-        setExpanded(!expanded)
+        setExpanded(!expanded);
     }
     
     function onHoverChanged(newHover) {
         if (hovered !== newHover) {
-            setHovered(newHover)
+            setHovered(newHover);
         }
     }
 
     return <li className={classNames}>
         <div className={nodeInfoClassNames}>
             <NodeInfo time={node.time} threadTime={parentTime} toggleExpand={toggleExpand} onHoverChanged={onHoverChanged}>
-                {basicName}
+                <Name node={node} mappings={mappings} />
             </NodeInfo>
         </div>
-        {expanded ? <ul className="children">
-            {node.children.map((node, i) => <BaseNode node={node} parents={parentsForChildren} key={i} />)}
-        </ul> : null}
+        {expanded ? (
+            <ul className="children">
+                {node.children.map((node, i) => <BaseNode node={node} parents={parentsForChildren} mappings={mappings} key={i} />)}
+            </ul>
+        ) : null}
     </li>
 })
 
-const Name = ({ name }) => {
-    const methodPackageSeparatorIdx = name.lastIndexOf('.')
-    if (methodPackageSeparatorIdx === -1) {
-        return <>{name}</>
+const Name = ({ node, mappings }) => {
+    if (!node.className || !node.methodName) {
+        return <>{node.name}</>
     }
-    const method = name.substring(methodPackageSeparatorIdx + 1)
-    const qualifiedClassName = name.substring(0, methodPackageSeparatorIdx)
 
-    let className
-    const classNameFromPackageSeparator = qualifiedClassName.lastIndexOf('.')
-    if (classNameFromPackageSeparator === -1) {
-        className = qualifiedClassName
+    let { className, methodName } = mappings.func(node) || {};
+
+    let remappedClass = false;
+    if (className) {
+        remappedClass = true;
     } else {
-        className = qualifiedClassName.substring(classNameFromPackageSeparator + 1)
+        className = node.className;
     }
 
-    const packageName = qualifiedClassName.substring(0, Math.max(0, qualifiedClassName.lastIndexOf('.')))
-    let lambda
+    let remappedMethod = false;
+    if (methodName) {
+        remappedMethod = true;
+    } else {
+        methodName = node.methodName;
+    }
 
-    // if we need to include the lambda part
-    const lambdaIdx = className.indexOf("$$Lambda");
-    if (lambdaIdx !== -1) {
-        lambda = className.substring(lambdaIdx)
-        className = className.substring(0, lambdaIdx)
+    let packageName;
+    let lambda;
+
+    const packageSplitIdx = className.lastIndexOf('.');
+    if (packageSplitIdx !== -1) {
+        packageName = className.substring(0, packageSplitIdx + 1);
+        className = className.substring(packageSplitIdx + 1);
+    }
+
+    const lambdaSplitIdx = className.indexOf("$$Lambda");
+    if (lambdaSplitIdx !== -1) {
+        lambda = className.substring(lambdaSplitIdx);
+        className = className.substring(0, lambdaSplitIdx);
     }
 
     return <>
-        <span className="package-part">{packageName ? packageName + "." : ""}</span>
-        <span className="class-part">{className}</span>
-        {lambda ? <span className="lambdadesc-part">{lambda}</span> : null}
+        {packageName ? <span className="package-part">{packageName}</span> : null}
+        {remappedClass ? <span className="class-part remapped" title={node.className}>{className}</span> : <span className="class-part">{className}</span>}
+        {lambda ? <span className="lambda-part">{lambda}</span> : null}
         .
-        <span className="method-part">{method}</span>
+        {remappedMethod ? <span className="method-part remapped" title={node.methodName}>{methodName}</span> : <span className="method-part">{methodName}</span>}
+        ()
     </>
 }
 
 const Metadata = ({ metadata }) => {
     let commonData = <CommonMetadata metadata={metadata} />
     let platformData = <PlatformMetadata metadata={metadata} />
-
-    return <div id="metadata">
-        {commonData}
-        {commonData && platformData && <br />}
-        {platformData}
-    </div>
+    return <>
+        {metadata.platform ?
+            <details id="metadata"><summary>{commonData}</summary>{platformData}</details> :
+            <div id="metadata">{commonData}</div>}
+    </>
 }
 
 const CommonMetadata = ({ metadata }) => {
     if (metadata.user && metadata.startTime && metadata.interval) {
-        const { user, startTime, interval } = metadata
+        const { user, startTime, interval } = metadata;
 
-        let comment = ''
+        let comment = '';
         if (metadata.comment) {
-            comment = '"' + metadata.comment + '"'
+            comment = '"' + metadata.comment + '"';
         }
 
-        const { type, name } = user
+        const { type, name } = user;
         const start = new Date(startTime);
+        const startTimeStr = start.toLocaleTimeString([], {hour12: true, hour: '2-digit', minute: '2-digit'}).replace(" ", "");
+        const startDateStr = start.toLocaleDateString();
 
-        let avatarUrl = 'https://minotar.net/avatar/Console/12.png'
-        if (type == CommandSenderData.Type.PLAYER.value) {
-            const uuid = user.uniqueId.replace(/\-/g, "")
-            avatarUrl = 'https://minotar.net/avatar/' + uuid + '/12.png'
+        let avatarUrl;
+        if (type === CommandSenderData.Type.PLAYER.value) {
+            const uuid = user.uniqueId.replace(/\-/g, "");
+            avatarUrl = 'https://minotar.net/avatar/' + uuid + '/20.png';
+        } else {
+            avatarUrl = 'https://minotar.net/avatar/Console/20.png';
         }
+
+        document.title ='Profile' + comment + ' at ' +  startTimeStr + ' ' + startDateStr;
 
         return <>
             <span>
-                Profile {comment} created by <img src={avatarUrl} alt="" /> {name} at {start.toLocaleTimeString([], {hour12: true, hour: '2-digit', minute: '2-digit'})} on {start.toLocaleDateString()}, interval {interval / 1000}ms
+                Profile {comment} created by <img src={avatarUrl} alt="" /> {name} at {startTimeStr} on {startDateStr}, interval {interval / 1000}ms
             </span>
         </>
     }
+    return null
 }
 
 const PlatformMetadata = ({ metadata }) => {
     if (metadata.platform) {
-        const { platform } = metadata
-        const platformType = Object.keys(PlatformData.Type)[platform.type].toLowerCase()
+        const { platform } = metadata;
+        const platformType = Object.keys(PlatformData.Type)[platform.type].toLowerCase();
+
+        let title = platform.name + ' version "' + platform.version + '" (' + platformType + ')';
+        if (platform.minecraftVersion) {
+            title = title + ', Minecraft ' + platform.minecraftVersion;
+        }
 
         return <>
             <span id="platform-data">
-                {platform.name} version "{platform.version}" ({platformType})
+                {title}
             </span>
         </>
     }
+    return null
+}
+
+export function MappingsMenu({ mappings, setMappings }) {
+    let groups = [{ id: "none", label: "None", options: [{ id: "none", label: "No mappings" }] }];
+
+    for (const type of Object.keys(mappings.types)) {
+        const data = mappings.types[type];
+        let versions = [];
+        for (const id of Object.keys(data.versions)) {
+            const version = data.versions[id];
+            const label = data.format.replace("%s", version.name);
+            versions.push({id: type + '-' + id, label});
+        }
+        groups.push({ id: type, label: data.name, options: versions});
+    }
+
+    return (
+        <span className="section dropdown" id="mappings-selector">
+            <select title="mappings" onChange={e => setMappings(e.target.value)}>
+                {groups.map(group => <MappingsGroup group={group} key={group.id} />)}
+            </select>
+        </span>
+    )
+}
+
+const MappingsGroup = ({ group }) => {
+    return (
+        <optgroup label={group.label}>
+            {group.options.map(opt => <MappingsOption option={opt} key={opt.id}>{opt.label}</MappingsOption>)}
+        </optgroup>
+    )
+}
+
+const MappingsOption = ({ option }) => {
+    return <option value={option.id}>{option.label}</option>
 }

@@ -128,7 +128,7 @@ h1 {
     color: var(--theme-name-unimportant-color);
 }
 
-#stack .lambdadesc-part {
+#stack .lambda-part {
     color: var(--theme-name-unimportant-color);
 }
 
@@ -185,7 +185,7 @@ h1 {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA7ElEQVR4Xt1TzYrCQAxOYo8z0GeRZY+eBPGkryGIZ4UeC/Yx/EHvnqTssot/9XF2YUHXQyd2RtuC2OnBg2AgJF/CfJkvwyAzwyNGiT+XwLktBMHwRyl270lDRCDCRb8/aBcSqFi59UYTiuwzXLasEtR18nYbQRTt4f2tqqPGad8uIb2641TyKUSJp307gbH/0wl63U4Ks3y925e/AibOMcN4OofRZKZLOmps6lj2CoBodAohspKUMtePaCcgQqNZCGlw+PFt8nwXWLZE+NttviQrBr6RhoRwOBxXVgLP82pJqECx/fq+n4EX+ExnBI9csQQ1hIoAAAAASUVORK5CYII=);
 }
 
-#overlay span {
+#sampler-overlay span {
     position: absolute;
     color: var(--theme-overlay-span-color);
     font-size: 90%;
@@ -196,7 +196,7 @@ h1 {
     text-align: right;
 }
 
-#overlay span.bookmarked {
+#sampler-overlay span.bookmarked {
     color: #da0b00;
 }
 
@@ -245,7 +245,7 @@ h1 {
     border-radius: 3px;
 }
 
-#description {
+#metadata {
     font-size: 130%;
     color: var(--theme-loading-color);
     background: var(--theme-loading-bgcolor);
@@ -253,7 +253,15 @@ h1 {
     margin-bottom: 10px;
 }
 
-#description img {
+#metadata summary {
+    cursor: pointer;
+}
+
+#metadata summary:focus {
+    outline: none;
+}
+
+#metadata img {
     vertical-align: top;
     padding-left: 5px;
 }

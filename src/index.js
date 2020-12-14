@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './spark-base.css';
-import './themes/spark.css';
+import './style/base.css';
+import './style/spark.css';
 import SparkRoot from './SparkRoot';
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from './misc/serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
