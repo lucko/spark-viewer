@@ -17,10 +17,10 @@ const LOADED_HEAP_DATA = Symbol();
 function Header({ mappings, setMappings }) {
     return (
         <div id="header">
-            <div id="logo">
+            <a href="/" id="logo">
                 <img src={sparkLogo} alt="" width="32px" height="32px" />
                 <h1>spark viewer</h1>
-            </div>
+            </a>
             {mappings ? <MappingsMenu mappings={mappings} setMappings={setMappings} /> : null}
         </div>
     )
@@ -105,7 +105,7 @@ export default function SparkRoot() {
                     <p>You can find out more about spark on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
                     
                     <h2># Viewer</h2>
-                    <p>This website is an online viewer for spark profiles. It is written using React, and open-source on GitHub. Any contributions are most welcome!</p>
+                    <p>This website is an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
                     <p>Uploaded content is stored centrally and retained for 30 days.</p>
 
                     <h2># Download</h2>

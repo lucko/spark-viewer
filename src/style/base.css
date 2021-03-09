@@ -63,6 +63,7 @@ a:hover, a:active {
     border-radius: 6px;
     padding: 3px 13px;
     margin: 3px 0;
+    border: 0;
 }
 
 #header > #logo > h1 {
