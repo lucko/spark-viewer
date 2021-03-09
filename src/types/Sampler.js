@@ -197,7 +197,7 @@ export function MappingsMenu({ mappings, setMappings }) {
     }
 
     return (
-        <span className="section dropdown" id="mappings-selector">
+        <span className="dropdown" id="mappings-selector">
             <select title="mappings" onChange={e => setMappings(e.target.value)}>
                 {groups.map(group => <MappingsGroup group={group} key={group.id} />)}
             </select>

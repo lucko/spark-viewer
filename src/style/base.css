@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
 /* GLOBAL */
 html {
@@ -6,12 +6,19 @@ html {
 }
 
 body {
-    font-family: 'Noto Sans', sans-serif;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 10pt;
     line-height: 150%;
     margin: 0;
     padding: 54px 20px 20px 20px;
     color: #E0E2E4;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100vh - 74px);
 }
 
 a:link, a:visited {
@@ -26,20 +33,14 @@ a:hover, a:active {
     text-decoration: none;
 }
 
-h1 {
-    font-size: 14pt;
-    margin: 0;
-    font-weight: normal;
-    vertical-align: middle;
-    display: unset;
-}
-
 
 
 /* HEADER & FOOTER */
 
 #header {
-    display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: #181d1f;
     color: #ccc;
     position: fixed;
@@ -55,32 +56,49 @@ h1 {
     min-width: 500px;
 }
 
-#header > .section {
-    vertical-align: 70%;
-    padding: 0 3px 0 3px;
-    display: inline-block;
+#header > #logo {
+    display: flex;
+    align-items: center;
+    background-color: #252b2d;
+    border-radius: 6px;
+    padding: 3px 13px;
+    margin: 3px 0;
+}
+
+#header > #logo > h1 {
+    font-size: 14pt;
+    margin: 0;
+    font-weight: normal;
+    color: #fff;
 }
 
 #header img {
     filter: invert(0%);
+    padding-right: 5px;
 }
 
 #footer {
-    /*background: var(--theme-footer-bgcolor);*/
     color: #888;
-    margin: 100px 0 0 0;
+    margin-top: 50px;
     font-size: 10pt;
     font-weight: normal;
     text-align: right;
 }
 
+#intro {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#intro > h2 {
+    margin-top: 30px;
+}
 
 
 /* STACK VIEW */
 
 #stack {
-    margin-left: 60px;
-    padding-top: 30px;
+    margin-left: 20px;
 }
 
 #stack ul {
@@ -140,14 +158,14 @@ h1 {
 #stack .remapped {
     background: #293134;
     border-radius: 3px;
-    padding: 0 4px;
+    padding: 0 2px;
 }
 
 #stack .percent {
     color: #FFCD22;
     font-size: 90%;
     border-radius: 3px;
-    padding: 0 4px;
+    padding: 0 6px;
 }
 
 #stack .bar {
@@ -218,18 +236,13 @@ h1 {
 
 /* MISC (shared elements) */
 
-.dropdown {
-    float: right;
-    padding-right: 15px;
-}
-
 .dropdown > select {
+    font-family: 'JetBrains Mono', monospace;
     background-color: #252b2d;
-    border-color: #676161;
+    border-style: none;
     color: #ccc;
-    border-radius: 3px;
-    padding: 3px;
-    margin-top: 5px;
+    border-radius: 6px;
+    padding: 5px;
 }
 
 .dropdown >select:focus {
@@ -250,7 +263,8 @@ h1 {
     color: #b5b5b5;
     background: #252b2d;
     padding: 8px;
-    margin-bottom: 10px;
+    margin: 12px 0;
+    border-radius: 6px;
 }
 
 #metadata summary {
@@ -283,7 +297,7 @@ h1 {
 
 
 /* CONTEXT MENU */
-
+/*
 .context-menu {
     display: block;
     max-width: 200px;
@@ -312,3 +326,4 @@ h1 {
 .context-menu ul > li:hover {
     background-color: #2E383E;
 }
+*/

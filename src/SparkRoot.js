@@ -17,8 +17,10 @@ const LOADED_HEAP_DATA = Symbol();
 function Header({ mappings, setMappings }) {
     return (
         <div id="header">
-            <img src={sparkLogo} alt="" width="32px" height="32px" />
-            <h1 className="section">spark viewer</h1>
+            <div id="logo">
+                <img src={sparkLogo} alt="" width="32px" height="32px" />
+                <h1>spark viewer</h1>
+            </div>
             {mappings ? <MappingsMenu mappings={mappings} setMappings={setMappings} /> : null}
         </div>
     )
@@ -91,9 +93,23 @@ export default function SparkRoot() {
     switch (status) {
         case NO_DATA:
             contents = (
-                <div id="intro" style={{ textAlign: "center" }}>
-                    <p>To get started, download the <a href="https://github.com/lucko/spark">spark</a> plugin for your server, and run <code>/spark</code>.</p>
-                    <p>The latest versions of the plugin are <a href="https://ci.lucko.me/job/spark/">available on Jenkins</a>.</p>
+                <div id="intro">
+                    <h1># spark</h1>
+                    <p>spark is a performance profiling plugin based on sk89q's <a href="https://github.com/sk89q/WarmRoast">WarmRoast profiler</a>.</p>
+                    <p>spark is made up of three separate components:</p>
+                    <ul>
+                        <li><b>CPU Profiler</b>: Diagnose performance issues with your server.</li>
+                        <li><b>Memory Inspection</b>: Diagnose memory issues with your server.</li>
+                        <li><b>Server Health Reporting</b>: Keep track of your servers overall health.</li>
+                    </ul>
+                    <p>You can find out more about spark on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
+                    
+                    <h2># Viewer</h2>
+                    <p>This website is an online viewer for spark profiles. It is written using React, and open-source on GitHub. Any contributions are most welcome!</p>
+                    <p>Uploaded content is stored centrally and retained for 30 days.</p>
+
+                    <h2># Download</h2>
+                    <p>You can always download the latest version of the plugin from <a href="https://ci.lucko.me/job/spark/">Jenkins</a>.</p>
                 </div>
             )
             break
