@@ -249,16 +249,8 @@ a:hover, a:active {
     outline: none;
 }
 
-#loading {
-    font-size: 130%;
-    color: #b5b5b5;
-    background: #252b2d;
-    border: 1px solid #676161;
-    padding: 8px;
-    border-radius: 3px;
-}
-
-#metadata {
+/* applies to #loading and #metadata */
+.banner-notice {
     font-size: 130%;
     color: #b5b5b5;
     background: #252b2d;

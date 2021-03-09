@@ -114,13 +114,13 @@ export default function SparkRoot() {
             )
             break
         case LOADING_DATA:
-            contents = <div id="loading">Downloading...</div>
+            contents = <div className="banner-notice">Downloading...</div>
             break
         case PARSING_DATA:
-            contents = <div id="loading">Rendering...</div>
+            contents = <div className="banner-notice">Rendering...</div>
             break
         case FAILED_DATA:
-            contents = <div id="loading">Unable to load the data. Perhaps it expired? Are you using a recent version?</div>
+            contents = <div className="banner-notice">Unable to load the data. Perhaps it expired? Are you using a recent version?</div>
             break
         case LOADED_PROFILE_DATA:
             contents = <Sampler data={loaded} mappings={mappings}/>
@@ -129,7 +129,7 @@ export default function SparkRoot() {
             contents = <Heap data={loaded}/>
             break
         default:
-            contents = <div id="loading">Unknown state - this is a bug.</div>
+            contents = <div className="banner-notice">Unknown state - this is a bug.</div>
             break
     }
     return <>

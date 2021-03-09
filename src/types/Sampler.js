@@ -125,8 +125,8 @@ const Metadata = ({ metadata }) => {
     let platformData = <PlatformMetadata metadata={metadata} />
     return <>
         {metadata.platform ?
-            <details id="metadata"><summary>{commonData}</summary>{platformData}</details> :
-            <div id="metadata">{commonData}</div>}
+            <details id="metadata" className="banner-notice"><summary>{commonData}</summary>{platformData}</details> :
+            <div id="metadata" className="banner-notice">{commonData}</div>}
     </>
 }
 
