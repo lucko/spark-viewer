@@ -72,6 +72,13 @@ const Name = ({ node, mappings }) => {
         return <>{node.name}</>
     }
 
+    if (node.className === "native") {
+        return <>
+            <span className="native-part">{node.methodName}</span>
+            <span className="package-part"> (native)</span>
+        </>;
+    }
+
     let { className, methodName } = mappings.func(node) || {};
 
     let remappedClass = false;

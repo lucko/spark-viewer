@@ -1,27 +1,28 @@
-/* GLOBAL */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
 
+/* GLOBAL */
 html {
-    background-color: var(--theme-background-color);
+    background-color: #1e2527;
 }
 
 body {
-    font-family: 'Lato', sans-serif;
+    font-family: 'Noto Sans', sans-serif;
     font-size: 10pt;
     line-height: 150%;
     margin: 0;
     padding: 54px 20px 20px 20px;
-    color: var(--theme-body-color);
+    color: #E0E2E4;
 }
 
 a:link, a:visited {
-    color: var(--theme-link-color);
+    color: #F77669;
     text-decoration: none;
-    border-bottom: 1px solid var(--theme-border-color);
+    border-bottom: 1px solid #909090;
 }
 
 a:hover, a:active {
-    color: var(--theme-hover-color);
-    border-color: var(--theme-hover-border-color);
+    color: #F77669;
+    border-color: #ccc;
     text-decoration: none;
 }
 
@@ -39,8 +40,8 @@ h1 {
 
 #header {
     display: block;
-    background: var(--theme-h1-bgcolor);
-    color: var(--theme-h1-color);
+    background: #181d1f;
+    color: #ccc;
     position: fixed;
     top: 0;
     left: 0;
@@ -48,7 +49,7 @@ h1 {
     padding: 5px 20px;
     margin: 0;
     font-weight: normal;
-    box-shadow: 0 0 4px var(--theme-h1-box-shadow);
+    box-shadow: 0 0 4px #130b00;
     z-index: 20;
     line-height: 100%;
     min-width: 500px;
@@ -61,12 +62,12 @@ h1 {
 }
 
 #header img {
-    filter: var(--theme-img-filter);
+    filter: invert(0%);
 }
 
 #footer {
     /*background: var(--theme-footer-bgcolor);*/
-    color: var(--theme-footer-color);
+    color: #888;
     margin: 100px 0 0 0;
     font-size: 10pt;
     font-weight: normal;
@@ -91,7 +92,7 @@ h1 {
     margin: 0 0 0 -10px;
     padding: 0;
     list-style: none;
-    border-left: 1px solid var(--theme-spacer-color);
+    border-left: 1px solid #3C3F41;
 }
 
 #stack li.parent {
@@ -99,19 +100,19 @@ h1 {
 }
 
 #stack .name {
-    color: var(--theme-name-color);
+    color: #BCBCBC;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA10lEQVR4Xt2Tu8rCQBSEzzlJmYBvYJ7EShArfQ1BrPNDyoB5DRHsrUQQQc3lcfxBiKbIHjfiCuayKSwEB6ZYPpjdGVhkZvhEJP3dALMMgmB+FoI7ddUQEYhw7bp/48YAkYtOfzCEJu22m5G2gnjeHIYxxHGiXJwV11dQTzdN4w0QKa4JULplGcymkwo4Rkn7iCjNOcNiuVK3vQZ0ug5gWwAgPnpalgW1+yDqA4hQmmSADVVGBW8bES7RaW+zYOBSNSSENL0etAGe5/UkMKBZ/77vv8APfKY7cvZVTt7VqzwAAAAASUVORK5CYII=) center left no-repeat;
     padding-left: 20px;
     cursor: pointer;
 }
 
 #stack .name:hover {
-    background-color: var(--theme-name-hover-bgcolor);
+    background-color: #2E383E;
 }
 
 #stack .name:hover + ul {
-    background: var(--theme-name-hover-list-bg);
-    box-shadow: 0 2px 4px var(--theme-name-hover-list-box-shadow);
+    background: #242b2f;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     border-radius: 3px;
 }
 
@@ -119,27 +120,31 @@ h1 {
     box-shadow: inset 0 0 0 100vmax rgba(134, 0, 0, 0.5);
 }
 
+#stack .native-part {
+    color: #5a5a5a;
+}
+
 #stack .package-part {
-    color: var(--theme-name-unimportant-color);
+    color: #5a5a5a;
 }
 
 #stack .lambda-part {
-    color: var(--theme-name-unimportant-color);
+    color: #5a5a5a;
 }
 
 #stack .lineNumber {
-    color: var(--theme-linenumber-color);
+    color: #5f5f5f;
     padding-left: 2px;
 }
 
 #stack .remapped {
-    background: var(--theme-name-remapped-color);
+    background: #293134;
     border-radius: 3px;
     padding: 0 4px;
 }
 
 #stack .percent {
-    color: var(--theme-percent-color);
+    color: #FFCD22;
     font-size: 90%;
     border-radius: 3px;
     padding: 0 4px;
@@ -151,22 +156,22 @@ h1 {
     height: 15px;
     margin-top: 2px;
     margin-left: 20px;
-    border: 1px solid var(--theme-bar-border-color);
+    border: 1px solid #484848;
     position: absolute;
     right: 30px;
-    background: var(--theme-bar-bgcolor);
+    background: #293134;
 }
 
 #stack .bar-inner {
     display: inline-block;
     height: 15px;
-    background: var(--theme-bar-inner-bgcolor);
+    background: #E2B671;
 }
 
 #stack .time {
     display: none;
     margin: 0;
-    color: var(--theme-time-color);
+    color: #888;
     font-size: 90%;
     border-radius: 3px;
     padding: 0 4px;
@@ -182,7 +187,7 @@ h1 {
 
 #sampler-overlay span {
     position: absolute;
-    color: var(--theme-overlay-span-color);
+    color: #E2B671;
     font-size: 90%;
     z-index: 10;
     line-height: 150%;
@@ -219,9 +224,9 @@ h1 {
 }
 
 .dropdown > select {
-    background-color: var(--theme-input-bgcolor);
-    border-color: var(--theme-input-border-color);
-    color: var(--theme-input-color);
+    background-color: #252b2d;
+    border-color: #676161;
+    color: #ccc;
     border-radius: 3px;
     padding: 3px;
     margin-top: 5px;
@@ -233,17 +238,17 @@ h1 {
 
 #loading {
     font-size: 130%;
-    color: var(--theme-loading-color);
-    background: var(--theme-loading-bgcolor);
-    border: 1px solid var(--theme-loading-border-color);
+    color: #b5b5b5;
+    background: #252b2d;
+    border: 1px solid #676161;
     padding: 8px;
     border-radius: 3px;
 }
 
 #metadata {
     font-size: 130%;
-    color: var(--theme-loading-color);
-    background: var(--theme-loading-bgcolor);
+    color: #b5b5b5;
+    background: #252b2d;
     padding: 8px;
     margin-bottom: 10px;
 }
@@ -263,15 +268,15 @@ h1 {
 
 .no-results {
     font-size: 130%;
-    color: var(--theme-no-results-color);
+    color: #800000;
 }
 
 .filter-input-box {
     float: right;
     width: 350px;
-    background-color: var(--theme-input-bgcolor);
-    border: 1px solid var(--theme-input-border-color);
-    color: var(--theme-input-color);
+    background-color: #252b2d;
+    border: 1px solid #676161;
+    color: #ccc;
     font-size: 14px;
 }
 
@@ -283,7 +288,7 @@ h1 {
     display: block;
     max-width: 200px;
     min-width: 200px;
-    background-color: var(--theme-context-menu-bgcolor);
+    background-color: #181d1f;
     position: absolute;
     padding: 5px 0;
     z-index: 999999999;
@@ -300,10 +305,10 @@ h1 {
     display: block;
     padding: 3px;
     list-style: none;
-    color: var(--theme-context-menu-color);
+    color: #ccc;
     cursor: default;
 }
 
 .context-menu ul > li:hover {
-    background-color: var(--theme-context-menu-hover-bgcolor);
+    background-color: #2E383E;
 }
