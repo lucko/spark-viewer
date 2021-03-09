@@ -253,6 +253,7 @@ a:hover, a:active {
 /* applies to #loading and #metadata */
 .banner-notice {
     font-size: 130%;
+    letter-spacing: -1px;
     color: #b5b5b5;
     background: #252b2d;
     padding: 8px;
@@ -270,7 +271,6 @@ a:hover, a:active {
 
 #metadata img {
     vertical-align: top;
-    padding-left: 5px;
 }
 
 .no-results {
