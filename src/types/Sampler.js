@@ -6,12 +6,17 @@ import {CommandSenderData, PlatformData} from '../proto';
 
 export function Sampler({ data, mappings }) {
     const { metadata, threads } = data;
+    const [ searchQuery, setSearchQuery ] = useState('');
+
     return <div id="sampler">
-        {!!metadata &&
-            <Metadata metadata={metadata} />
-        }
+        <div id="metadata-and-search">
+            {!!metadata &&
+                <Metadata metadata={metadata} />
+            }
+            <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        </div>
         <div id="stack">
-            {threads.map(thread => <BaseNode parents={[]} node={thread} mappings={mappings} key={thread.name} />)}
+            {threads.map(thread => <BaseNode parents={[]} node={thread} searchQuery={searchQuery} mappings={mappings} key={thread.name} />)}
         </div>
     </div>
 }
@@ -31,7 +36,7 @@ const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHo
 })
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
-const BaseNode = React.memo(({ parents, node, mappings }) => {
+const BaseNode = React.memo(({ parents, node, searchQuery, mappings }) => {
     const [ expanded, setExpanded ] = useState(parents.length === 0 ? false : parents[parents.length - 1].children.length === 1);
     const [ hovered, setHovered ] = useState(false);
     const classNames = classnames({
@@ -39,7 +44,6 @@ const BaseNode = React.memo(({ parents, node, mappings }) => {
         'collapsed': !expanded,
         'parent': parents.length === 0
     });
-    const nodeInfoClassNames = 'name';
     const parentsForChildren = useMemo(() => parents.concat([ node ]), [parents, node]);
     const parentTime = parents.length === 0 ? node.time : parents[0].time;
 
@@ -53,15 +57,21 @@ const BaseNode = React.memo(({ parents, node, mappings }) => {
         }
     }
 
+    if (searchQuery) {
+        if (!searchMatches(searchQuery.toLowerCase(), node, parents)) {
+            return null;
+        }
+    }
+
     return <li className={classNames}>
-        <div className={nodeInfoClassNames}>
+        <div className="name">
             <NodeInfo time={node.time} threadTime={parentTime} toggleExpand={toggleExpand} onHoverChanged={onHoverChanged}>
                 <Name node={node} mappings={mappings} />
             </NodeInfo>
         </div>
         {expanded ? (
             <ul className="children">
-                {node.children.map((node, i) => <BaseNode node={node} parents={parentsForChildren} mappings={mappings} key={i} />)}
+                {node.children.map((node, i) => <BaseNode node={node} parents={parentsForChildren} searchQuery={searchQuery} mappings={mappings} key={i} />)}
             </ul>
         ) : null}
     </li>
@@ -215,4 +225,46 @@ const MappingsGroup = ({ group }) => {
 
 const MappingsOption = ({ option }) => {
     return <option value={option.id}>{option.label}</option>
+}
+
+const SearchBar = ({ searchQuery, setSearchQuery }) => {
+    function onQueryChanged(e) {
+        setSearchQuery(e.target.value);
+    }
+    return <input className="searchbar" type="text" value={searchQuery} onChange={onQueryChanged}></input>
+};
+
+function nodeMatchesQuery(query, node) {
+    if (!node.className || !node.methodName) {
+        return node.name.toLowerCase().includes(query);
+    } else {
+        return node.className.toLowerCase().includes(query) || node.methodName.toLowerCase().includes(query);
+    }
+}
+
+function searchMatchesChildren(query, node) {
+    if (!node.children) {
+        return false;
+    }
+    for (const child of node.children) {
+        if (nodeMatchesQuery(query, child)) {
+            return true;
+        }
+        if (searchMatchesChildren(query, child)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function searchMatches(query, node, parents) {
+    if (nodeMatchesQuery(query, node)) {
+        return true;
+    }
+    for (const parent of parents) {
+        if (nodeMatchesQuery(query, parent)) {
+            return true;
+        }
+    }
+    return searchMatchesChildren(query, node);
 }

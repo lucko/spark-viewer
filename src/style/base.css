@@ -237,7 +237,7 @@ a:hover, a:active {
 
 /* MISC (shared elements) */
 
-.dropdown > select {
+select, input {
     font-family: 'JetBrains Mono', monospace;
     background-color: #252b2d;
     border-style: none;
@@ -246,7 +246,7 @@ a:hover, a:active {
     padding: 5px;
 }
 
-.dropdown >select:focus {
+select:focus, input:focus {
     outline: none;
 }
 
@@ -261,6 +261,11 @@ a:hover, a:active {
     border-radius: 6px;
 }
 
+#metadata-and-search {
+    display: flex;
+    justify-content: space-between;
+}
+
 #metadata summary {
     cursor: pointer;
 }
@@ -271,6 +276,16 @@ a:hover, a:active {
 
 #metadata img {
     vertical-align: top;
+}
+
+.searchbar {
+    padding: 8px 8px 8px 28px;;
+    margin: 12px 0 12px 10px;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgY2xhc3M9InN2Zy1pbmxpbmUtLWZhIGZhLXNlYXJjaCBmYS13LTE2IiByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPjxwYXRoIGZpbGw9IiNiNWI1YjUiIGQ9Ik01MDUgNDQyLjdMNDA1LjMgMzQzYy00LjUtNC41LTEwLjYtNy0xNy03SDM3MmMyNy42LTM1LjMgNDQtNzkuNyA0NC0xMjhDNDE2IDkzLjEgMzIyLjkgMCAyMDggMFMwIDkzLjEgMCAyMDhzOTMuMSAyMDggMjA4IDIwOGM0OC4zIDAgOTIuNy0xNi40IDEyOC00NHYxNi4zYzAgNi40IDIuNSAxMi41IDcgMTdsOTkuNyA5OS43YzkuNCA5LjQgMjQuNiA5LjQgMzMuOSAwbDI4LjMtMjguM2M5LjQtOS40IDkuNC0yNC42LjEtMzR6TTIwOCAzMzZjLTcwLjcgMC0xMjgtNTcuMi0xMjgtMTI4IDAtNzAuNyA1Ny4yLTEyOCAxMjgtMTI4IDcwLjcgMCAxMjggNTcuMiAxMjggMTI4IDAgNzAuNy01Ny4yIDEyOC0xMjggMTI4eiI+PC9wYXRoPjwvc3ZnPg==); 
+    background-repeat: no-repeat;
+    background-position: 8px 50%;
+    background-size: 15px;
+    width: 240px;
 }
 
 .no-results {
