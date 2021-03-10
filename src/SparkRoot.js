@@ -36,7 +36,17 @@ function Footer() {
 }
 
 export default function SparkRoot() {
-    const [status, setStatus] = useState(window.location.hash.startsWith('#') ? LOADING_DATA : NO_DATA);
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+
+    let code;
+    if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
+        code = hash.substring(1);
+    } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
+        code = path.substring(1);
+    }
+
+    const [status, setStatus] = useState(code ? LOADING_DATA : path === '/' ? NO_DATA : FAILED_DATA);
     const [loaded, setLoaded] = useState(null);
     const [mappingsInfo, setMappingsInfo] = useState(null);
     const [mappings, setMappings] = useState({func: _ => {}});
@@ -48,41 +58,43 @@ export default function SparkRoot() {
     }
 
     useEffect(() => {
+        if (!code) {
+            return;
+        }
+
         async function onLoad() {
-            const hash = window.location.hash;
-            if (hash.startsWith('#')) {
-                try {
-                    const req = await fetch(`https://bytebin.lucko.me/${hash.substring(1)}`);
-                    if (req.ok) {
-                        const type = req.headers.get('content-type');
-                        if (type === 'application/x-spark-sampler') {
-                            // request mappings metadata in the background
-                            getMappingsInfo().then(setMappingsInfo);
+            try {
+                const req = await fetch(`https://bytebin.lucko.me/${code}`);
+                if (!req.ok) {
+                    setStatus(FAILED_DATA);
+                    return;
+                }
 
-                            const buf = await req.arrayBuffer();
-                            setStatus(PARSING_DATA);
-                            const pbf = new Pbf(new Uint8Array(buf));
-                            const data = SamplerData.read(pbf);
+                const type = req.headers.get('content-type');
+                if (type === 'application/x-spark-sampler') {
+                    // request mappings metadata in the background
+                    getMappingsInfo().then(setMappingsInfo);
 
-                            setLoaded(data);
-                            setStatus(LOADED_PROFILE_DATA);
-                        } else if (type === 'application/x-spark-heap') {
-                            const buf = await req.arrayBuffer();
-                            setStatus(PARSING_DATA);
-                            const pbf = new Pbf(new Uint8Array(buf));
-                            const data = HeapData.read(pbf);
+                    const buf = await req.arrayBuffer();
+                    setStatus(PARSING_DATA);
+                    const pbf = new Pbf(new Uint8Array(buf));
+                    const data = SamplerData.read(pbf);
 
-                            setLoaded(data);
-                            setStatus(LOADED_HEAP_DATA);
-                        } else {
-                            setStatus(FAILED_DATA);
-                        }
-                    } else {
-                        setStatus(FAILED_DATA);
-                    }
-                } catch (e) {
+                    setLoaded(data);
+                    setStatus(LOADED_PROFILE_DATA);
+                } else if (type === 'application/x-spark-heap') {
+                    const buf = await req.arrayBuffer();
+                    setStatus(PARSING_DATA);
+                    const pbf = new Pbf(new Uint8Array(buf));
+                    const data = HeapData.read(pbf);
+
+                    setLoaded(data);
+                    setStatus(LOADED_HEAP_DATA);
+                } else {
                     setStatus(FAILED_DATA);
                 }
+            } catch (e) {
+                setStatus(FAILED_DATA);
             }
         }
 

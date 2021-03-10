@@ -297,16 +297,6 @@ select:focus, input:focus {
     color: #800000;
 }
 
-.filter-input-box {
-    float: right;
-    width: 350px;
-    background-color: #252b2d;
-    border: 1px solid #676161;
-    color: #ccc;
-    font-size: 14px;
-}
-
-
 
 /* CONTEXT MENU */
 /*
