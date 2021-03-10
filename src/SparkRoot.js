@@ -7,12 +7,13 @@ import { Heap } from './types/Heap';
 
 import sparkLogo from './assets/spark-logo.png'
 
-const NO_DATA = Symbol();
+const HOMEPAGE = Symbol();
 const LOADING_DATA = Symbol();
 const PARSING_DATA = Symbol();
 const FAILED_DATA = Symbol();
 const LOADED_PROFILE_DATA = Symbol();
 const LOADED_HEAP_DATA = Symbol();
+const PAGE_NOT_FOUND = Symbol();
 
 function Header({ mappings, setMappings }) {
     return (
@@ -36,29 +37,44 @@ function Footer() {
 }
 
 export default function SparkRoot() {
-    const path = window.location.pathname;
-    const hash = window.location.hash;
+    const [code] = useState(() => {
+        const path = window.location.pathname;
+        const hash = window.location.hash;
+    
+        let code;
+        if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
+            code = hash.substring(1);
+            // change URL to remove the hash
+            window.history.pushState({}, '', code + window.location.search);
+        } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
+            code = path.substring(1);
+        }
+        return code;
+    });
 
-    let code;
-    if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
-        code = hash.substring(1);
-    } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
-        code = path.substring(1);
-    }
-
-    const [status, setStatus] = useState(code ? LOADING_DATA : path === '/' ? NO_DATA : FAILED_DATA);
+    const [status, setStatus] = useState(code ? LOADING_DATA : window.location.pathname === '/' ? HOMEPAGE : PAGE_NOT_FOUND);
     const [loaded, setLoaded] = useState(null);
     const [mappingsInfo, setMappingsInfo] = useState(null);
     const [mappings, setMappings] = useState({func: _ => {}});
+    const [mappingsType, setMappingsType] = useState(null);
 
     function onMappingsRequest(type) {
-        requestMappings(type, mappingsInfo).then(func => {
-            setMappings({ func });
-        })
+        if (mappingsType !== type) {
+            setMappingsType(type);
+            requestMappings(type, mappingsInfo, loaded).then(func => {
+                setMappings({ func });
+            })
+        }
     }
 
     useEffect(() => {
-        if (!code) {
+        if (mappingsInfo && loaded) {
+            onMappingsRequest('auto');
+        }
+    }, [mappingsInfo, loaded]);
+
+    useEffect(() => {
+        if (status !== LOADING_DATA) {
             return;
         }
 
@@ -99,11 +115,11 @@ export default function SparkRoot() {
         }
 
         onLoad().then(_ => {});
-    }, []);
+    });
 
     let contents;
     switch (status) {
-        case NO_DATA:
+        case HOMEPAGE:
             contents = (
                 <div id="intro">
                     <h1># spark</h1>
@@ -124,6 +140,9 @@ export default function SparkRoot() {
                     <p>You can always download the latest version of the plugin from <a href="https://ci.lucko.me/job/spark/">Jenkins</a>.</p>
                 </div>
             )
+            break
+        case PAGE_NOT_FOUND:
+            contents = <div className="banner-notice">404 - Page Not Found</div>
             break
         case LOADING_DATA:
             contents = <div className="banner-notice">Downloading...</div>

@@ -5,7 +5,27 @@ export async function getMappingsInfo() {
     return await mappings.json();
 }
 
-export async function requestMappings(type, mappingsInfo) {
+function detectMappings(info, data) {
+    if (!info.auto || !data.metadata) {
+        return null;
+    }
+
+    const meta = data.metadata;
+    if (meta && meta.platform && meta.platform.name && meta.platform.minecraftVersion) {
+        const id = meta.platform.name.toLowerCase() + '/' + meta.platform.minecraftVersion;
+        return info.auto[id];
+    }
+    return null;
+}
+
+export async function requestMappings(type, mappingsInfo, loaded) {
+    if (type === 'auto') {
+        type = detectMappings(mappingsInfo, loaded);
+        if (!type) {
+            return _ => {};
+        }
+    }
+
     if (type.startsWith("bukkit-mojang")) {
         const version = type.substring("bukkit-mojang-".length);
         const nmsVersion = mappingsInfo.types['bukkit-mojang'].versions[version].nmsVersion;

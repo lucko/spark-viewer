@@ -193,7 +193,7 @@ const PlatformMetadata = ({ metadata }) => {
 }
 
 export function MappingsMenu({ mappings, setMappings }) {
-    let groups = [{ id: "none", label: "None", options: [{ id: "none", label: "No mappings" }] }];
+    let groups = [{ id: "none", label: "None", options: [{ id: "auto", label: "Auto Detect" }, { id: "none", label: "No Mappings" }] }];
 
     for (const type of Object.keys(mappings.types)) {
         const data = mappings.types[type];
