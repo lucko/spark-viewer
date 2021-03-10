@@ -3,10 +3,30 @@ import {humanFriendlyPercentage} from '../misc/util'
 import withHoverDetection from '../hoc/withHoverDetection'
 import classnames from 'classnames'
 import {CommandSenderData, PlatformData} from '../proto';
+import AutoSizedFlameGraph from '../misc/AutoSizedFlameGraph';
+
+function conv(node) {
+    const o = {};
+    if (!node.className || !node.methodName) {
+        o.name = node.name;
+    } else {
+        o.name = node.className + '.' + node.methodName + '()';
+    }
+    o.value = node.time;
+    o.children = [];
+
+    for (const child of node.children) {
+        o.children.push(conv(child));
+    }
+
+    return o;
+}
 
 export function Sampler({ data, mappings }) {
     const { metadata, threads } = data;
     const [ searchQuery, setSearchQuery ] = useState('');
+
+    const flameData = conv(threads[0]);
 
     return <div id="sampler">
         <div id="metadata-and-search">
@@ -15,10 +35,15 @@ export function Sampler({ data, mappings }) {
             }
             <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         </div>
-        <div id="stack">
-            {threads.map(thread => <BaseNode parents={[]} node={thread} searchQuery={searchQuery} mappings={mappings} key={thread.name} />)}
-        </div>
+        <AutoSizedFlameGraph
+            data={flameData}
+            height={'calc(100vh - 140px)'}
+        />
+        
     </div>
+    // <div id="stack">
+    //{threads.map(thread => <BaseNode parents={[]} node={thread} searchQuery={searchQuery} mappings={mappings} key={thread.name} />)}
+    // </div>
 }
 
 const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHoverChanged, toggleExpand }) => {
