@@ -266,6 +266,10 @@ select:focus, input:focus {
     justify-content: space-between;
 }
 
+#metadata {
+    width: 100%;
+}
+
 #metadata summary {
     cursor: pointer;
 }

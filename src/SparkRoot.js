@@ -95,7 +95,7 @@ export default function SparkRoot() {
             contents = (
                 <div id="intro">
                     <h1># spark</h1>
-                    <p>spark is a performance profiling plugin based on sk89q's <a href="https://github.com/sk89q/WarmRoast">WarmRoast profiler</a>.</p>
+                    <p>spark is a performance profiling plugin based on sk89q's WarmRoast profiler.</p>
                     <p>spark is made up of three separate components:</p>
                     <ul>
                         <li><b>CPU Profiler</b>: Diagnose performance issues with your server.</li>
@@ -106,7 +106,7 @@ export default function SparkRoot() {
                     
                     <h2># Viewer</h2>
                     <p>This website is an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
-                    <p>Uploaded content is stored centrally and retained for 30 days.</p>
+                    <p>Uploaded content is stored centrally and retained for 60 days.</p>
 
                     <h2># Download</h2>
                     <p>You can always download the latest version of the plugin from <a href="https://ci.lucko.me/job/spark/">Jenkins</a>.</p>
