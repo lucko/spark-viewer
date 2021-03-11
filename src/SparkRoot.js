@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Pbf from 'pbf'
 import { SamplerData, HeapData } from './proto'
 import { Sampler, MappingsMenu } from './types/Sampler';
 import { getMappingsInfo, requestMappings } from './mappings'
 import { Heap } from './types/Heap';
 
-import sparkLogo from './assets/spark-logo.png'
+import sparkLogo from './assets/spark-logo.svg'
 
 const HOMEPAGE = Symbol();
 const LOADING_DATA = Symbol();
@@ -58,20 +58,20 @@ export default function SparkRoot() {
     const [mappings, setMappings] = useState({func: _ => {}});
     const [mappingsType, setMappingsType] = useState(null);
 
-    function onMappingsRequest(type) {
+    const onMappingsRequest = useCallback((type) => {
         if (mappingsType !== type) {
             setMappingsType(type);
             requestMappings(type, mappingsInfo, loaded).then(func => {
                 setMappings({ func });
             })
         }
-    }
+    }, [mappingsType, mappingsInfo, loaded]);
 
     useEffect(() => {
         if (mappingsInfo && loaded) {
             onMappingsRequest('auto');
         }
-    }, [mappingsInfo, loaded]);
+    }, [mappingsInfo, loaded, onMappingsRequest]);
 
     useEffect(() => {
         if (status !== LOADING_DATA) {

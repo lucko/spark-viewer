@@ -61,7 +61,7 @@ a:hover, a:active {
     align-items: center;
     background-color: #252b2d;
     border-radius: 6px;
-    padding: 3px 13px;
+    padding: 3px 5px;
     margin: 3px 0;
     border: 0;
 }
@@ -88,7 +88,7 @@ a:hover, a:active {
 
 #intro {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
 }
 
 #intro > h2 {
