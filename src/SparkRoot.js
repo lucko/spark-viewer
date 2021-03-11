@@ -130,17 +130,14 @@ export default function SparkRoot() {
                         <li><b>Memory Inspection</b>: Diagnose memory issues with your server.</li>
                         <li><b>Server Health Reporting</b>: Keep track of your servers overall health.</li>
                     </ul>
-                    <p>You can find out more about spark on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
-                    
-                    <h2># Documentation</h2>
                     <p>You can find <a href="https://spark.lucko.me/docs">documentation</a> for spark on our docs website.</p>
+                    <p>You can <a href="https://ci.lucko.me/job/spark/">download</a> the latest version of the plugin from Jenkins.</p>
+                    <p>The source code and more information about the spark plugin is available on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
 
                     <h2># Viewer</h2>
-                    <p>This website contains an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
+                    <p>This website contains an online viewer for spark profiles.</p>
+                    <p>It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
                     <p>Uploaded content is stored centrally and retained for 60 days.</p>
-
-                    <h2># Download</h2>
-                    <p>You can always download the latest version of the plugin from <a href="https://ci.lucko.me/job/spark/">Jenkins</a>.</p>
                 </div>
             )
             break
