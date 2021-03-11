@@ -167,7 +167,7 @@ export default function SparkRoot() {
             break
     }
     return <>
-        <Header isViewer={loaded} mappings={mappingsInfo} setMappings={onMappingsRequest} />
+        <Header isViewer={code} mappings={mappingsInfo} setMappings={onMappingsRequest} />
         {contents}
         <Footer />
     </>
