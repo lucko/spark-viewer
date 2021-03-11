@@ -133,7 +133,7 @@ export default function SparkRoot() {
                     <p>You can find out more about spark on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
                     
                     <h2># Documentation</h2>
-                    <p>You can find a complete set of documentation for spark <a href="https://spark.lucko.me/docs">here</a>.</p>
+                    <p>You can find <a href="https://spark.lucko.me/docs">documentation</a> for spark on our docs website.</p>
 
                     <h2># Viewer</h2>
                     <p>This website contains an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
