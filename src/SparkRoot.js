@@ -15,12 +15,12 @@ const LOADED_PROFILE_DATA = Symbol();
 const LOADED_HEAP_DATA = Symbol();
 const PAGE_NOT_FOUND = Symbol();
 
-function Header({ mappings, setMappings }) {
+function Header({ isViewer, mappings, setMappings }) {
     return (
         <div id="header">
             <a href="/" id="logo">
                 <img src={sparkLogo} alt="" width="32px" height="32px" />
-                <h1>spark viewer</h1>
+                {isViewer ? <h1>spark viewer</h1> : <h1>spark</h1>}
             </a>
             {mappings ? <MappingsMenu mappings={mappings} setMappings={setMappings} /> : null}
         </div>
@@ -132,8 +132,11 @@ export default function SparkRoot() {
                     </ul>
                     <p>You can find out more about spark on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
                     
+                    <h2># Documentation</h2>
+                    <p>You can find a complete set of documentation for spark <a href="https://spark.lucko.me/docs">here</a>.</p>
+
                     <h2># Viewer</h2>
-                    <p>This website is an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
+                    <p>This website contains an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
                     <p>Uploaded content is stored centrally and retained for 60 days.</p>
 
                     <h2># Download</h2>
@@ -164,7 +167,7 @@ export default function SparkRoot() {
             break
     }
     return <>
-        <Header mappings={mappingsInfo} setMappings={onMappingsRequest} />
+        <Header isViewer={loaded} mappings={mappingsInfo} setMappings={onMappingsRequest} />
         {contents}
         <Footer />
     </>
