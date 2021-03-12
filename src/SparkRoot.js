@@ -115,7 +115,7 @@ export default function SparkRoot() {
         }
 
         onLoad().then(_ => {});
-    });
+    }, [status, code]);
 
     let contents;
     switch (status) {
