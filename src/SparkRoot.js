@@ -123,7 +123,7 @@ export default function SparkRoot() {
             contents = (
                 <div id="intro">
                     <h1># spark</h1>
-                    <p>spark is a performance profiling plugin based on sk89q's WarmRoast profiler.</p>
+                    <p>spark is a performance profiling plugin/mod for Minecraft clients, servers and proxies.</p>
                     <p>spark is made up of three separate components:</p>
                     <ul>
                         <li><b>CPU Profiler</b>: Diagnose performance issues with your server.</li>
