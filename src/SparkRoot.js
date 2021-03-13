@@ -68,10 +68,10 @@ export default function SparkRoot() {
     }, [mappingsType, mappingsInfo, loaded]);
 
     useEffect(() => {
-        if (mappingsInfo && loaded) {
+        if (!mappingsType && mappingsInfo && loaded) {
             onMappingsRequest('auto');
         }
-    }, [mappingsInfo, loaded, onMappingsRequest]);
+    }, [mappingsType, mappingsInfo, loaded, onMappingsRequest]);
 
     useEffect(() => {
         if (status !== LOADING_DATA) {
