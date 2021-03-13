@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Pbf from 'pbf'
+import history from 'history/browser';
 import { SamplerData, HeapData } from './proto'
-import { Sampler, MappingsMenu } from './types/Sampler';
+import { Sampler, MappingsMenu, labelData } from './types/Sampler';
 import { getMappingsInfo, requestMappings } from './mappings'
 import { Heap } from './types/Heap';
 
@@ -45,7 +46,7 @@ export default function SparkRoot() {
         if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
             code = hash.substring(1);
             // change URL to remove the hash
-            window.history.pushState({}, '', code + window.location.search);
+            history.replace(code);
         } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
             code = path.substring(1);
         }
@@ -95,6 +96,7 @@ export default function SparkRoot() {
                     setStatus(PARSING_DATA);
                     const pbf = new Pbf(new Uint8Array(buf));
                     const data = SamplerData.read(pbf);
+                    labelData(data);
 
                     setLoaded(data);
                     setStatus(LOADED_PROFILE_DATA);
@@ -110,6 +112,7 @@ export default function SparkRoot() {
                     setStatus(FAILED_DATA);
                 }
             } catch (e) {
+                console.log(e);
                 setStatus(FAILED_DATA);
             }
         }
