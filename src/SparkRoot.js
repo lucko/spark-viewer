@@ -46,7 +46,10 @@ export default function SparkRoot() {
         if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
             code = hash.substring(1);
             // change URL to remove the hash
-            history.replace(code);
+            history.replace({
+                pathname: code,
+                hash: ''
+            });
         } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
             code = path.substring(1);
         }
