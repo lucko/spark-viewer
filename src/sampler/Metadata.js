@@ -1,7 +1,7 @@
 import React from 'react';
 import { CommandSenderData, PlatformData } from '../proto';
 
-export function Metadata({ metadata }) {
+export default function Metadata({ metadata }) {
     let commonData = <CommonMetadata metadata={metadata} />
     let platformData = <PlatformMetadata metadata={metadata} />
     return <>

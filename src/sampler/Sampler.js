@@ -2,9 +2,9 @@ import React, { useState, useMemo } from 'react';
 
 import classnames from 'classnames';
 import history from 'history/browser';
-import { Flame, buildFlameGraph } from './Flame';
-import { Metadata } from './Metadata';
-import { SearchBar, searchMatches } from './SearchBar';
+import Flame from './Flame';
+import Metadata from './Metadata';
+import SearchBar, { searchMatches } from './SearchBar';
 
 import { humanFriendlyPercentage } from '../misc/util'
 import { resolveMappings } from './mappings';
@@ -13,7 +13,7 @@ import { resolveMappings } from './mappings';
 import { Menu, Item, useContextMenu, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
 
-export function Sampler({ data, mappings }) {
+export default function Sampler({ data, mappings }) {
     const { metadata, threads } = data;
 
     const [ searchQuery, setSearchQuery ] = useState('');
@@ -63,12 +63,7 @@ export function Sampler({ data, mappings }) {
             }
         </div>
 
-        {!!flameData &&
-            <Flame
-                data={buildFlameGraph(flameData, mappings)}
-                height={'calc(100vh - 140px)'}
-            />
-        }
+        {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
         <div id="stack" style={!!flameData ? { display: 'none' } : {}}>
             {threads.map(thread => <BaseNode

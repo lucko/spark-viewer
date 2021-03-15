@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function SearchBar({ searchQuery, setSearchQuery }) {
+export default function SearchBar({ searchQuery, setSearchQuery }) {
     function onQueryChanged(e) {
         setSearchQuery(e.target.value.toLowerCase());
     }

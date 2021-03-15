@@ -3,9 +3,10 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FlameGraph } from 'react-flame-graph';
 import { resolveMappings } from './mappings';
 
-export function Flame({ data, height }) {
+export default function Flame({ flameData, mappings }) {
+  const data = buildFlameGraph(flameData, mappings);
   return (
-    <div className='flame' style={{ height }}>
+    <div className='flame' style={{ height: 'calc(100vh - 140px)' }}>
       <AutoSizer>
         {({ height: autoSizerHeight, width }) => (
           <Fragment>
@@ -21,7 +22,7 @@ export function Flame({ data, height }) {
   );
 }
 
-export function buildFlameGraph(node, mappings) {
+function buildFlameGraph(node, mappings) {
   const {
       thread, native,
       className, methodName,

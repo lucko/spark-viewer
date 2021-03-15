@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function MappingsMenu({ mappings, setMappings }) {
+export default function MappingsMenu({ mappings, setMappings }) {
     let groups = [{
         id: "none",
         label: "None",

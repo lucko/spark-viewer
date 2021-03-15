@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Pbf from 'pbf'
 import history from 'history/browser';
+
 import Homepage from './Homepage';
+import Sampler, { labelData } from './sampler/Sampler';
+import Heap from './heap/Heap';
+import MappingsMenu from './sampler/MappingsMenu';
+
 import { SamplerData, HeapData } from './proto'
-import { Sampler, labelData } from './sampler/Sampler';
-import { MappingsMenu } from './sampler/MappingsMenu';
 import { getMappingsInfo, requestMappings } from './sampler/mappings'
-import { Heap } from './heap/Heap';
 
 import sparkLogo from './assets/spark-logo.svg'
 
