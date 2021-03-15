@@ -309,7 +309,8 @@ select:focus, input:focus {
 
 .flame-exit-button {
     margin: 12px 0 12px 10px;
-    width: 160px;
+    width: 12em;
+    text-align: center;
     cursor: pointer;
 }
 
