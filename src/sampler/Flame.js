@@ -7,44 +7,54 @@ export default function Flame({ flameData, mappings }) {
   const data = buildFlameGraph(flameData, mappings);
   return (
     <div className='flame' style={{ height: 'calc(100vh - 140px)' }}>
-      <AutoSizer>
-        {({ height: autoSizerHeight, width }) => (
-          <Fragment>
-            <FlameGraph
-              data={data}
-              height={autoSizerHeight}
-              width={width}
-            />
-          </Fragment>
-        )}
-      </AutoSizer>
+        <AutoSizer>
+            {({ height: autoSizerHeight, width }) => (
+                <Fragment>
+                    <FlameGraph
+                    data={data}
+                    height={autoSizerHeight}
+                    width={width}
+                    />
+                </Fragment>
+            )}
+        </AutoSizer>
     </div>
   );
 }
 
 function buildFlameGraph(node, mappings) {
-  const {
-      thread, native,
-      className, methodName,
-      packageName, lambda
-  } = resolveMappings(node, mappings);
+    let {
+        thread, native,
+        className, methodName,
+        packageName, lambda
+    } = resolveMappings(node, mappings);
 
-  const obj = {};
-  if (thread) {
-      obj.name = node.name;
-  } else if (native) {
-      obj.name = node.methodName + ' (native)';
-  } else {
-      obj.name = (packageName ? packageName : '') + className + (lambda ? lambda : '') + '.' + methodName + '()'
-      obj.tooltip = node.className + '.' + node.methodName + '() - ' + node.time + 'ms';
-  }
+    const obj = {};
+    if (thread) {
+        obj.name = node.name;
+    } else if (native) {
+        obj.name = node.methodName + ' (native)';
+    } else {
+        if (packageName) {
+            let match = packageName.match(/^net\.minecraft\.server(?:\.v[0-9R_]+)?\.(.*)$/);
+            if (match && match.length === 2) {
+                packageName = 'nms.' + match[1];
+            }
+            match = packageName.match(/^org\.bukkit\.craftbukkit(?:\.v[0-9R_]+)?\.(.*)$/);
+            if (match && match.length === 2) {
+                packageName = 'obc.' + match[1];
+            }
+        }
+        obj.name = (packageName ? packageName : '') + className + '.' + methodName + '()'
+        obj.tooltip = node.className + '.' + node.methodName + '() - ' + node.time + 'ms';
+    }
 
-  obj.value = node.time;
-  obj.children = [];
+    obj.value = node.time;
+    obj.children = [];
 
-  for (const child of node.children) {
-      obj.children.push(buildFlameGraph(child, mappings));
-  }
+    for (const child of node.children) {
+        obj.children.push(buildFlameGraph(child, mappings));
+    }
 
-  return obj;
+    return obj;
 }
