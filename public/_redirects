@@ -1,2 +1,2 @@
-# Netlify settings for single-page application
+/docs/* https://spark-docs.netlify.app/:splat 200
 /*    /index.html   200

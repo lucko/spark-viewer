@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Pbf from 'pbf'
+import history from 'history/browser';
 import { SamplerData, HeapData } from './proto'
-import { Sampler, MappingsMenu } from './types/Sampler';
+import { Sampler, MappingsMenu, labelData } from './types/Sampler';
 import { getMappingsInfo, requestMappings } from './mappings'
 import { Heap } from './types/Heap';
 
-import sparkLogo from './assets/spark-logo.png'
+import sparkLogo from './assets/spark-logo.svg'
 
 const HOMEPAGE = Symbol();
 const LOADING_DATA = Symbol();
@@ -15,12 +16,12 @@ const LOADED_PROFILE_DATA = Symbol();
 const LOADED_HEAP_DATA = Symbol();
 const PAGE_NOT_FOUND = Symbol();
 
-function Header({ mappings, setMappings }) {
+function Header({ isViewer, mappings, setMappings }) {
     return (
         <div id="header">
             <a href="/" id="logo">
                 <img src={sparkLogo} alt="" width="32px" height="32px" />
-                <h1>spark viewer</h1>
+                {isViewer ? <h1>spark viewer</h1> : <h1>spark</h1>}
             </a>
             {mappings ? <MappingsMenu mappings={mappings} setMappings={setMappings} /> : null}
         </div>
@@ -45,7 +46,10 @@ export default function SparkRoot() {
         if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
             code = hash.substring(1);
             // change URL to remove the hash
-            window.history.pushState({}, '', code + window.location.search);
+            history.replace({
+                pathname: code,
+                hash: ''
+            });
         } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
             code = path.substring(1);
         }
@@ -58,20 +62,20 @@ export default function SparkRoot() {
     const [mappings, setMappings] = useState({func: _ => {}});
     const [mappingsType, setMappingsType] = useState(null);
 
-    function onMappingsRequest(type) {
+    const onMappingsRequest = useCallback((type) => {
         if (mappingsType !== type) {
             setMappingsType(type);
             requestMappings(type, mappingsInfo, loaded).then(func => {
                 setMappings({ func });
             })
         }
-    }
+    }, [mappingsType, mappingsInfo, loaded]);
 
     useEffect(() => {
-        if (mappingsInfo && loaded) {
+        if (!mappingsType && mappingsInfo && loaded) {
             onMappingsRequest('auto');
         }
-    }, [mappingsInfo, loaded]);
+    }, [mappingsType, mappingsInfo, loaded, onMappingsRequest]);
 
     useEffect(() => {
         if (status !== LOADING_DATA) {
@@ -95,6 +99,7 @@ export default function SparkRoot() {
                     setStatus(PARSING_DATA);
                     const pbf = new Pbf(new Uint8Array(buf));
                     const data = SamplerData.read(pbf);
+                    labelData(data);
 
                     setLoaded(data);
                     setStatus(LOADED_PROFILE_DATA);
@@ -110,12 +115,13 @@ export default function SparkRoot() {
                     setStatus(FAILED_DATA);
                 }
             } catch (e) {
+                console.log(e);
                 setStatus(FAILED_DATA);
             }
         }
 
         onLoad().then(_ => {});
-    });
+    }, [status, code]);
 
     let contents;
     switch (status) {
@@ -123,21 +129,21 @@ export default function SparkRoot() {
             contents = (
                 <div id="intro">
                     <h1># spark</h1>
-                    <p>spark is a performance profiling plugin based on sk89q's WarmRoast profiler.</p>
+                    <p>spark is a performance profiling plugin/mod for Minecraft clients, servers and proxies.</p>
                     <p>spark is made up of three separate components:</p>
                     <ul>
                         <li><b>CPU Profiler</b>: Diagnose performance issues with your server.</li>
                         <li><b>Memory Inspection</b>: Diagnose memory issues with your server.</li>
                         <li><b>Server Health Reporting</b>: Keep track of your servers overall health.</li>
                     </ul>
-                    <p>You can find out more about spark on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
-                    
-                    <h2># Viewer</h2>
-                    <p>This website is an online viewer for spark profiles. It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
-                    <p>Uploaded content is stored centrally and retained for 60 days.</p>
+                    <p>You can find <a href="https://spark.lucko.me/docs">documentation</a> for spark on our docs website.</p>
+                    <p>You can <a href="https://ci.lucko.me/job/spark/">download</a> the latest version of the plugin from Jenkins.</p>
+                    <p>The source code and more information about the spark plugin is available on <a href="https://github.com/lucko/spark">GitHub</a>.</p>
 
-                    <h2># Download</h2>
-                    <p>You can always download the latest version of the plugin from <a href="https://ci.lucko.me/job/spark/">Jenkins</a>.</p>
+                    <h2># Viewer</h2>
+                    <p>This website contains an online viewer for spark profiles.</p>
+                    <p>It is written using React, and open-source'd on GitHub. Any contributions are most welcome!</p>
+                    <p>Uploaded content is stored centrally and retained for 60 days.</p>
                 </div>
             )
             break
@@ -164,7 +170,7 @@ export default function SparkRoot() {
             break
     }
     return <>
-        <Header mappings={mappingsInfo} setMappings={onMappingsRequest} />
+        <Header isViewer={code} mappings={mappingsInfo} setMappings={onMappingsRequest} />
         {contents}
         <Footer />
     </>

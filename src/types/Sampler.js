@@ -1,8 +1,10 @@
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useMemo} from 'react';
 import {humanFriendlyPercentage} from '../misc/util'
-import withHoverDetection from '../hoc/withHoverDetection'
 import classnames from 'classnames'
+import history from 'history/browser';
+import {Menu, Item, useContextMenu, theme} from 'react-contexify';
 import {CommandSenderData, PlatformData} from '../proto';
+import 'react-contexify/dist/ReactContexify.css';
 import AutoSizedFlameGraph from '../misc/AutoSizedFlameGraph';
 
 function conv(node) {
@@ -23,8 +25,33 @@ function conv(node) {
 }
 
 export function Sampler({ data, mappings }) {
+    const [initialHighlights] = useState(() => {
+        const set = new Set();
+        const params = new URLSearchParams(window.location.search); 
+        const ids = params.get('hl');
+        if (ids) {
+            ids.split(',').forEach(id => set.add(parseInt(id)));
+        }
+        return set;
+    });
+
     const { metadata, threads } = data;
     const [ searchQuery, setSearchQuery ] = useState('');
+    const [ highlighted, setHighlighted ] = useState(initialHighlights);
+
+    function handleHighlight({ props }) {
+        const id = props.nodeId;
+        const set = new Set(highlighted);
+        if (set.has(id)) {
+            set.delete(id);
+        } else {
+            set.add(id);
+        }
+        setHighlighted(set);
+        history.replace({
+            search: '?hl=' + Array.from(set).join(',')
+        });
+    }
 
     const flameData = conv(threads[0]);
 
@@ -35,20 +62,40 @@ export function Sampler({ data, mappings }) {
             }
             <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         </div>
+
         <AutoSizedFlameGraph
             data={flameData}
             height={'calc(100vh - 140px)'}
         />
         
+        <Menu id={'sampler-cm'} theme={theme.dark}>
+            <Item onClick={handleHighlight}>Toggle highlight</Item>
+        </Menu>
     </div>
-    // <div id="stack">
-    //{threads.map(thread => <BaseNode parents={[]} node={thread} searchQuery={searchQuery} mappings={mappings} key={thread.name} />)}
-    // </div>
 }
 
-const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHoverChanged, toggleExpand }) => {
-    useEffect(() => onHoverChanged(hovered), [onHoverChanged, hovered]);
-    return <div onClick={toggleExpand}>
+/*
+<div id="stack">
+    {threads.map(thread => <BaseNode
+        parents={[]}
+        node={thread}
+        searchQuery={searchQuery}
+        highlighted={highlighted}
+        mappings={mappings}
+        key={thread.name}
+    />)}
+</div>
+*/
+
+const NodeInfo = ({ nodeId, children, time, threadTime, toggleExpand }) => {
+    const { show } = useContextMenu({ id: 'sampler-cm' });
+
+    function handleContextMenu(event) {
+        event.preventDefault();
+        show(event, { props: { nodeId } });
+    }
+
+    return <div onClick={toggleExpand} onContextMenu={handleContextMenu}>
         {children}
         <span className="percent">{humanFriendlyPercentage(time / threadTime)}</span>
         <span className="time">{time}ms</span>
@@ -58,28 +105,30 @@ const NodeInfo = withHoverDetection(({ hovered, children, time, threadTime, onHo
             }} />
         </span>
     </div>
-})
+}
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
-const BaseNode = React.memo(({ parents, node, searchQuery, mappings }) => {
-    const [ expanded, setExpanded ] = useState(parents.length === 0 ? false : parents[parents.length - 1].children.length === 1);
-    const [ hovered, setHovered ] = useState(false);
+const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings }) => {
+    const [ expanded, setExpanded ] = useState(() => {
+        if (highlighted.size && isHighlighted(node, highlighted)) {
+            return true;
+        }
+        return parents.length === 0 ? false : parents[parents.length - 1].children.length === 1
+    });
     const classNames = classnames({
         'node': true,
         'collapsed': !expanded,
         'parent': parents.length === 0
+    });
+    const nameClassNames = classnames({
+        'name': true,
+        'bookmarked': highlighted.has(node.id)
     });
     const parentsForChildren = useMemo(() => parents.concat([ node ]), [parents, node]);
     const parentTime = parents.length === 0 ? node.time : parents[0].time;
 
     function toggleExpand() {
         setExpanded(!expanded);
-    }
-    
-    function onHoverChanged(newHover) {
-        if (hovered !== newHover) {
-            setHovered(newHover);
-        }
     }
 
     if (searchQuery) {
@@ -89,14 +138,21 @@ const BaseNode = React.memo(({ parents, node, searchQuery, mappings }) => {
     }
 
     return <li className={classNames}>
-        <div className="name">
-            <NodeInfo time={node.time} threadTime={parentTime} toggleExpand={toggleExpand} onHoverChanged={onHoverChanged}>
+        <div className={nameClassNames}>
+            <NodeInfo nodeId={node.id} time={node.time} threadTime={parentTime} toggleExpand={toggleExpand}>
                 <Name node={node} mappings={mappings} />
             </NodeInfo>
         </div>
         {expanded ? (
             <ul className="children">
-                {node.children.map((node, i) => <BaseNode node={node} parents={parentsForChildren} searchQuery={searchQuery} mappings={mappings} key={i} />)}
+                {node.children.map((node, i) => <BaseNode
+                    node={node}
+                    parents={parentsForChildren}
+                    searchQuery={searchQuery}
+                    highlighted={highlighted}
+                    mappings={mappings}
+                    key={i}
+                />)}
             </ul>
         ) : null}
     </li>
@@ -181,7 +237,7 @@ const CommonMetadata = ({ metadata }) => {
 
         let avatarUrl;
         if (type === CommandSenderData.Type.PLAYER.value) {
-            const uuid = user.uniqueId.replace(/\-/g, "");
+            const uuid = user.uniqueId.replace(/-/g, "");
             avatarUrl = 'https://minotar.net/avatar/' + uuid + '/20.png';
         } else {
             avatarUrl = 'https://minotar.net/avatar/Console/20.png';
@@ -258,6 +314,42 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
     }
     return <input className="searchbar" type="text" value={searchQuery} onChange={onQueryChanged}></input>
 };
+
+export function labelData(data) {
+    let i = 0;
+    for (const n of data.threads) {
+        n.id = i++;
+    }
+    for (const n of data.threads) {
+        if (n.children) {
+            i = label(n.children, i);
+        }
+    }
+}
+
+function label(nodes, i) {
+    for (const n of nodes) {
+        n.id = i++;
+    }
+    for (const n of nodes) {
+        if (n.children) {
+            i = label(n.children, i);
+        }
+    }
+    return i;
+}
+
+function isHighlighted(node, highlighted) {
+    if (highlighted.has(node.id)) {
+        return true;
+    }
+    for (const c of node.children) {
+        if (isHighlighted(c, highlighted)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function nodeMatchesQuery(query, node) {
     if (!node.className || !node.methodName) {

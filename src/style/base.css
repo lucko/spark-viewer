@@ -61,7 +61,7 @@ a:hover, a:active {
     align-items: center;
     background-color: #252b2d;
     border-radius: 6px;
-    padding: 3px 13px;
+    padding: 3px 5px;
     margin: 3px 0;
     border: 0;
 }
@@ -88,7 +88,7 @@ a:hover, a:active {
 
 #intro {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
 }
 
 #intro > h2 {
@@ -299,33 +299,7 @@ select:focus, input:focus {
 
 
 /* CONTEXT MENU */
-/*
-.context-menu {
-    display: block;
-    max-width: 200px;
-    min-width: 200px;
-    background-color: #181d1f;
-    position: absolute;
-    padding: 5px 0;
-    z-index: 999999999;
-    box-shadow: 0 2px 6px rgba(0,0,0,.5)
-}
 
-.context-menu ul {
-    list-style: none;
-    padding: 0 5px;
-    margin: 0;
+.react-contexify {
+    background-color: #181d1f !important;
 }
-
-.context-menu ul > li {
-    display: block;
-    padding: 3px;
-    list-style: none;
-    color: #ccc;
-    cursor: default;
-}
-
-.context-menu ul > li:hover {
-    background-color: #2E383E;
-}
-*/
