@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FlameGraph } from 'react-flame-graph';
 
@@ -8,13 +8,8 @@ export default function AutoSizedFlameGraph({
 }) {
   return (
     <div
-      style={{
-        height,
-        backgroundColor: '#fff',
-        padding: '20px',
-        boxSizing: 'border-box',
-        borderRadius: '0.5rem',
-      }}
+      className='flame'
+      style={{ height }}
     >
       <AutoSizer>
         {({ height: autoSizerHeight, width }) => (

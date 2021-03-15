@@ -1,28 +1,14 @@
 import React, {useState, useMemo} from 'react';
 import {humanFriendlyPercentage} from '../misc/util'
-import classnames from 'classnames'
-import history from 'history/browser';
-import {Menu, Item, useContextMenu, theme} from 'react-contexify';
 import {CommandSenderData, PlatformData} from '../proto';
-import 'react-contexify/dist/ReactContexify.css';
+
+import classnames from 'classnames';
+import history from 'history/browser';
 import AutoSizedFlameGraph from '../misc/AutoSizedFlameGraph';
 
-function conv(node) {
-    const o = {};
-    if (!node.className || !node.methodName) {
-        o.name = node.name;
-    } else {
-        o.name = node.className + '.' + node.methodName + '()';
-    }
-    o.value = node.time;
-    o.children = [];
-
-    for (const child of node.children) {
-        o.children.push(conv(child));
-    }
-
-    return o;
-}
+// context menu
+import {Menu, Item, useContextMenu, theme} from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.css';
 
 export function Sampler({ data, mappings }) {
     const [initialHighlights] = useState(() => {
@@ -38,6 +24,7 @@ export function Sampler({ data, mappings }) {
     const { metadata, threads } = data;
     const [ searchQuery, setSearchQuery ] = useState('');
     const [ highlighted, setHighlighted ] = useState(initialHighlights);
+    const [ flameData, setFlameData ] = useState(null);
 
     function handleHighlight({ props }) {
         const id = props.nodeId;
@@ -53,39 +40,50 @@ export function Sampler({ data, mappings }) {
         });
     }
 
-    const flameData = conv(threads[0]);
+    function handleFlame({ props }) {
+        const node = findNodeById(data.threads, props.nodeId);
+        setFlameData(node);
+    }
+
+    function exitFlame() {
+        setFlameData(null);
+    }
 
     return <div id="sampler">
         <div id="metadata-and-search">
             {!!metadata &&
                 <Metadata metadata={metadata} />
             }
-            <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            {!flameData ?
+                <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} /> :
+                <div className="flame-exit-button banner-notice" onClick={exitFlame}>Exit Flame View</div>
+            }
         </div>
 
-        <AutoSizedFlameGraph
-            data={flameData}
-            height={'calc(100vh - 140px)'}
-        />
-        
+        {!!flameData &&
+            <AutoSizedFlameGraph
+                data={buildFlameGraph(flameData, mappings)}
+                height={'calc(100vh - 140px)'}
+            />
+        }
+
+        <div id="stack" style={flameData ? {display: 'none'} : {}}>
+            {threads.map(thread => <BaseNode
+                parents={[]}
+                node={thread}
+                searchQuery={searchQuery}
+                highlighted={highlighted}
+                mappings={mappings}
+                key={thread.name}
+            />)}
+        </div>
+
         <Menu id={'sampler-cm'} theme={theme.dark}>
-            <Item onClick={handleHighlight}>Toggle highlight</Item>
+            <Item onClick={handleFlame}>View as Flame Graph</Item>
+            <Item onClick={handleHighlight}>Toggle bookmark</Item>
         </Menu>
     </div>
 }
-
-/*
-<div id="stack">
-    {threads.map(thread => <BaseNode
-        parents={[]}
-        node={thread}
-        searchQuery={searchQuery}
-        highlighted={highlighted}
-        mappings={mappings}
-        key={thread.name}
-    />)}
-</div>
-*/
 
 const NodeInfo = ({ nodeId, children, time, threadTime, toggleExpand }) => {
     const { show } = useContextMenu({ id: 'sampler-cm' });
@@ -159,46 +157,22 @@ const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings
 })
 
 const Name = ({ node, mappings }) => {
-    if (!node.className || !node.methodName) {
+    let { 
+        thread, native,
+        className, methodName,
+        packageName, lambda,
+        remappedClass, remappedMethod
+    } = resolveMappings(node, mappings);
+
+    if (thread) {
         return <>{node.name}</>
     }
 
-    if (node.className === "native") {
+    if (native) {
         return <>
             <span className="native-part">{node.methodName}</span>
             <span className="package-part"> (native)</span>
         </>;
-    }
-
-    let { className, methodName } = mappings.func(node) || {};
-
-    let remappedClass = false;
-    if (className) {
-        remappedClass = true;
-    } else {
-        className = node.className;
-    }
-
-    let remappedMethod = false;
-    if (methodName) {
-        remappedMethod = true;
-    } else {
-        methodName = node.methodName;
-    }
-
-    let packageName;
-    let lambda;
-
-    const packageSplitIdx = className.lastIndexOf('.');
-    if (packageSplitIdx !== -1) {
-        packageName = className.substring(0, packageSplitIdx + 1);
-        className = className.substring(packageSplitIdx + 1);
-    }
-
-    const lambdaSplitIdx = className.indexOf("$$Lambda");
-    if (lambdaSplitIdx !== -1) {
-        lambda = className.substring(lambdaSplitIdx);
-        className = className.substring(0, lambdaSplitIdx);
     }
 
     return <>
@@ -337,6 +311,86 @@ function label(nodes, i) {
         }
     }
     return i;
+}
+
+function resolveMappings(node, mappings) {
+    if (!node.className || !node.methodName) {
+        return { thread: true }
+    }
+
+    if (node.className === "native") {
+        return { native: true }
+    }
+
+    let { className, methodName } = mappings.func(node) || {};
+
+    let remappedClass = false;
+    if (className) {
+        remappedClass = true;
+    } else {
+        className = node.className;
+    }
+
+    let remappedMethod = false;
+    if (methodName) {
+        remappedMethod = true;
+    } else {
+        methodName = node.methodName;
+    }
+
+    let packageName;
+    let lambda;
+
+    const packageSplitIdx = className.lastIndexOf('.');
+    if (packageSplitIdx !== -1) {
+        packageName = className.substring(0, packageSplitIdx + 1);
+        className = className.substring(packageSplitIdx + 1);
+    }
+
+    const lambdaSplitIdx = className.indexOf("$$Lambda");
+    if (lambdaSplitIdx !== -1) {
+        lambda = className.substring(lambdaSplitIdx);
+        className = className.substring(0, lambdaSplitIdx);
+    }
+
+    return { className, methodName, packageName, lambda, remappedClass, remappedMethod }
+}
+
+function buildFlameGraph(node, mappings) {
+    const obj = {};
+
+    const { thread, native, className, methodName, packageName, lambda } = resolveMappings(node, mappings);
+
+    if (thread) {
+        obj.name = node.name;
+    } else if (native) {
+        obj.name = node.methodName + ' (native)';
+    } else {
+        obj.name = (packageName ? packageName : '') + className + (lambda ? lambda : '') + '.' + methodName + '()'
+        obj.tooltip = node.className + '.' + node.methodName + '() - ' + node.time + 'ms';
+    }
+
+    obj.value = node.time;
+    obj.children = [];
+
+    for (const child of node.children) {
+        obj.children.push(buildFlameGraph(child, mappings));
+    }
+
+    return obj;
+}
+
+function findNodeById(nodes, nodeId) {
+    for (const node of nodes) {
+        if (node.id === nodeId) {
+            return node;
+        }
+        const childMatch = findNodeById(node.children, nodeId);
+        if (childMatch) {
+            return childMatch;
+        }
+    }
+    return null;
 }
 
 function isHighlighted(node, highlighted) {
