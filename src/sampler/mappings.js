@@ -1,5 +1,48 @@
 const MAPPING_DATA_URL = "https://sparkmappings.lucko.me/";
 
+export function resolveMappings(node, mappings) {
+    if (!node.className || !node.methodName) {
+        return { thread: true }
+    }
+
+    if (node.className === "native") {
+        return { native: true }
+    }
+
+    let { className, methodName } = mappings.func(node) || {};
+
+    let remappedClass = false;
+    if (className) {
+        remappedClass = true;
+    } else {
+        className = node.className;
+    }
+
+    let remappedMethod = false;
+    if (methodName) {
+        remappedMethod = true;
+    } else {
+        methodName = node.methodName;
+    }
+
+    let packageName;
+    let lambda;
+
+    const packageSplitIdx = className.lastIndexOf('.');
+    if (packageSplitIdx !== -1) {
+        packageName = className.substring(0, packageSplitIdx + 1);
+        className = className.substring(packageSplitIdx + 1);
+    }
+
+    const lambdaSplitIdx = className.indexOf("$$Lambda");
+    if (lambdaSplitIdx !== -1) {
+        lambda = className.substring(lambdaSplitIdx);
+        className = className.substring(0, lambdaSplitIdx);
+    }
+
+    return { className, methodName, packageName, lambda, remappedClass, remappedMethod }
+}
+
 export async function getMappingsInfo() {
     const mappings = await fetch(MAPPING_DATA_URL + "mappings.json");
     return await mappings.json();

@@ -1,9 +1,9 @@
 # spark-viewer
-This repository contains the web viewer for [spark](https://github.com/lucko/spark), written using [React](https://reactjs.org).
+This repository contains the website & viewer for [spark](https://github.com/lucko/spark), written using [React](https://reactjs.org).
 
 The viewer supports two modes:
 * viewing the output from the spark profiler
-* viewing heap dump summaries
+* viewing the output from spark heap dump summaries
 
 Content storage is handled by a [separate service](https://github.com/lucko/bytebin).
 

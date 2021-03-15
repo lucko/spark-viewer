@@ -12,7 +12,9 @@
     "react": "^16.13.1",
     "react-contexify": "^5.0.0",
     "react-dom": "^16.13.1",
+    "react-flame-graph": "^1.4.0",
     "react-scripts": "3.4.1",
+    "react-virtualized-auto-sizer": "^1.0.5",
     "serve": "^11.3.2",
     "source-map-explorer": "^2.4.2"
   },

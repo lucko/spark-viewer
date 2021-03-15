@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Heap({ data }) {
+export default function Heap({ data }) {
     const { entries } = data;
 
     let rows = [];

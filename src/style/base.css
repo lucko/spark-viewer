@@ -219,6 +219,21 @@ a:hover, a:active {
     color: #da0b00;
 }
 
+.flame {
+    background-color: #252b2d;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+}
+
+/* this feels a bit hacky but I'm not sure the correct way to override this */
+.flame .LabeledRect_div__3RSFb {
+    font-family: monospace !important;
+}
+
+.flame .LabeledRect_rect__11W7H {
+    stroke: #181d1f !important;
+}
 
 
 /* HEAP VIEW */
@@ -290,6 +305,12 @@ select:focus, input:focus {
     background-position: 8px 50%;
     background-size: 15px;
     width: 240px;
+}
+
+.flame-exit-button {
+    margin: 12px 0 12px 10px;
+    width: 160px;
+    cursor: pointer;
 }
 
 .no-results {
