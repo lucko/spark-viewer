@@ -297,6 +297,7 @@ select:focus, input:focus {
 
 #metadata img {
     vertical-align: top;
+    padding-right: 3px;
 }
 
 .searchbar {

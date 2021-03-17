@@ -24,18 +24,33 @@ CommandSenderData.Type = {
     }
 };
 
+// MemoryData ========================================
+
+var MemoryData = exports.MemoryData = {};
+
+MemoryData.read = function (pbf, end) {
+    return pbf.readFields(MemoryData._readField, {used: 0, committed: 0, max: 0}, end);
+};
+MemoryData._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.used = pbf.readVarint(true);
+    else if (tag === 2) obj.committed = pbf.readVarint(true);
+    else if (tag === 3) obj.max = pbf.readVarint(true);
+};
+
 // PlatformData ========================================
 
 var PlatformData = exports.PlatformData = {};
 
 PlatformData.read = function (pbf, end) {
-    return pbf.readFields(PlatformData._readField, {type: 0, name: "", version: "", minecraftVersion: ""}, end);
+    return pbf.readFields(PlatformData._readField, {type: 0, name: "", version: "", minecraftVersion: "", nCpus: 0, heapUsage: null}, end);
 };
 PlatformData._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
     else if (tag === 2) obj.name = pbf.readString();
     else if (tag === 3) obj.version = pbf.readString();
     else if (tag === 4) obj.minecraftVersion = pbf.readString();
+    else if (tag === 5) obj.nCpus = pbf.readVarint(true);
+    else if (tag === 6) obj.heapUsage = MemoryData.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 PlatformData.Type = {
