@@ -26,7 +26,7 @@ function buildFlameGraph(node, mappings) {
     let {
         thread, native,
         className, methodName,
-        packageName, lambda
+        packageName
     } = resolveMappings(node, mappings);
 
     const obj = {};
