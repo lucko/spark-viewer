@@ -83,7 +83,7 @@ export default function Sampler({ data, mappings }) {
     </div>
 }
 
-const NodeInfo = ({ nodeId, children, time, threadTime, toggleExpand }) => {
+const NodeInfo = ({ nodeId, children, time, selfTime, threadTime, toggleExpand }) => {
     const { show } = useContextMenu({ id: 'sampler-cm' });
 
     function handleContextMenu(event) {
@@ -94,7 +94,10 @@ const NodeInfo = ({ nodeId, children, time, threadTime, toggleExpand }) => {
     return <div onClick={toggleExpand} onContextMenu={handleContextMenu}>
         {children}
         <span className="percent">{humanFriendlyPercentage(time / threadTime)}</span>
-        <span className="time">{time}ms</span>
+        {selfTime > 0
+            ? <span className="time">{time}ms (self: {selfTime}ms - {humanFriendlyPercentage(selfTime / threadTime)})</span>
+            : <span className="time">{time}ms</span>
+        }
         <span className="bar">
             <span className="bar-inner" style={{
                 width: humanFriendlyPercentage(time / threadTime)
@@ -133,10 +136,12 @@ const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings
         }
     }
 
+    const selfTime = node.time - node.children.reduce((acc, n) => acc + n.time, 0);
+
     return (
         <li className={classNames}>
             <div className={nameClassNames}>
-                <NodeInfo nodeId={node.id} time={node.time} threadTime={parentTime} toggleExpand={toggleExpand}>
+                <NodeInfo nodeId={node.id} time={node.time} selfTime={selfTime} threadTime={parentTime} toggleExpand={toggleExpand}>
                     <Name node={node} mappings={mappings} />
                 </NodeInfo>
             </div>
