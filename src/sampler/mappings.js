@@ -98,7 +98,7 @@ export async function requestMappings(type, mappingsInfo, loaded) {
         ]);
 
         bukkitGenReverseIndex(bukkitMappings);
-        return bukkitMojangRemap(mojangMappings, bukkitMappings, nmsVersion)
+        return bukkitRemap(mojangMappings, bukkitMappings, nmsVersion)
     } else if (type.startsWith("bukkit")) {
         const version = type.substring("bukkit-".length);
         const nmsVersion = mappingsInfo.types.bukkit.versions[version].nmsVersion;
@@ -109,7 +109,7 @@ export async function requestMappings(type, mappingsInfo, loaded) {
         ]);
 
         bukkitGenReverseIndex(bukkitMappings);
-        return bukkitMcpRemap(mcpMappings, bukkitMappings, nmsVersion)
+        return bukkitRemap(mcpMappings, bukkitMappings, nmsVersion)
     } else if (type.startsWith("mcp")) {
         const version = type.substring("mcp-".length);
 
@@ -134,7 +134,7 @@ function bukkitGenReverseIndex(bukkitMappings) {
     bukkitMappings.classesObfuscated = obj;
 }
 
-const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node) => {
+const bukkitRemap = (outputMappings, bukkitMappings, nmsVersion) => (node) => {
     if (!node.className.startsWith("net.minecraft.server." + nmsVersion + ".")) return {};
     const nmsClassName = node.className.substring(("net.minecraft.server." + nmsVersion + ".").length);
 
@@ -145,8 +145,8 @@ const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node)
     if (!bukkitClassData) return {};
 
     const obfuscatedClassName = bukkitClassData.obfuscated;
-    const mojangClassData = mojangMappings.classes[obfuscatedClassName];
-    if (!mojangClassData) return {};
+    const outputClassData = outputMappings.classes[obfuscatedClassName];
+    if (!outputClassData) return {};
 
     // if bukkit has already provided a mapping for this method, just return.
     for (const method of bukkitClassData.methods) {
@@ -155,25 +155,25 @@ const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node)
         }
     }
 
-    let mojangMethods = [];
-    for (const mojangMethod of mojangClassData.methods) {
-        if (mojangMethod.obfuscated === node.methodName) {
-            mojangMethods.push(mojangMethod);
+    let outputMethods = [];
+    for (const outputMethod of outputClassData.methods) {
+        if (outputMethod.obfuscated === node.methodName) {
+            outputMethods.push(mojangMethod);
         }
     }
 
-    if (!mojangMethods) return {};
+    if (!outputMethods) return {};
 
-    if (mojangMethods.length === 1) {
-        const methodName = mojangMethods[0].mapped;
+    if (outputMethods.length === 1) {
+        const methodName = outputMethods[0].mapped;
         return { methodName };
     }
 
     const methodDesc = node.methodDesc;
     if (!methodDesc) return {};
 
-    for (const mojangMethod of mojangMethods) {
-        const obfDesc = mojangMethod.description;
+    for (const outputMethods of outputMethods) {
+        const obfDesc = outputMethods.description;
 
         // generate the deobfucscated description for the method (obf mojang --> bukkit)
         const deobfDesc = obfDesc.replace(/L([^;]+);/g, function(match) {
@@ -192,73 +192,7 @@ const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node)
         // if the description of the method we're trying to remap matches the converted
         // description of the MCP method, we have a match...
         if (methodDesc === deobfDesc) {
-            const methodName = mojangMethod.mapped;
-            return { methodName };
-        }
-    }
-
-    return {};
-}
-
-const bukkitMcpRemap = (mcpMappings, bukkitMappings, nmsVersion) => (node) => {
-    if (!node.className.startsWith("net.minecraft.server." + nmsVersion + ".")) return {};
-    const nmsClassName = node.className.substring(("net.minecraft.server." + nmsVersion + ".").length);
-
-    let bukkitClassData = bukkitMappings.classes[nmsClassName];
-    if (nmsClassName === "MinecraftServer") {
-        bukkitClassData = bukkitMappings.classes["net.minecraft.server.MinecraftServer"];
-    }
-    if (!bukkitClassData) return {};
-
-    const obfuscatedClassName = bukkitClassData.obfuscated;
-    const mcpClassData = mcpMappings.classes[obfuscatedClassName];
-    if (!mcpClassData) return {};
-
-    // if bukkit has already provided a mapping for this method, just return.
-    for (const method of bukkitClassData.methods) {
-        if (method.mapped === node.methodName) {
-            return {};
-        }
-    }
-
-    let mcpMethods = [];
-    for (const mcpMethod of mcpClassData.methods) {
-        if (mcpMethod.obfuscated === node.methodName) {
-            mcpMethods.push(mcpMethod);
-        }
-    }
-
-    if (!mcpMethods) return {};
-
-    if (mcpMethods.length === 1) {
-        const methodName = mcpMethods[0].mapped;
-        return { methodName };
-    }
-
-    const methodDesc = node.methodDesc;
-    if (!methodDesc) return {};
-
-    for (const mcpMethod of mcpMethods) {
-        const obfDesc = mcpMethod.description;
-
-        // generate the deobfucscated description for the method (obf mojang --> bukkit)
-        const deobfDesc = obfDesc.replace(/L([^;]+);/g, function(match) {
-            // the obfuscated type name
-            const obfType = match.substring(1, match.length - 1);
-
-            // find the mapped bukkit class for the obf'd type.
-            const bukkitMapping = bukkitMappings.classesObfuscated[obfType];
-            if (bukkitMapping) {
-                return "Lnet/minecraft/server/" + nmsVersion + "/" + bukkitMapping.mapped + ";";
-            }
-
-            return match;
-        });
-
-        // if the description of the method we're trying to remap matches the converted
-        // description of the MCP method, we have a match...
-        if (methodDesc === deobfDesc) {
-            const methodName = mcpMethod.mapped;
+            const methodName = outputMethod.mapped;
             return { methodName };
         }
     }
