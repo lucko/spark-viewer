@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Pbf from 'pbf'
+import Pbf from 'pbf';
 import history from 'history/browser';
+import ls from 'local-storage';
 
 import Homepage from './Homepage';
 import Sampler, { labelData } from './sampler/Sampler';
@@ -48,7 +49,7 @@ export default function SparkRoot() {
     const [loaded, setLoaded] = useState(null);
     const [mappingsInfo, setMappingsInfo] = useState(null);
     const [mappings, setMappings] = useState({func: _ => {}});
-    const [mappingsType, setMappingsType] = useState(null);
+    const [mappingsType, setMappingsType] = useState(ls.get('spark-mappings-pref') === 'none' ? 'none' : 'auto');
 
     // Function called whenever the user picks mappings, either
     // from the input dropdown, or 'auto' when mappings info is loaded.
@@ -57,15 +58,23 @@ export default function SparkRoot() {
             setMappingsType(type);
             requestMappings(type, mappingsInfo, loaded).then(func => {
                 setMappings({ func });
-            })
+            });
+
+            if (type === 'none') {
+                ls.set('spark-mappings-pref', 'none');
+            } else {
+                ls.remove('spark-mappings-pref');
+            }
         }
     }, [mappingsType, mappingsInfo, loaded]);
 
     // Wait for mappingsInfo and data ('loaded') to be populated,
     // then run a mappings request for 'auto'.
     useEffect(() => {
-        if (!mappingsType && mappingsInfo && loaded) {
-            onMappingsRequest('auto');
+        if (mappingsInfo && loaded && mappingsType === 'auto') {
+            requestMappings('auto', mappingsInfo, loaded).then(func => {
+                setMappings({ func });
+            });
         }
     }, [mappingsType, mappingsInfo, loaded, onMappingsRequest]);
 
@@ -150,13 +159,13 @@ export default function SparkRoot() {
             break
     }
     return <>
-        <Header isViewer={!!code} mappings={mappingsInfo} setMappings={onMappingsRequest} />
+        <Header isViewer={!!code} mappingsInfo={mappingsInfo} mappings={mappingsType} setMappings={onMappingsRequest} />
         {contents}
         <Footer />
     </>
 }
 
-function Header({ isViewer, mappings, setMappings }) {
+function Header({ isViewer, mappingsInfo, mappings, setMappings }) {
     return (
         <div id="header">
             <a href="/" id="logo">
@@ -166,7 +175,7 @@ function Header({ isViewer, mappings, setMappings }) {
                     : <h1>spark</h1>
                 }
             </a>
-            {!!mappings && <MappingsMenu {...{mappings, setMappings}} />}
+            {!!mappingsInfo && <MappingsMenu {...{mappingsInfo, mappings, setMappings}} />}
         </div>
     )
 }

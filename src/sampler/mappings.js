@@ -216,7 +216,7 @@ const yarnRemap = (yarnMappings) => (node) => {
 // {
 //   thread:         boolean   if the node is a thread
 //   native:         boolean   if the node is a native frame
-
+//
 //   /* the following may be missing if either of the above are true */
 //   className:      string    the possibly remapped name of the class
 //   methodName:     string    the possibly remapped name of the method

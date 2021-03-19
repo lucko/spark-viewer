@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function MappingsMenu({ mappings, setMappings }) {
+export default function MappingsMenu({ mappingsInfo, mappings, setMappings }) {
     let groups = [{
         id: "none",
         label: "None",
@@ -10,8 +10,8 @@ export default function MappingsMenu({ mappings, setMappings }) {
         ]
     }];
 
-    for (const type of Object.keys(mappings.types)) {
-        const data = mappings.types[type];
+    for (const type of Object.keys(mappingsInfo.types)) {
+        const data = mappingsInfo.types[type];
         let versions = [];
         for (const id of Object.keys(data.versions)) {
             const version = data.versions[id];
@@ -23,7 +23,7 @@ export default function MappingsMenu({ mappings, setMappings }) {
 
     return (
         <span className="dropdown" id="mappings-selector">
-            <select title="mappings" onChange={e => setMappings(e.target.value)}>
+            <select title="mappings" value={mappings} onChange={e => setMappings(e.target.value)}>
                 {groups.map(group => <MappingsGroup group={group} key={group.id} />)}
             </select>
         </span>
