@@ -111,3 +111,36 @@ message ThreadNode {
   double time = 2;
   repeated StackTraceNode children = 3;
 }
+
+// Mappings
+message BukkitMappings {
+  map<string, ClassMapping> classes = 1;
+}
+
+message McpMappings {
+  map<string, ClassMapping> classes = 1;
+  map<string, string> methods = 2;
+}
+
+message MojangMappings {
+  map<string, ClassMapping> classes = 1;
+  map<string, string> methods = 2;
+}
+
+message YarnMappings {
+  map<string, string> classes = 1;
+  map<string, string> methods = 2;
+}
+
+message ClassMapping {
+  string mapped = 1;
+  string obfuscated = 2;
+  repeated MethodMapping methods = 3;
+}
+
+message MethodMapping {
+  string mapped = 1;
+  string obfuscated = 2;
+  string description = 3;
+  string searge = 4; // optional - MCP only
+}

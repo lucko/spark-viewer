@@ -1,4 +1,12 @@
-const MAPPING_DATA_URL = "https://sparkmappings.lucko.me/";
+import Pbf from 'pbf';
+import {
+    BukkitMappings,
+    McpMappings,
+    MojangMappings,
+    YarnMappings
+} from '../proto';
+
+const MAPPING_DATA_URL = "https://sparkmappings.lucko.me/dist/";
 
 export function resolveMappings(node, mappings) {
     if (!node.className || !node.methodName) {
@@ -61,6 +69,17 @@ function detectMappings(info, data) {
     return null;
 }
 
+const parseBukkit = buf => BukkitMappings.read(new Pbf(new Uint8Array(buf)));
+const parseMcp = buf => McpMappings.read(new Pbf(new Uint8Array(buf)));
+const parseMojang = buf => MojangMappings.read(new Pbf(new Uint8Array(buf)));
+const parseYarn = buf => YarnMappings.read(new Pbf(new Uint8Array(buf)));
+
+function fetchMappings(version, type, parseFunc) {
+    return fetch(MAPPING_DATA_URL + version + '/' + type + '.pbmapping')
+        .then(r => r.arrayBuffer())
+        .then(parseFunc);
+}
+
 export async function requestMappings(type, mappingsInfo, loaded) {
     if (type === 'auto') {
         type = detectMappings(mappingsInfo, loaded);
@@ -74,8 +93,8 @@ export async function requestMappings(type, mappingsInfo, loaded) {
         const nmsVersion = mappingsInfo.types['bukkit-mojang'].versions[version].nmsVersion;
 
         const [mojangMappings, bukkitMappings] = await Promise.all([
-            fetch(MAPPING_DATA_URL + version + "/mojang.json").then(r => r.json()),
-            fetch(MAPPING_DATA_URL + version + "/bukkit.json").then(r => r.json())
+            fetchMappings(version, 'mojang', parseMojang),
+            fetchMappings(version, 'bukkit', parseBukkit)
         ]);
 
         bukkitGenReverseIndex(bukkitMappings);
@@ -85,8 +104,8 @@ export async function requestMappings(type, mappingsInfo, loaded) {
         const nmsVersion = mappingsInfo.types.bukkit.versions[version].nmsVersion;
 
         const [mcpMappings, bukkitMappings] = await Promise.all([
-            fetch(MAPPING_DATA_URL + version + "/mcp.json").then(r => r.json()),
-            fetch(MAPPING_DATA_URL + version + "/bukkit.json").then(r => r.json())
+            fetchMappings(version, 'mcp', parseMcp),
+            fetchMappings(version, 'bukkit', parseBukkit)
         ]);
 
         bukkitGenReverseIndex(bukkitMappings);
@@ -94,12 +113,12 @@ export async function requestMappings(type, mappingsInfo, loaded) {
     } else if (type.startsWith("mcp")) {
         const version = type.substring("mcp-".length);
 
-        const mcpMappings = await fetch(MAPPING_DATA_URL + version + "/mcp.json").then(r => r.json());
+        const mcpMappings = await fetchMappings(version, 'mcp', parseMcp);
         return mcpRemap(mcpMappings)
     } else if (type.startsWith("yarn")) {
         const version = type.substring("yarn-".length);
 
-        const yarnMappings = await fetch(MAPPING_DATA_URL + version + "/yarn.json").then(r => r.json());
+        const yarnMappings = await fetchMappings(version, 'yarn', parseYarn);
         return yarnRemap(yarnMappings)
     } else {
         return _ => {}
@@ -108,16 +127,11 @@ export async function requestMappings(type, mappingsInfo, loaded) {
 
 // create reverse index for classes by obfuscated name
 function bukkitGenReverseIndex(bukkitMappings) {
-    const classesObfuscated = {};
-    const classes = bukkitMappings.classes;
-    for (const bukkitName in classes) {
-        if (!classes.hasOwnProperty(bukkitName)) {
-            continue;
-        }
-        const mapping = bukkitMappings.classes[bukkitName];
-        classesObfuscated[mapping.obfuscated] = mapping;
+    const obj = {};
+    for (const mapping of Object.values(bukkitMappings.classes)) {
+        obj[mapping.obfuscated] = mapping;
     }
-    bukkitMappings.classesObfuscated = classesObfuscated;
+    bukkitMappings.classesObfuscated = obj;
 }
 
 const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node) => {
@@ -136,7 +150,7 @@ const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node)
 
     // if bukkit has already provided a mapping for this method, just return.
     for (const method of bukkitClassData.methods) {
-        if (method.bukkitName === node.methodName) {
+        if (method.mapped === node.methodName) {
             return {};
         }
     }
@@ -151,7 +165,7 @@ const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node)
     if (!mojangMethods) return {};
 
     if (mojangMethods.length === 1) {
-        const methodName = mojangMethods[0].mojangName;
+        const methodName = mojangMethods[0].mapped;
         return { methodName };
     }
 
@@ -178,7 +192,7 @@ const bukkitMojangRemap = (mojangMappings, bukkitMappings, nmsVersion) => (node)
         // if the description of the method we're trying to remap matches the converted
         // description of the MCP method, we have a match...
         if (methodDesc === deobfDesc) {
-            const methodName = mojangMethod.mojangName;
+            const methodName = mojangMethod.mapped;
             return { methodName };
         }
     }
@@ -202,7 +216,7 @@ const bukkitMcpRemap = (mcpMappings, bukkitMappings, nmsVersion) => (node) => {
 
     // if bukkit has already provided a mapping for this method, just return.
     for (const method of bukkitClassData.methods) {
-        if (method.bukkitName === node.methodName) {
+        if (method.mapped === node.methodName) {
             return {};
         }
     }
@@ -217,7 +231,7 @@ const bukkitMcpRemap = (mcpMappings, bukkitMappings, nmsVersion) => (node) => {
     if (!mcpMethods) return {};
 
     if (mcpMethods.length === 1) {
-        const methodName = mcpMethods[0].mcpName;
+        const methodName = mcpMethods[0].mapped;
         return { methodName };
     }
 
@@ -244,7 +258,7 @@ const bukkitMcpRemap = (mcpMappings, bukkitMappings, nmsVersion) => (node) => {
         // if the description of the method we're trying to remap matches the converted
         // description of the MCP method, we have a match...
         if (methodDesc === deobfDesc) {
-            const methodName = mcpMethod.mcpName;
+            const methodName = mcpMethod.mapped;
             return { methodName };
         }
     }

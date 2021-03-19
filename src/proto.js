@@ -231,3 +231,161 @@ ThreadNode._readField = function (tag, obj, pbf) {
     else if (tag === 2) obj.time = pbf.readDouble();
     else if (tag === 3) obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
 };
+
+// BukkitMappings ========================================
+
+var BukkitMappings = exports.BukkitMappings = {};
+
+BukkitMappings.read = function (pbf, end) {
+    return pbf.readFields(BukkitMappings._readField, {classes: {}}, end);
+};
+BukkitMappings._readField = function (tag, obj, pbf) {
+    if (tag === 1)  { var entry = BukkitMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
+};
+
+// BukkitMappings._FieldEntry1 ========================================
+
+BukkitMappings._FieldEntry1 = {};
+
+BukkitMappings._FieldEntry1.read = function (pbf, end) {
+    return pbf.readFields(BukkitMappings._FieldEntry1._readField, {key: "", value: null}, end);
+};
+BukkitMappings._FieldEntry1._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
+};
+
+// McpMappings ========================================
+
+var McpMappings = exports.McpMappings = {};
+
+McpMappings.read = function (pbf, end) {
+    return pbf.readFields(McpMappings._readField, {classes: {}, methods: {}}, end);
+};
+McpMappings._readField = function (tag, obj, pbf) {
+    if (tag === 1)  { var entry = McpMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
+    else if (tag === 2)  { entry = McpMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos); obj.methods[entry.key] = entry.value; }
+};
+
+// McpMappings._FieldEntry1 ========================================
+
+McpMappings._FieldEntry1 = {};
+
+McpMappings._FieldEntry1.read = function (pbf, end) {
+    return pbf.readFields(McpMappings._FieldEntry1._readField, {key: "", value: null}, end);
+};
+McpMappings._FieldEntry1._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
+};
+
+// McpMappings._FieldEntry2 ========================================
+
+McpMappings._FieldEntry2 = {};
+
+McpMappings._FieldEntry2.read = function (pbf, end) {
+    return pbf.readFields(McpMappings._FieldEntry2._readField, {key: "", value: ""}, end);
+};
+McpMappings._FieldEntry2._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
+};
+
+// MojangMappings ========================================
+
+var MojangMappings = exports.MojangMappings = {};
+
+MojangMappings.read = function (pbf, end) {
+    return pbf.readFields(MojangMappings._readField, {classes: {}, methods: {}}, end);
+};
+MojangMappings._readField = function (tag, obj, pbf) {
+    if (tag === 1)  { var entry = MojangMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
+    else if (tag === 2)  { entry = MojangMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos); obj.methods[entry.key] = entry.value; }
+};
+
+// MojangMappings._FieldEntry1 ========================================
+
+MojangMappings._FieldEntry1 = {};
+
+MojangMappings._FieldEntry1.read = function (pbf, end) {
+    return pbf.readFields(MojangMappings._FieldEntry1._readField, {key: "", value: null}, end);
+};
+MojangMappings._FieldEntry1._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
+};
+
+// MojangMappings._FieldEntry2 ========================================
+
+MojangMappings._FieldEntry2 = {};
+
+MojangMappings._FieldEntry2.read = function (pbf, end) {
+    return pbf.readFields(MojangMappings._FieldEntry2._readField, {key: "", value: ""}, end);
+};
+MojangMappings._FieldEntry2._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
+};
+
+// YarnMappings ========================================
+
+var YarnMappings = exports.YarnMappings = {};
+
+YarnMappings.read = function (pbf, end) {
+    return pbf.readFields(YarnMappings._readField, {classes: {}, methods: {}}, end);
+};
+YarnMappings._readField = function (tag, obj, pbf) {
+    if (tag === 1)  { var entry = YarnMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
+    else if (tag === 2)  { entry = YarnMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos); obj.methods[entry.key] = entry.value; }
+};
+
+// YarnMappings._FieldEntry1 ========================================
+
+YarnMappings._FieldEntry1 = {};
+
+YarnMappings._FieldEntry1.read = function (pbf, end) {
+    return pbf.readFields(YarnMappings._FieldEntry1._readField, {key: "", value: ""}, end);
+};
+YarnMappings._FieldEntry1._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
+};
+
+// YarnMappings._FieldEntry2 ========================================
+
+YarnMappings._FieldEntry2 = {};
+
+YarnMappings._FieldEntry2.read = function (pbf, end) {
+    return pbf.readFields(YarnMappings._FieldEntry2._readField, {key: "", value: ""}, end);
+};
+YarnMappings._FieldEntry2._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
+};
+
+// ClassMapping ========================================
+
+var ClassMapping = exports.ClassMapping = {};
+
+ClassMapping.read = function (pbf, end) {
+    return pbf.readFields(ClassMapping._readField, {mapped: "", obfuscated: "", methods: []}, end);
+};
+ClassMapping._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.mapped = pbf.readString();
+    else if (tag === 2) obj.obfuscated = pbf.readString();
+    else if (tag === 3) obj.methods.push(MethodMapping.read(pbf, pbf.readVarint() + pbf.pos));
+};
+
+// MethodMapping ========================================
+
+var MethodMapping = exports.MethodMapping = {};
+
+MethodMapping.read = function (pbf, end) {
+    return pbf.readFields(MethodMapping._readField, {mapped: "", obfuscated: "", description: "", searge: ""}, end);
+};
+MethodMapping._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.mapped = pbf.readString();
+    else if (tag === 2) obj.obfuscated = pbf.readString();
+    else if (tag === 3) obj.description = pbf.readString();
+    else if (tag === 4) obj.searge = pbf.readString();
+};
