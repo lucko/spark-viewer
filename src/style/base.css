@@ -230,7 +230,7 @@ a:hover, a:active {
 
 /* this feels a bit hacky but I'm not sure the correct way to override this */
 .flame .LabeledRect_div__3RSFb {
-    font-family: monospace !important;
+    font-family: 'JetBrains Mono', monospace !important;
 }
 
 .flame .LabeledRect_rect__11W7H {
