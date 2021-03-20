@@ -124,7 +124,7 @@ const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings
         'bookmarked': highlighted.has(node.id)
     });
     const parentsForChildren = useMemo(() => parents.concat([ node ]), [parents, node]);
-    const parentTime = parents.length === 0 ? node.time : parents[0].time;
+    const threadTime = parents.length === 0 ? node.time : parents[0].time;
 
     function toggleExpand() {
         setExpanded(!expanded);
@@ -141,8 +141,9 @@ const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings
     return (
         <li className={classNames}>
             <div className={nameClassNames}>
-                <NodeInfo nodeId={node.id} time={node.time} selfTime={selfTime} threadTime={parentTime} toggleExpand={toggleExpand}>
+                <NodeInfo nodeId={node.id} time={node.time} selfTime={selfTime} threadTime={threadTime} toggleExpand={toggleExpand}>
                     <Name node={node} mappings={mappings} />
+                    {!!node.parentLineNumber && <LineNumber node={node} parent={parents[parents.length - 1]} />}
                 </NodeInfo>
             </div>
             {expanded &&
@@ -165,7 +166,7 @@ const Name = ({ node, mappings }) => {
     let { 
         thread, native,
         className, methodName,
-        packageName, lambda,
+        packageName, lambda, 
         remappedClass, remappedMethod
     } = resolveMappings(node, mappings);
 
@@ -194,6 +195,11 @@ const Name = ({ node, mappings }) => {
         }
         ()
     </>
+}
+
+const LineNumber = ({ node, parent }) => {
+    const title = 'Invoked on line ' + node.parentLineNumber + ' of ' + parent.className + '.' + parent.methodName + '()';
+    return <span className="lineNumber" title={title}>:{node.parentLineNumber}</span>
 }
 
 // Deterministically assigns a unique integer id to each node in the data.
