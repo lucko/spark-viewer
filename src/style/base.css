@@ -86,12 +86,12 @@ a:hover, a:active {
     text-align: right;
 }
 
-#intro {
+.page {
     max-width: 800px;
     margin: 20px auto;
 }
 
-#intro > h2 {
+.page > h2 {
     margin-top: 30px;
 }
 

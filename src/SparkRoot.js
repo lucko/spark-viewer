@@ -4,9 +4,11 @@ import history from 'history/browser';
 import ls from 'local-storage';
 
 import Homepage from './Homepage';
+import Download from './Download';
 import Sampler, { labelData } from './sampler/Sampler';
 import Heap from './heap/Heap';
 import MappingsMenu from './sampler/MappingsMenu';
+import BannerNotice from './misc/BannerNotice';
 
 import { SamplerData, HeapData } from './proto'
 import { getMappingsInfo, requestMappings } from './sampler/mappings'
@@ -14,6 +16,7 @@ import { getMappingsInfo, requestMappings } from './sampler/mappings'
 import sparkLogo from './assets/spark-logo.svg'
 
 const HOMEPAGE = Symbol();
+const DOWNLOAD = Symbol();
 const LOADING_DATA = Symbol();
 const PARSING_DATA = Symbol();
 const FAILED_DATA = Symbol();
@@ -45,7 +48,17 @@ function getUrlCode() {
 
 export default function SparkRoot() {
     const [code] = useState(getUrlCode);
-    const [status, setStatus] = useState(code ? LOADING_DATA : window.location.pathname === '/' ? HOMEPAGE : PAGE_NOT_FOUND);
+    const [status, setStatus] = useState(() => {
+        if (code && code === 'download') {
+            return DOWNLOAD;
+        } else if (code) {
+            return LOADING_DATA;
+        } else if (window.location.pathname === '/') {
+            return HOMEPAGE;
+        } else {
+            return PAGE_NOT_FOUND;
+        }
+    });
     const [loaded, setLoaded] = useState(null);
     const [mappingsInfo, setMappingsInfo] = useState(null);
     const [mappings, setMappings] = useState({func: _ => {}});
@@ -136,6 +149,9 @@ export default function SparkRoot() {
         case HOMEPAGE:
             contents = <Homepage />
             break
+        case DOWNLOAD:
+            contents = <Download />
+            break;
         case PAGE_NOT_FOUND:
             contents = <BannerNotice>404 - Page Not Found</BannerNotice>
             break
@@ -159,7 +175,7 @@ export default function SparkRoot() {
             break
     }
     return <>
-        <Header isViewer={!!code} mappingsInfo={mappingsInfo} mappings={mappingsType} setMappings={onMappingsRequest} />
+        <Header isViewer={code && status !== DOWNLOAD} mappingsInfo={mappingsInfo} mappings={mappingsType} setMappings={onMappingsRequest} />
         {contents}
         <Footer />
     </>
@@ -187,8 +203,4 @@ function Footer() {
             Copyright &copy; 2018-2021 <a href="https://github.com/lucko">lucko</a>, <a href="https://github.com/astei">astei</a> & spark contributors
         </div>
     )
-}
-
-function BannerNotice(props) {
-    return <div className="banner-notice">{props.children}</div>
 }
