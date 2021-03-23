@@ -30,7 +30,7 @@ export default function Sampler({ data, mappings }) {
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
-        const id = props.nodeId;
+        const id = props.node.id;
         const set = new Set(highlighted);
         if (set.has(id)) {
             set.delete(id);
@@ -45,8 +45,7 @@ export default function Sampler({ data, mappings }) {
 
     // Callback function for the "View as Flame Graph" context menu button
     function handleFlame({ props }) {
-        const node = findNodeById(data.threads, props.nodeId);
-        setFlameData(node);
+        setFlameData(props.node);
     }
 
     // Callback function for the "Exit Flame View" button
@@ -83,15 +82,8 @@ export default function Sampler({ data, mappings }) {
     </div>
 }
 
-const NodeInfo = ({ nodeId, children, time, selfTime, threadTime, toggleExpand }) => {
-    const { show } = useContextMenu({ id: 'sampler-cm' });
-
-    function handleContextMenu(event) {
-        event.preventDefault();
-        show(event, { props: { nodeId } });
-    }
-
-    return <div onClick={toggleExpand} onContextMenu={handleContextMenu}>
+const NodeInfo = ({ children, time, selfTime, threadTime }) => {
+    return <>
         {children}
         <span className="percent">{humanFriendlyPercentage(time / threadTime)}</span>
         {selfTime > 0
@@ -103,7 +95,7 @@ const NodeInfo = ({ nodeId, children, time, selfTime, threadTime, toggleExpand }
                 width: humanFriendlyPercentage(time / threadTime)
             }} />
         </span>
-    </div>
+    </>
 }
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
@@ -130,6 +122,13 @@ const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings
         setExpanded(!expanded);
     }
 
+    const { show } = useContextMenu({ id: 'sampler-cm' });
+
+    function handleContextMenu(event) {
+        event.preventDefault();
+        show(event, { props: { node } });
+    }
+
     if (searchQuery) {
         if (!searchMatches(searchQuery, node, parents)) {
             return null;
@@ -140,8 +139,8 @@ const BaseNode = React.memo(({ parents, node, searchQuery, highlighted, mappings
 
     return (
         <li className={classNames}>
-            <div className={nameClassNames}>
-                <NodeInfo nodeId={node.id} time={node.time} selfTime={selfTime} threadTime={threadTime} toggleExpand={toggleExpand}>
+            <div className={nameClassNames} onClick={toggleExpand} onContextMenu={handleContextMenu}>
+                <NodeInfo time={node.time} selfTime={selfTime} threadTime={threadTime}>
                     <Name node={node} mappings={mappings} />
                     {!!node.parentLineNumber && <LineNumber node={node} parent={parents[parents.length - 1]} />}
                 </NodeInfo>
@@ -213,20 +212,6 @@ export function labelData(nodes, i) {
         }
     }
     return i;
-}
-
-// Attempts to find a node with the given id in a list of nodes, recursively
-function findNodeById(nodes, nodeId) {
-    for (const node of nodes) {
-        if (node.id === nodeId) {
-            return node;
-        }
-        const childMatch = findNodeById(node.children, nodeId);
-        if (childMatch) {
-            return childMatch;
-        }
-    }
-    return null;
 }
 
 // Checks if a node, or one of it's children is in the given highlighted set
