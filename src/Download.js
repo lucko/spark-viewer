@@ -103,7 +103,20 @@ export default function Download() {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Sponge"
+                comment="API 6/7"
                 artifact="spark"
+                installDir="plugins"
+            >
+                <li>
+                    Use <code>/spark</code> to control the plugin.
+                </li>
+            </DownloadInfo>
+
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Sponge"
+                comment="API 8"
+                artifact="spark-sponge8"
                 installDir="plugins"
             >
                 <li>
@@ -154,10 +167,20 @@ export default function Download() {
     );
 }
 
-const DownloadInfo = ({ artifacts, name, artifact, installDir, children }) => {
+const DownloadInfo = ({
+    artifacts,
+    name,
+    comment,
+    artifact,
+    installDir,
+    children,
+}) => {
     return (
-        <>
-            <h3>{name}</h3>
+        <div>
+            <h3>
+                {name}
+                {comment && <span> ({comment})</span>}
+            </h3>
             <ul>
                 <li>
                     Download <a href={artifacts[artifact]}>{artifact}.jar</a>{' '}
@@ -165,6 +188,6 @@ const DownloadInfo = ({ artifacts, name, artifact, installDir, children }) => {
                 </li>
                 {children}
             </ul>
-        </>
+        </div>
     );
 };

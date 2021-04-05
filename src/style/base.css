@@ -95,6 +95,10 @@ a:active {
     margin-top: 30px;
 }
 
+.page h3 > span {
+    color: #888;
+}
+
 /* STACK VIEW */
 
 #stack {
