@@ -2,10 +2,14 @@
 
 // CommandSenderData ========================================
 
-var CommandSenderData = exports.CommandSenderData = {};
+var CommandSenderData = (exports.CommandSenderData = {});
 
 CommandSenderData.read = function (pbf, end) {
-    return pbf.readFields(CommandSenderData._readField, {type: 0, name: "", uniqueId: ""}, end);
+    return pbf.readFields(
+        CommandSenderData._readField,
+        { type: 0, name: '', uniqueId: '' },
+        end
+    );
 };
 CommandSenderData._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
@@ -14,22 +18,26 @@ CommandSenderData._readField = function (tag, obj, pbf) {
 };
 
 CommandSenderData.Type = {
-    "OTHER": {
-        "value": 0,
-        "options": {}
+    OTHER: {
+        value: 0,
+        options: {},
     },
-    "PLAYER": {
-        "value": 1,
-        "options": {}
-    }
+    PLAYER: {
+        value: 1,
+        options: {},
+    },
 };
 
 // MemoryData ========================================
 
-var MemoryData = exports.MemoryData = {};
+var MemoryData = (exports.MemoryData = {});
 
 MemoryData.read = function (pbf, end) {
-    return pbf.readFields(MemoryData._readField, {used: 0, committed: 0, max: 0}, end);
+    return pbf.readFields(
+        MemoryData._readField,
+        { used: 0, committed: 0, max: 0 },
+        end
+    );
 };
 MemoryData._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.used = pbf.readVarint(true);
@@ -39,10 +47,21 @@ MemoryData._readField = function (tag, obj, pbf) {
 
 // PlatformData ========================================
 
-var PlatformData = exports.PlatformData = {};
+var PlatformData = (exports.PlatformData = {});
 
 PlatformData.read = function (pbf, end) {
-    return pbf.readFields(PlatformData._readField, {type: 0, name: "", version: "", minecraftVersion: "", nCpus: 0, heapUsage: null}, end);
+    return pbf.readFields(
+        PlatformData._readField,
+        {
+            type: 0,
+            name: '',
+            version: '',
+            minecraftVersion: '',
+            nCpus: 0,
+            heapUsage: null,
+        },
+        end
+    );
 };
 PlatformData._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
@@ -50,54 +69,71 @@ PlatformData._readField = function (tag, obj, pbf) {
     else if (tag === 3) obj.version = pbf.readString();
     else if (tag === 4) obj.minecraftVersion = pbf.readString();
     else if (tag === 5) obj.nCpus = pbf.readVarint(true);
-    else if (tag === 6) obj.heapUsage = MemoryData.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 6)
+        obj.heapUsage = MemoryData.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 PlatformData.Type = {
-    "SERVER": {
-        "value": 0,
-        "options": {}
+    SERVER: {
+        value: 0,
+        options: {},
     },
-    "CLIENT": {
-        "value": 1,
-        "options": {}
+    CLIENT: {
+        value: 1,
+        options: {},
     },
-    "PROXY": {
-        "value": 2,
-        "options": {}
-    }
+    PROXY: {
+        value: 2,
+        options: {},
+    },
 };
 
 // HeapData ========================================
 
-var HeapData = exports.HeapData = {};
+var HeapData = (exports.HeapData = {});
 
 HeapData.read = function (pbf, end) {
-    return pbf.readFields(HeapData._readField, {metadata: null, entries: []}, end);
+    return pbf.readFields(
+        HeapData._readField,
+        { metadata: null, entries: [] },
+        end
+    );
 };
 HeapData._readField = function (tag, obj, pbf) {
-    if (tag === 1) obj.metadata = HeapMetadata.read(pbf, pbf.readVarint() + pbf.pos);
-    else if (tag === 2) obj.entries.push(HeapEntry.read(pbf, pbf.readVarint() + pbf.pos));
+    if (tag === 1)
+        obj.metadata = HeapMetadata.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2)
+        obj.entries.push(HeapEntry.read(pbf, pbf.readVarint() + pbf.pos));
 };
 
 // HeapMetadata ========================================
 
-var HeapMetadata = exports.HeapMetadata = {};
+var HeapMetadata = (exports.HeapMetadata = {});
 
 HeapMetadata.read = function (pbf, end) {
-    return pbf.readFields(HeapMetadata._readField, {user: null, platform: null}, end);
+    return pbf.readFields(
+        HeapMetadata._readField,
+        { user: null, platform: null },
+        end
+    );
 };
 HeapMetadata._readField = function (tag, obj, pbf) {
-    if (tag === 1) obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
-    else if (tag === 2) obj.platform = PlatformData.read(pbf, pbf.readVarint() + pbf.pos);
+    if (tag === 1)
+        obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2)
+        obj.platform = PlatformData.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // HeapEntry ========================================
 
-var HeapEntry = exports.HeapEntry = {};
+var HeapEntry = (exports.HeapEntry = {});
 
 HeapEntry.read = function (pbf, end) {
-    return pbf.readFields(HeapEntry._readField, {order: 0, instances: 0, size: 0, type: ""}, end);
+    return pbf.readFields(
+        HeapEntry._readField,
+        { order: 0, instances: 0, size: 0, type: '' },
+        end
+    );
 };
 HeapEntry._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.order = pbf.readVarint(true);
@@ -108,31 +144,59 @@ HeapEntry._readField = function (tag, obj, pbf) {
 
 // SamplerData ========================================
 
-var SamplerData = exports.SamplerData = {};
+var SamplerData = (exports.SamplerData = {});
 
 SamplerData.read = function (pbf, end) {
-    return pbf.readFields(SamplerData._readField, {metadata: null, threads: []}, end);
+    return pbf.readFields(
+        SamplerData._readField,
+        { metadata: null, threads: [] },
+        end
+    );
 };
 SamplerData._readField = function (tag, obj, pbf) {
-    if (tag === 1) obj.metadata = SamplerMetadata.read(pbf, pbf.readVarint() + pbf.pos);
-    else if (tag === 2) obj.threads.push(ThreadNode.read(pbf, pbf.readVarint() + pbf.pos));
+    if (tag === 1)
+        obj.metadata = SamplerMetadata.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2)
+        obj.threads.push(ThreadNode.read(pbf, pbf.readVarint() + pbf.pos));
 };
 
 // SamplerMetadata ========================================
 
-var SamplerMetadata = exports.SamplerMetadata = {};
+var SamplerMetadata = (exports.SamplerMetadata = {});
 
 SamplerMetadata.read = function (pbf, end) {
-    return pbf.readFields(SamplerMetadata._readField, {user: null, startTime: 0, interval: 0, threadDumper: null, dataAggregator: null, comment: "", platform: null}, end);
+    return pbf.readFields(
+        SamplerMetadata._readField,
+        {
+            user: null,
+            startTime: 0,
+            interval: 0,
+            threadDumper: null,
+            dataAggregator: null,
+            comment: '',
+            platform: null,
+        },
+        end
+    );
 };
 SamplerMetadata._readField = function (tag, obj, pbf) {
-    if (tag === 1) obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
+    if (tag === 1)
+        obj.user = CommandSenderData.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 2) obj.startTime = pbf.readVarint(true);
     else if (tag === 3) obj.interval = pbf.readVarint(true);
-    else if (tag === 4) obj.threadDumper = SamplerMetadata.ThreadDumper.read(pbf, pbf.readVarint() + pbf.pos);
-    else if (tag === 5) obj.dataAggregator = SamplerMetadata.DataAggregator.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 4)
+        obj.threadDumper = SamplerMetadata.ThreadDumper.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+    else if (tag === 5)
+        obj.dataAggregator = SamplerMetadata.DataAggregator.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
     else if (tag === 6) obj.comment = pbf.readString();
-    else if (tag === 7) obj.platform = PlatformData.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 7)
+        obj.platform = PlatformData.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // SamplerMetadata.ThreadDumper ========================================
@@ -140,7 +204,11 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
 SamplerMetadata.ThreadDumper = {};
 
 SamplerMetadata.ThreadDumper.read = function (pbf, end) {
-    return pbf.readFields(SamplerMetadata.ThreadDumper._readField, {type: 0, ids: [], patterns: []}, end);
+    return pbf.readFields(
+        SamplerMetadata.ThreadDumper._readField,
+        { type: 0, ids: [], patterns: [] },
+        end
+    );
 };
 SamplerMetadata.ThreadDumper._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
@@ -149,18 +217,18 @@ SamplerMetadata.ThreadDumper._readField = function (tag, obj, pbf) {
 };
 
 SamplerMetadata.ThreadDumper.Type = {
-    "ALL": {
-        "value": 0,
-        "options": {}
+    ALL: {
+        value: 0,
+        options: {},
     },
-    "SPECIFIC": {
-        "value": 1,
-        "options": {}
+    SPECIFIC: {
+        value: 1,
+        options: {},
     },
-    "REGEX": {
-        "value": 2,
-        "options": {}
-    }
+    REGEX: {
+        value: 2,
+        options: {},
+    },
 };
 
 // SamplerMetadata.DataAggregator ========================================
@@ -168,7 +236,11 @@ SamplerMetadata.ThreadDumper.Type = {
 SamplerMetadata.DataAggregator = {};
 
 SamplerMetadata.DataAggregator.read = function (pbf, end) {
-    return pbf.readFields(SamplerMetadata.DataAggregator._readField, {type: 0, threadGrouper: 0, tickLengthThreshold: 0}, end);
+    return pbf.readFields(
+        SamplerMetadata.DataAggregator._readField,
+        { type: 0, threadGrouper: 0, tickLengthThreshold: 0 },
+        end
+    );
 };
 SamplerMetadata.DataAggregator._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
@@ -177,41 +249,54 @@ SamplerMetadata.DataAggregator._readField = function (tag, obj, pbf) {
 };
 
 SamplerMetadata.DataAggregator.Type = {
-    "SIMPLE": {
-        "value": 0,
-        "options": {}
+    SIMPLE: {
+        value: 0,
+        options: {},
     },
-    "TICKED": {
-        "value": 1,
-        "options": {}
-    }
+    TICKED: {
+        value: 1,
+        options: {},
+    },
 };
 
 SamplerMetadata.DataAggregator.ThreadGrouper = {
-    "BY_NAME": {
-        "value": 0,
-        "options": {}
+    BY_NAME: {
+        value: 0,
+        options: {},
     },
-    "BY_POOL": {
-        "value": 1,
-        "options": {}
+    BY_POOL: {
+        value: 1,
+        options: {},
     },
-    "AS_ONE": {
-        "value": 2,
-        "options": {}
-    }
+    AS_ONE: {
+        value: 2,
+        options: {},
+    },
 };
 
 // StackTraceNode ========================================
 
-var StackTraceNode = exports.StackTraceNode = {};
+var StackTraceNode = (exports.StackTraceNode = {});
 
 StackTraceNode.read = function (pbf, end) {
-    return pbf.readFields(StackTraceNode._readField, {time: 0, children: [], className: "", methodName: "", parentLineNumber: 0, lineNumber: 0, methodDesc: ""}, end);
+    return pbf.readFields(
+        StackTraceNode._readField,
+        {
+            time: 0,
+            children: [],
+            className: '',
+            methodName: '',
+            parentLineNumber: 0,
+            lineNumber: 0,
+            methodDesc: '',
+        },
+        end
+    );
 };
 StackTraceNode._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.time = pbf.readDouble();
-    else if (tag === 2) obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
+    else if (tag === 2)
+        obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
     else if (tag === 3) obj.className = pbf.readString();
     else if (tag === 4) obj.methodName = pbf.readString();
     else if (tag === 5) obj.parentLineNumber = pbf.readVarint(true);
@@ -221,26 +306,37 @@ StackTraceNode._readField = function (tag, obj, pbf) {
 
 // ThreadNode ========================================
 
-var ThreadNode = exports.ThreadNode = {};
+var ThreadNode = (exports.ThreadNode = {});
 
 ThreadNode.read = function (pbf, end) {
-    return pbf.readFields(ThreadNode._readField, {name: "", time: 0, children: []}, end);
+    return pbf.readFields(
+        ThreadNode._readField,
+        { name: '', time: 0, children: [] },
+        end
+    );
 };
 ThreadNode._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.name = pbf.readString();
     else if (tag === 2) obj.time = pbf.readDouble();
-    else if (tag === 3) obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
+    else if (tag === 3)
+        obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
 };
 
 // BukkitMappings ========================================
 
-var BukkitMappings = exports.BukkitMappings = {};
+var BukkitMappings = (exports.BukkitMappings = {});
 
 BukkitMappings.read = function (pbf, end) {
-    return pbf.readFields(BukkitMappings._readField, {classes: {}}, end);
+    return pbf.readFields(BukkitMappings._readField, { classes: {} }, end);
 };
 BukkitMappings._readField = function (tag, obj, pbf) {
-    if (tag === 1)  { var entry = BukkitMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
+    if (tag === 1) {
+        var entry = BukkitMappings._FieldEntry1.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.classes[entry.key] = entry.value;
+    }
 };
 
 // BukkitMappings._FieldEntry1 ========================================
@@ -248,23 +344,40 @@ BukkitMappings._readField = function (tag, obj, pbf) {
 BukkitMappings._FieldEntry1 = {};
 
 BukkitMappings._FieldEntry1.read = function (pbf, end) {
-    return pbf.readFields(BukkitMappings._FieldEntry1._readField, {key: "", value: null}, end);
+    return pbf.readFields(
+        BukkitMappings._FieldEntry1._readField,
+        { key: '', value: null },
+        end
+    );
 };
 BukkitMappings._FieldEntry1._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
-    else if (tag === 2) obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2)
+        obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // McpMappings ========================================
 
-var McpMappings = exports.McpMappings = {};
+var McpMappings = (exports.McpMappings = {});
 
 McpMappings.read = function (pbf, end) {
-    return pbf.readFields(McpMappings._readField, {classes: {}, methods: {}}, end);
+    return pbf.readFields(
+        McpMappings._readField,
+        { classes: {}, methods: {} },
+        end
+    );
 };
 McpMappings._readField = function (tag, obj, pbf) {
-    if (tag === 1)  { var entry = McpMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
-    else if (tag === 2)  { entry = McpMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos); obj.methods[entry.key] = entry.value; }
+    if (tag === 1) {
+        var entry = McpMappings._FieldEntry1.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.classes[entry.key] = entry.value;
+    } else if (tag === 2) {
+        entry = McpMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos);
+        obj.methods[entry.key] = entry.value;
+    }
 };
 
 // McpMappings._FieldEntry1 ========================================
@@ -272,11 +385,16 @@ McpMappings._readField = function (tag, obj, pbf) {
 McpMappings._FieldEntry1 = {};
 
 McpMappings._FieldEntry1.read = function (pbf, end) {
-    return pbf.readFields(McpMappings._FieldEntry1._readField, {key: "", value: null}, end);
+    return pbf.readFields(
+        McpMappings._FieldEntry1._readField,
+        { key: '', value: null },
+        end
+    );
 };
 McpMappings._FieldEntry1._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
-    else if (tag === 2) obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2)
+        obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // McpMappings._FieldEntry2 ========================================
@@ -284,7 +402,11 @@ McpMappings._FieldEntry1._readField = function (tag, obj, pbf) {
 McpMappings._FieldEntry2 = {};
 
 McpMappings._FieldEntry2.read = function (pbf, end) {
-    return pbf.readFields(McpMappings._FieldEntry2._readField, {key: "", value: ""}, end);
+    return pbf.readFields(
+        McpMappings._FieldEntry2._readField,
+        { key: '', value: '' },
+        end
+    );
 };
 McpMappings._FieldEntry2._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
@@ -293,14 +415,29 @@ McpMappings._FieldEntry2._readField = function (tag, obj, pbf) {
 
 // MojangMappings ========================================
 
-var MojangMappings = exports.MojangMappings = {};
+var MojangMappings = (exports.MojangMappings = {});
 
 MojangMappings.read = function (pbf, end) {
-    return pbf.readFields(MojangMappings._readField, {classes: {}, methods: {}}, end);
+    return pbf.readFields(
+        MojangMappings._readField,
+        { classes: {}, methods: {} },
+        end
+    );
 };
 MojangMappings._readField = function (tag, obj, pbf) {
-    if (tag === 1)  { var entry = MojangMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
-    else if (tag === 2)  { entry = MojangMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos); obj.methods[entry.key] = entry.value; }
+    if (tag === 1) {
+        var entry = MojangMappings._FieldEntry1.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.classes[entry.key] = entry.value;
+    } else if (tag === 2) {
+        entry = MojangMappings._FieldEntry2.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.methods[entry.key] = entry.value;
+    }
 };
 
 // MojangMappings._FieldEntry1 ========================================
@@ -308,11 +445,16 @@ MojangMappings._readField = function (tag, obj, pbf) {
 MojangMappings._FieldEntry1 = {};
 
 MojangMappings._FieldEntry1.read = function (pbf, end) {
-    return pbf.readFields(MojangMappings._FieldEntry1._readField, {key: "", value: null}, end);
+    return pbf.readFields(
+        MojangMappings._FieldEntry1._readField,
+        { key: '', value: null },
+        end
+    );
 };
 MojangMappings._FieldEntry1._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
-    else if (tag === 2) obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
+    else if (tag === 2)
+        obj.value = ClassMapping.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // MojangMappings._FieldEntry2 ========================================
@@ -320,7 +462,11 @@ MojangMappings._FieldEntry1._readField = function (tag, obj, pbf) {
 MojangMappings._FieldEntry2 = {};
 
 MojangMappings._FieldEntry2.read = function (pbf, end) {
-    return pbf.readFields(MojangMappings._FieldEntry2._readField, {key: "", value: ""}, end);
+    return pbf.readFields(
+        MojangMappings._FieldEntry2._readField,
+        { key: '', value: '' },
+        end
+    );
 };
 MojangMappings._FieldEntry2._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
@@ -329,14 +475,26 @@ MojangMappings._FieldEntry2._readField = function (tag, obj, pbf) {
 
 // YarnMappings ========================================
 
-var YarnMappings = exports.YarnMappings = {};
+var YarnMappings = (exports.YarnMappings = {});
 
 YarnMappings.read = function (pbf, end) {
-    return pbf.readFields(YarnMappings._readField, {classes: {}, methods: {}}, end);
+    return pbf.readFields(
+        YarnMappings._readField,
+        { classes: {}, methods: {} },
+        end
+    );
 };
 YarnMappings._readField = function (tag, obj, pbf) {
-    if (tag === 1)  { var entry = YarnMappings._FieldEntry1.read(pbf, pbf.readVarint() + pbf.pos); obj.classes[entry.key] = entry.value; }
-    else if (tag === 2)  { entry = YarnMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos); obj.methods[entry.key] = entry.value; }
+    if (tag === 1) {
+        var entry = YarnMappings._FieldEntry1.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.classes[entry.key] = entry.value;
+    } else if (tag === 2) {
+        entry = YarnMappings._FieldEntry2.read(pbf, pbf.readVarint() + pbf.pos);
+        obj.methods[entry.key] = entry.value;
+    }
 };
 
 // YarnMappings._FieldEntry1 ========================================
@@ -344,7 +502,11 @@ YarnMappings._readField = function (tag, obj, pbf) {
 YarnMappings._FieldEntry1 = {};
 
 YarnMappings._FieldEntry1.read = function (pbf, end) {
-    return pbf.readFields(YarnMappings._FieldEntry1._readField, {key: "", value: ""}, end);
+    return pbf.readFields(
+        YarnMappings._FieldEntry1._readField,
+        { key: '', value: '' },
+        end
+    );
 };
 YarnMappings._FieldEntry1._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
@@ -356,7 +518,11 @@ YarnMappings._FieldEntry1._readField = function (tag, obj, pbf) {
 YarnMappings._FieldEntry2 = {};
 
 YarnMappings._FieldEntry2.read = function (pbf, end) {
-    return pbf.readFields(YarnMappings._FieldEntry2._readField, {key: "", value: ""}, end);
+    return pbf.readFields(
+        YarnMappings._FieldEntry2._readField,
+        { key: '', value: '' },
+        end
+    );
 };
 YarnMappings._FieldEntry2._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
@@ -365,23 +531,32 @@ YarnMappings._FieldEntry2._readField = function (tag, obj, pbf) {
 
 // ClassMapping ========================================
 
-var ClassMapping = exports.ClassMapping = {};
+var ClassMapping = (exports.ClassMapping = {});
 
 ClassMapping.read = function (pbf, end) {
-    return pbf.readFields(ClassMapping._readField, {mapped: "", obfuscated: "", methods: []}, end);
+    return pbf.readFields(
+        ClassMapping._readField,
+        { mapped: '', obfuscated: '', methods: [] },
+        end
+    );
 };
 ClassMapping._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.mapped = pbf.readString();
     else if (tag === 2) obj.obfuscated = pbf.readString();
-    else if (tag === 3) obj.methods.push(MethodMapping.read(pbf, pbf.readVarint() + pbf.pos));
+    else if (tag === 3)
+        obj.methods.push(MethodMapping.read(pbf, pbf.readVarint() + pbf.pos));
 };
 
 // MethodMapping ========================================
 
-var MethodMapping = exports.MethodMapping = {};
+var MethodMapping = (exports.MethodMapping = {});
 
 MethodMapping.read = function (pbf, end) {
-    return pbf.readFields(MethodMapping._readField, {mapped: "", obfuscated: "", description: "", searge: ""}, end);
+    return pbf.readFields(
+        MethodMapping._readField,
+        { mapped: '', obfuscated: '', description: '', searge: '' },
+        end
+    );
 };
 MethodMapping._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.mapped = pbf.readString();

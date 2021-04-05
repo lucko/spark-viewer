@@ -1,3 +1,3 @@
 export function humanFriendlyPercentage(percentage) {
-    return (percentage * 100).toFixed(2) + "%"
+    return (percentage * 100).toFixed(2) + '%';
 }

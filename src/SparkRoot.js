@@ -10,10 +10,10 @@ import Heap from './heap/Heap';
 import MappingsMenu from './sampler/MappingsMenu';
 import BannerNotice from './misc/BannerNotice';
 
-import { SamplerData, HeapData } from './proto'
-import { getMappingsInfo, requestMappings } from './sampler/mappings'
+import { SamplerData, HeapData } from './proto';
+import { getMappingsInfo, requestMappings } from './sampler/mappings';
 
-import sparkLogo from './assets/spark-logo.svg'
+import sparkLogo from './assets/spark-logo.svg';
 
 const HOMEPAGE = Symbol();
 const DOWNLOAD = Symbol();
@@ -38,7 +38,7 @@ function getUrlCode() {
         // change URL to remove the hash
         history.replace({
             pathname: code,
-            hash: ''
+            hash: '',
         });
     } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
         code = path.substring(1);
@@ -61,25 +61,30 @@ export default function SparkRoot() {
     });
     const [loaded, setLoaded] = useState(null);
     const [mappingsInfo, setMappingsInfo] = useState(null);
-    const [mappings, setMappings] = useState({func: _ => {}});
-    const [mappingsType, setMappingsType] = useState(ls.get('spark-mappings-pref') === 'none' ? 'none' : 'auto');
+    const [mappings, setMappings] = useState({ func: _ => {} });
+    const [mappingsType, setMappingsType] = useState(
+        ls.get('spark-mappings-pref') === 'none' ? 'none' : 'auto'
+    );
 
     // Function called whenever the user picks mappings, either
     // from the input dropdown, or 'auto' when mappings info is loaded.
-    const onMappingsRequest = useCallback(type => {
-        if (mappingsType !== type) {
-            setMappingsType(type);
-            requestMappings(type, mappingsInfo, loaded).then(func => {
-                setMappings({ func });
-            });
+    const onMappingsRequest = useCallback(
+        type => {
+            if (mappingsType !== type) {
+                setMappingsType(type);
+                requestMappings(type, mappingsInfo, loaded).then(func => {
+                    setMappings({ func });
+                });
 
-            if (type === 'none') {
-                ls.set('spark-mappings-pref', 'none');
-            } else {
-                ls.remove('spark-mappings-pref');
+                if (type === 'none') {
+                    ls.set('spark-mappings-pref', 'none');
+                } else {
+                    ls.remove('spark-mappings-pref');
+                }
             }
-        }
-    }, [mappingsType, mappingsInfo, loaded]);
+        },
+        [mappingsType, mappingsInfo, loaded]
+    );
 
     // Wait for mappingsInfo and data ('loaded') to be populated,
     // then run a mappings request for 'auto'.
@@ -147,38 +152,52 @@ export default function SparkRoot() {
     let contents;
     switch (status) {
         case HOMEPAGE:
-            contents = <Homepage />
-            break
+            contents = <Homepage />;
+            break;
         case DOWNLOAD:
-            contents = <Download />
+            contents = <Download />;
             break;
         case PAGE_NOT_FOUND:
-            contents = <BannerNotice>404 - Page Not Found</BannerNotice>
-            break
+            contents = <BannerNotice>404 - Page Not Found</BannerNotice>;
+            break;
         case LOADING_DATA:
-            contents = <BannerNotice>Downloading...</BannerNotice>
-            break
+            contents = <BannerNotice>Downloading...</BannerNotice>;
+            break;
         case PARSING_DATA:
-            contents = <BannerNotice>Rendering...</BannerNotice>
-            break
+            contents = <BannerNotice>Rendering...</BannerNotice>;
+            break;
         case FAILED_DATA:
-            contents = <BannerNotice>Unable to load the data. Perhaps it expired? Are you using a recent version?</BannerNotice>
-            break
+            contents = (
+                <BannerNotice>
+                    Unable to load the data. Perhaps it expired? Are you using a
+                    recent version?
+                </BannerNotice>
+            );
+            break;
         case LOADED_PROFILE_DATA:
-            contents = <Sampler data={loaded} mappings={mappings} />
-            break
+            contents = <Sampler data={loaded} mappings={mappings} />;
+            break;
         case LOADED_HEAP_DATA:
-            contents = <Heap data={loaded} />
-            break
+            contents = <Heap data={loaded} />;
+            break;
         default:
-            contents = <BannerNotice>Unknown state - this is a bug.</BannerNotice>
-            break
+            contents = (
+                <BannerNotice>Unknown state - this is a bug.</BannerNotice>
+            );
+            break;
     }
-    return <>
-        <Header isViewer={code && status !== DOWNLOAD} mappingsInfo={mappingsInfo} mappings={mappingsType} setMappings={onMappingsRequest} />
-        {contents}
-        <Footer />
-    </>
+    return (
+        <>
+            <Header
+                isViewer={code && status !== DOWNLOAD}
+                mappingsInfo={mappingsInfo}
+                mappings={mappingsType}
+                setMappings={onMappingsRequest}
+            />
+            {contents}
+            <Footer />
+        </>
+    );
 }
 
 function Header({ isViewer, mappingsInfo, mappings, setMappings }) {
@@ -186,21 +205,25 @@ function Header({ isViewer, mappingsInfo, mappings, setMappings }) {
         <div id="header">
             <a href="/" id="logo">
                 <img src={sparkLogo} alt="" width="32px" height="32px" />
-                {isViewer
-                    ? <h1>spark viewer</h1>
-                    : <h1>spark</h1>
-                }
+                {isViewer ? <h1>spark viewer</h1> : <h1>spark</h1>}
             </a>
-            {!!mappingsInfo && <MappingsMenu {...{mappingsInfo, mappings, setMappings}} />}
+            {!!mappingsInfo && (
+                <MappingsMenu {...{ mappingsInfo, mappings, setMappings }} />
+            )}
         </div>
-    )
+    );
 }
 
 function Footer() {
     return (
         <div id="footer">
-            <a href="https://github.com/lucko/spark">spark</a> and <a href="https://github.com/lucko/spark-viewer">spark-viewer</a> are based on WarmRoast by sk89q.<br />
-            Copyright &copy; 2018-2021 <a href="https://github.com/lucko">lucko</a>, <a href="https://github.com/astei">astei</a> & spark contributors
+            <a href="https://github.com/lucko/spark">spark</a> and{' '}
+            <a href="https://github.com/lucko/spark-viewer">spark-viewer</a> are
+            based on WarmRoast by sk89q.
+            <br />
+            Copyright &copy; 2018-2021{' '}
+            <a href="https://github.com/lucko">lucko</a>,{' '}
+            <a href="https://github.com/astei">astei</a> & spark contributors
         </div>
-    )
+    );
 }

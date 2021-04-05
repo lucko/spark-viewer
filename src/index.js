@@ -4,8 +4,8 @@ import './style/base.css';
 import SparkRoot from './SparkRoot';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <SparkRoot />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <SparkRoot />
+    </React.StrictMode>,
+    document.getElementById('root')
 );

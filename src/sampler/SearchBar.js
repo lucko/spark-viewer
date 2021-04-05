@@ -4,14 +4,24 @@ export default function SearchBar({ searchQuery, setSearchQuery }) {
     function onQueryChanged(e) {
         setSearchQuery(e.target.value.toLowerCase());
     }
-    return <input className="searchbar" type="text" value={searchQuery} onChange={onQueryChanged}></input>
+    return (
+        <input
+            className="searchbar"
+            type="text"
+            value={searchQuery}
+            onChange={onQueryChanged}
+        ></input>
+    );
 }
 
 function nodeMatchesQuery(query, node) {
     if (!node.className || !node.methodName) {
         return node.name.toLowerCase().includes(query);
     } else {
-        return node.className.toLowerCase().includes(query) || node.methodName.toLowerCase().includes(query);
+        return (
+            node.className.toLowerCase().includes(query) ||
+            node.methodName.toLowerCase().includes(query)
+        );
     }
 }
 
