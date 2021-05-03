@@ -74,6 +74,20 @@ export default function Download() {
 
             <DownloadInfo
                 artifacts={artifacts}
+                name="Fabric"
+                artifact="spark-fabric"
+                installDir="mods"
+            >
+                <li>
+                    Use <code>/spark</code> to control the mod. (server-side)
+                </li>
+                <li>
+                    Use <code>/sparkc</code> to control the mod. (client-side)
+                </li>
+            </DownloadInfo>
+
+            <DownloadInfo
+                artifacts={artifacts}
                 name="Forge"
                 artifact="spark-forge"
                 installDir="mods"
@@ -88,8 +102,9 @@ export default function Download() {
 
             <DownloadInfo
                 artifacts={artifacts}
-                name="Fabric"
-                artifact="spark-fabric"
+                name="Forge"
+                comment="MC 1.12.2"
+                artifact="spark-forge1122"
                 installDir="mods"
             >
                 <li>
