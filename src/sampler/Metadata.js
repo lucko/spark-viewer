@@ -39,9 +39,9 @@ const CommonMetadata = ({ metadata }) => {
         let avatarUrl;
         if (user.type === CommandSenderData.Type.PLAYER.value) {
             const uuid = user.uniqueId.replace(/-/g, '');
-            avatarUrl = 'https://minotar.net/avatar/' + uuid + '/20.png';
+            avatarUrl = 'https://crafthead.net/avatar/' + uuid + '/20.png';
         } else {
-            avatarUrl = 'https://minotar.net/avatar/Console/20.png';
+            avatarUrl = 'https://crafthead.net/avatar/Console/20.png';
         }
 
         document.title =
