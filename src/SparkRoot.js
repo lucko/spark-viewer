@@ -48,6 +48,10 @@ function getUrlCode() {
 
 export default function SparkRoot() {
     const [code] = useState(getUrlCode);
+    const [rawMode] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('raw') !== null;
+    });
     const [status, setStatus] = useState(() => {
         if (code && code === 'download') {
             return DOWNLOAD;
@@ -107,7 +111,9 @@ export default function SparkRoot() {
             setStatus(PARSING_DATA);
             const pbf = new Pbf(new Uint8Array(buf));
             const data = SamplerData.read(pbf);
-            labelData(data.threads, 0);
+            if (!rawMode) {
+                labelData(data.threads, 0);
+            }
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);
         }
@@ -147,7 +153,18 @@ export default function SparkRoot() {
         }
 
         onLoad().then(_ => {});
-    }, [status, code]);
+    }, [status, code, rawMode]);
+
+    if (
+        rawMode &&
+        (status === LOADED_PROFILE_DATA || status === LOADED_HEAP_DATA)
+    ) {
+        return (
+            <pre style={{ position: 'absolute', top: 0 }}>
+                {JSON.stringify(loaded, null, 2)}
+            </pre>
+        );
+    }
 
     let contents;
     switch (status) {
