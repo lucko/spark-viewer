@@ -47,11 +47,14 @@ function getUrlCode() {
 }
 
 export default function SparkRoot() {
+    // the data code from the URL path
     const [code] = useState(getUrlCode);
+    // if raw output mode is enabled -- '?raw=1' flag in the URL
     const [rawMode] = useState(() => {
         const params = new URLSearchParams(window.location.search);
         return params.get('raw') !== null;
     });
+    // the status of this component
     const [status, setStatus] = useState(() => {
         if (code && code === 'download') {
             return DOWNLOAD;
@@ -63,9 +66,13 @@ export default function SparkRoot() {
             return PAGE_NOT_FOUND;
         }
     });
+    // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
+    // the mappings info object currently loaded
     const [mappingsInfo, setMappingsInfo] = useState(null);
+    // the current mappings function
     const [mappings, setMappings] = useState({ func: _ => {} });
+    // the current mappings type
     const [mappingsType, setMappingsType] = useState(
         ls.get('spark-mappings-pref') === 'none' ? 'none' : 'auto'
     );
@@ -90,7 +97,7 @@ export default function SparkRoot() {
         [mappingsType, mappingsInfo, loaded]
     );
 
-    // Wait for mappingsInfo and data ('loaded') to be populated,
+    // Wait for mappingsInfo and the data ('loaded') to be populated,
     // then run a mappings request for 'auto'.
     useEffect(() => {
         if (mappingsInfo && loaded && mappingsType === 'auto') {
@@ -98,7 +105,7 @@ export default function SparkRoot() {
                 setMappings({ func });
             });
         }
-    }, [mappingsType, mappingsInfo, loaded, onMappingsRequest]);
+    }, [mappingsType, mappingsInfo, loaded]);
 
     // On page load, if status is set to LOADING_DATA, make
     // a request to bytebin to load the payload
@@ -107,10 +114,16 @@ export default function SparkRoot() {
             return;
         }
 
-        function initSampler(buf) {
-            setStatus(PARSING_DATA);
+        // Function to parse the data payload from a request given the schema type
+        async function parse(req, schema) {
+            const buf = await req.arrayBuffer();
             const pbf = new Pbf(new Uint8Array(buf));
-            const data = SamplerData.read(pbf);
+            return schema.read(pbf);
+        }
+
+        // Loads sampler data from the given request
+        async function loadSampler(req) {
+            const data = await parse(req, SamplerData);
             if (!rawMode) {
                 labelData(data.threads, 0);
             }
@@ -118,15 +131,14 @@ export default function SparkRoot() {
             setStatus(LOADED_PROFILE_DATA);
         }
 
-        function initHeap(buf) {
-            setStatus(PARSING_DATA);
-            const pbf = new Pbf(new Uint8Array(buf));
-            const data = HeapData.read(pbf);
+        // Loads heap data from the given request
+        async function loadHeap(req) {
+            const data = await parse(req, HeapData);
             setLoaded(data);
             setStatus(LOADED_HEAP_DATA);
         }
 
-        async function onLoad() {
+        (async () => {
             try {
                 const req = await fetch(`https://bytebin.lucko.me/${code}`);
                 if (!req.ok) {
@@ -136,13 +148,13 @@ export default function SparkRoot() {
 
                 const type = req.headers.get('content-type');
                 if (type === 'application/x-spark-sampler') {
-                    // request mappings metadata in the background
-                    getMappingsInfo().then(setMappingsInfo);
-                    const buf = await req.arrayBuffer();
-                    initSampler(buf);
+                    if (!rawMode) {
+                        getMappingsInfo().then(setMappingsInfo);
+                    }
+
+                    await loadSampler(req);
                 } else if (type === 'application/x-spark-heap') {
-                    const buf = await req.arrayBuffer();
-                    initHeap(buf);
+                    await loadHeap(req);
                 } else {
                     setStatus(FAILED_DATA);
                 }
@@ -150,9 +162,7 @@ export default function SparkRoot() {
                 console.log(e);
                 setStatus(FAILED_DATA);
             }
-        }
-
-        onLoad().then(_ => {});
+        })();
     }, [status, code, rawMode]);
 
     if (

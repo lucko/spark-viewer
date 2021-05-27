@@ -46,18 +46,12 @@ function detectMappings(mappingsInfo, profileData) {
     return null;
 }
 
-// functions to convert an arraybuffer containing protobuf mappings data to a JS object
-const parseBukkit = buf => BukkitMappings.read(new Pbf(new Uint8Array(buf)));
-const parseMcp = buf => McpMappings.read(new Pbf(new Uint8Array(buf)));
-const parseMojang = buf => MojangMappings.read(new Pbf(new Uint8Array(buf)));
-const parseYarn = buf => YarnMappings.read(new Pbf(new Uint8Array(buf)));
-
 // fetches mappings data of a given type, for a given version, then applies the parseFunc
 // to convert the arraybuffer to a JS object
-function fetchMappings(version, type, parseFunc) {
+function fetchMappings(version, type, schema) {
     return fetch(MAPPING_DATA_URL + version + '/' + type + '.pbmapping')
         .then(r => r.arrayBuffer())
-        .then(parseFunc);
+        .then(buf => schema.read(new Pbf(new Uint8Array(buf))));
 }
 
 // requests a mappings function '(node) => { ..mappings }' of the given type.
@@ -75,8 +69,8 @@ export async function requestMappings(type, mappingsInfo, profileData) {
             mappingsInfo.types['bukkit-mojang'].versions[version].nmsVersion;
 
         const [mojangMappings, bukkitMappings] = await Promise.all([
-            fetchMappings(version, 'mojang', parseMojang),
-            fetchMappings(version, 'bukkit', parseBukkit),
+            fetchMappings(version, 'mojang', MojangMappings),
+            fetchMappings(version, 'bukkit', BukkitMappings),
         ]);
 
         return bukkitRemap(mojangMappings, bukkitMappings, nmsVersion);
@@ -86,20 +80,20 @@ export async function requestMappings(type, mappingsInfo, profileData) {
             mappingsInfo.types.bukkit.versions[version].nmsVersion;
 
         const [mcpMappings, bukkitMappings] = await Promise.all([
-            fetchMappings(version, 'mcp', parseMcp),
-            fetchMappings(version, 'bukkit', parseBukkit),
+            fetchMappings(version, 'mcp', McpMappings),
+            fetchMappings(version, 'bukkit', BukkitMappings),
         ]);
 
         return bukkitRemap(mcpMappings, bukkitMappings, nmsVersion);
     } else if (type.startsWith('mcp')) {
         const version = type.substring('mcp-'.length);
 
-        const mcpMappings = await fetchMappings(version, 'mcp', parseMcp);
+        const mcpMappings = await fetchMappings(version, 'mcp', McpMappings);
         return mcpRemap(mcpMappings);
     } else if (type.startsWith('yarn')) {
         const version = type.substring('yarn-'.length);
 
-        const yarnMappings = await fetchMappings(version, 'yarn', parseYarn);
+        const yarnMappings = await fetchMappings(version, 'yarn', YarnMappings);
         return yarnRemap(yarnMappings);
     } else {
         return _ => {};
