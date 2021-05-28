@@ -20,7 +20,8 @@ function nodeMatchesQuery(query, node) {
     } else {
         return (
             node.className.toLowerCase().includes(query) ||
-            node.methodName.toLowerCase().includes(query)
+            node.methodName.toLowerCase().includes(query) ||
+            (node.source && node.source.toLowerCase().includes(query))
         );
     }
 }

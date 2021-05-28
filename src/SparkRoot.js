@@ -5,7 +5,7 @@ import ls from 'local-storage';
 
 import Homepage from './Homepage';
 import Download from './Download';
-import Sampler, { labelData } from './sampler/Sampler';
+import Sampler, { labelData, labelDataWithSource } from './sampler/Sampler';
 import Heap from './heap/Heap';
 import MappingsMenu from './sampler/MappingsMenu';
 import BannerNotice from './misc/BannerNotice';
@@ -126,6 +126,7 @@ export default function SparkRoot() {
             const data = await parse(req, SamplerData);
             if (!rawMode) {
                 labelData(data.threads, 0);
+                labelDataWithSource(data);
             }
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);

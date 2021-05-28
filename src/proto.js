@@ -149,7 +149,7 @@ var SamplerData = (exports.SamplerData = {});
 SamplerData.read = function (pbf, end) {
     return pbf.readFields(
         SamplerData._readField,
-        { metadata: null, threads: [] },
+        { metadata: null, threads: [], classSources: {} },
         end
     );
 };
@@ -158,6 +158,29 @@ SamplerData._readField = function (tag, obj, pbf) {
         obj.metadata = SamplerMetadata.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 2)
         obj.threads.push(ThreadNode.read(pbf, pbf.readVarint() + pbf.pos));
+    else if (tag === 3) {
+        var entry = SamplerData._FieldEntry3.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.classSources[entry.key] = entry.value;
+    }
+};
+
+// SamplerData._FieldEntry3 ========================================
+
+SamplerData._FieldEntry3 = {};
+
+SamplerData._FieldEntry3.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerData._FieldEntry3._readField,
+        { key: '', value: '' },
+        end
+    );
+};
+SamplerData._FieldEntry3._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
 };
 
 // SamplerMetadata ========================================

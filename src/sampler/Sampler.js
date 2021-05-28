@@ -74,7 +74,10 @@ export default function Sampler({ data, mappings }) {
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
-            <div id="stack" style={!!flameData ? { display: 'none' } : {}}>
+            <div
+                className="stack"
+                style={!!flameData ? { display: 'none' } : {}}
+            >
                 {threads.map(thread => (
                     <BaseNode
                         parents={[]}
@@ -95,7 +98,7 @@ export default function Sampler({ data, mappings }) {
     );
 }
 
-const NodeInfo = ({ children, time, selfTime, threadTime }) => {
+const NodeInfo = ({ children, time, selfTime, threadTime, source }) => {
     return (
         <>
             {children}
@@ -110,6 +113,7 @@ const NodeInfo = ({ children, time, selfTime, threadTime }) => {
             ) : (
                 <span className="time">{time}ms</span>
             )}
+            {!!source && <span className="time">({source})</span>}
             <span className="bar">
                 <span
                     className="bar-inner"
@@ -142,10 +146,10 @@ const BaseNode = React.memo(
             name: true,
             bookmarked: highlighted.has(node.id),
         });
-        const parentsForChildren = useMemo(() => parents.concat([node]), [
-            parents,
-            node,
-        ]);
+        const parentsForChildren = useMemo(
+            () => parents.concat([node]),
+            [parents, node]
+        );
         const threadTime = parents.length === 0 ? node.time : parents[0].time;
 
         function toggleExpand() {
@@ -179,6 +183,7 @@ const BaseNode = React.memo(
                         time={node.time}
                         selfTime={selfTime}
                         threadTime={threadTime}
+                        source={node.source}
                     >
                         <Name node={node} mappings={mappings} />
                         {!!node.parentLineNumber && (
@@ -285,6 +290,27 @@ export function labelData(nodes, i) {
         }
     }
     return i;
+}
+
+// Uses the 'data.classSources' map to annotate node objects with their source
+export function labelDataWithSource(data) {
+    function apply(sources, nodes) {
+        for (const node of nodes) {
+            if (node.className) {
+                const source = sources[node.className];
+                if (source) {
+                    node.source = source;
+                }
+            }
+            apply(sources, node.children);
+        }
+    }
+
+    if (data.classSources) {
+        for (const thread of data.threads) {
+            apply(data.classSources, thread.children);
+        }
+    }
 }
 
 // Checks if a node, or one of it's children is in the given highlighted set
