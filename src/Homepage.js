@@ -11,16 +11,14 @@ export default function Homepage() {
             <p>spark is made up of three separate components:</p>
             <ul>
                 <li>
-                    <b>CPU Profiler</b>: Diagnose performance issues with your
-                    server.
+                    <b>CPU Profiler</b>: Diagnose performance issues.
                 </li>
                 <li>
-                    <b>Memory Inspection</b>: Diagnose memory issues with your
-                    server.
+                    <b>Memory Inspection</b>: Diagnose memory issues.
                 </li>
                 <li>
-                    <b>Server Health Reporting</b>: Keep track of your servers
-                    overall health.
+                    <b>Server Health Reporting</b>: Keep track of overall server
+                    health.
                 </li>
             </ul>
             <p>
