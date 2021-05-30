@@ -197,6 +197,11 @@ a:active {
     background: #e2b671;
 }
 
+.stack h2 > .time {
+    display: initial;
+    font-size: 100%;
+}
+
 .stack .time {
     display: none;
     margin: 0;
@@ -303,6 +308,13 @@ input:focus {
     padding-right: 3px;
 }
 
+.metadata-button {
+    margin: 12px 0 12px 10px;
+    width: 12em;
+    text-align: center;
+    cursor: pointer;
+}
+
 .searchbar {
     padding: 8px 8px 8px 28px;
     margin: 12px 0 12px 10px;
@@ -311,13 +323,6 @@ input:focus {
     background-position: 8px 50%;
     background-size: 15px;
     width: 240px;
-}
-
-.flame-exit-button {
-    margin: 12px 0 12px 10px;
-    width: 12em;
-    text-align: center;
-    cursor: pointer;
 }
 
 .no-results {

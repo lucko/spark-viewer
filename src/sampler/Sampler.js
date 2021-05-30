@@ -6,7 +6,7 @@ import Flame from './Flame';
 import Metadata from './Metadata';
 import SearchBar, { searchMatches } from './SearchBar';
 
-import { humanFriendlyPercentage } from '../misc/util';
+import { humanFriendlyPercentage, formatTime } from '../misc/util';
 import { resolveMappings } from './mappings';
 
 // context menu
@@ -27,6 +27,7 @@ export default function Sampler({ data, mappings }) {
         return set;
     });
     const [flameData, setFlameData] = useState(null);
+    const [sourceView, setSourceView] = useState(false);
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -53,13 +54,25 @@ export default function Sampler({ data, mappings }) {
         setFlameData(null);
     }
 
+    function toggleSourceView() {
+        setSourceView(!sourceView);
+    }
+
     return (
         <div id="sampler">
             <div id="metadata-and-search">
                 {!!metadata && <Metadata metadata={metadata} />}
+                {!!Object.keys(data.classSources).length && (
+                    <div
+                        className="metadata-button banner-notice"
+                        onClick={toggleSourceView}
+                    >
+                        {sourceView ? 'view: sources' : 'view: all'}
+                    </div>
+                )}
                 {!!flameData ? (
                     <div
-                        className="flame-exit-button banner-notice"
+                        className="metadata-button banner-notice"
                         onClick={exitFlame}
                     >
                         Exit Flame View
@@ -74,20 +87,23 @@ export default function Sampler({ data, mappings }) {
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
-            <div
-                className="stack"
-                style={!!flameData ? { display: 'none' } : {}}
-            >
-                {threads.map(thread => (
-                    <BaseNode
-                        parents={[]}
-                        node={thread}
-                        searchQuery={searchQuery}
-                        highlighted={highlighted}
+            <div style={!!flameData ? { display: 'none' } : {}}>
+                {sourceView ? (
+                    <SourcesView
+                        classSources={data.classSources}
+                        threads={threads}
                         mappings={mappings}
-                        key={thread.name}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
                     />
-                ))}
+                ) : (
+                    <AllView
+                        threads={threads}
+                        mappings={mappings}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
+                    />
+                )}
             </div>
 
             <Menu id={'sampler-cm'} theme={theme.dark}>
@@ -98,20 +114,148 @@ export default function Sampler({ data, mappings }) {
     );
 }
 
-const NodeInfo = ({ children, time, selfTime, threadTime, source }) => {
+// The sampler view in which all data is shown in one, single stack.
+const AllView = ({ threads, mappings, highlighted, searchQuery }) => {
+    return (
+        <div className="stack">
+            {threads.map(thread => (
+                <BaseNode
+                    parents={[]}
+                    node={thread}
+                    mappings={mappings}
+                    highlighted={highlighted}
+                    searchQuery={searchQuery}
+                    key={thread.name}
+                />
+            ))}
+        </div>
+    );
+};
+
+// The sampler view in which there is a stack displayed for each known source.
+const SourcesView = ({
+    classSources,
+    threads,
+    mappings,
+    highlighted,
+    searchQuery,
+}) => {
+    // generate the sources data.
+    const [data] = useState(() => {
+        // get a list of each distinct source
+        const sources = classSources
+            ? [...new Set(Object.values(classSources))]
+            : [];
+
+        // function to scan a thread for matches
+        function findMatches(acc, source, node) {
+            if (node.source === source) {
+                // if the source of the node matches, add it to the accumulator
+                // todo: merge into acc instead?
+                acc.push(node);
+            } else {
+                // otherwise, search the nodes children (recursively...)
+                for (const child of node.children) {
+                    findMatches(acc, source, child);
+                }
+            }
+        }
+
+        return sources
+            .map(source => {
+                const out = [];
+                let totalTime = 0;
+                for (const thread of threads) {
+                    const acc = [];
+                    findMatches(acc, source, thread);
+                    acc.sort((a, b) => b.time - a.time);
+
+                    if (acc.length) {
+                        let copy = Object.assign({}, thread);
+                        copy.children = acc;
+                        out.push(copy);
+
+                        totalTime += acc.reduce((a, c) => a + c.time, 0);
+                    }
+                }
+                return { source, totalTime, threads: out };
+            })
+            .sort((a, b) => b.totalTime - a.totalTime);
+    });
+
+    return (
+        <div className="sourceview">
+            {data.map(({ source, totalTime, threads }) => (
+                <SourceSection
+                    source={source}
+                    totalTime={totalTime}
+                    threads={threads}
+                    mappings={mappings}
+                    highlighted={highlighted}
+                    searchQuery={searchQuery}
+                    key={source}
+                />
+            ))}
+        </div>
+    );
+};
+
+const SourceSection = ({
+    source,
+    totalTime,
+    threads,
+    mappings,
+    highlighted,
+    searchQuery,
+}) => {
+    return (
+        <div className="stack">
+            <h2>
+                {source}{' '}
+                <span className="time">({formatTime(totalTime)}ms)</span>
+            </h2>
+            {threads.map(thread => (
+                <BaseNode
+                    parents={[]}
+                    node={thread}
+                    searchQuery={searchQuery}
+                    highlighted={highlighted}
+                    mappings={mappings}
+                    isSourceRoot={true}
+                    key={thread.name}
+                />
+            ))}
+        </div>
+    );
+};
+
+const NodeInfo = ({
+    children,
+    time,
+    selfTime,
+    threadTime,
+    source,
+    isSourceRoot,
+}) => {
+    // if this the root of a source (a thread node), display the total of the
+    // source instead of the thread as a whole
+    if (isSourceRoot) {
+        time = threadTime - selfTime;
+    }
+
     return (
         <>
             {children}
             <span className="percent">
                 {humanFriendlyPercentage(time / threadTime)}
             </span>
-            {selfTime > 0 ? (
+            {selfTime > 0 && !isSourceRoot ? (
                 <span className="time">
-                    {time}ms (self: {selfTime}ms -{' '}
+                    {formatTime(time)}ms (self: {formatTime(selfTime)}ms -{' '}
                     {humanFriendlyPercentage(selfTime / threadTime)})
                 </span>
             ) : (
-                <span className="time">{time}ms</span>
+                <span className="time">{formatTime(time)}ms</span>
             )}
             {!!source && <span className="time">({source})</span>}
             <span className="bar">
@@ -128,7 +272,7 @@ const NodeInfo = ({ children, time, selfTime, threadTime, source }) => {
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
 const BaseNode = React.memo(
-    ({ parents, node, searchQuery, highlighted, mappings }) => {
+    ({ parents, node, searchQuery, highlighted, mappings, isSourceRoot }) => {
         const [expanded, setExpanded] = useState(() => {
             if (highlighted.size && isHighlighted(node, highlighted)) {
                 return true;
@@ -184,6 +328,7 @@ const BaseNode = React.memo(
                         selfTime={selfTime}
                         threadTime={threadTime}
                         source={node.source}
+                        isSourceRoot={isSourceRoot}
                     >
                         <Name node={node} mappings={mappings} />
                         {!!node.parentLineNumber && (
@@ -296,7 +441,12 @@ export function labelData(nodes, i) {
 export function labelDataWithSource(data) {
     function apply(sources, nodes) {
         for (const node of nodes) {
-            if (node.className) {
+            if (
+                node.className &&
+                !node.className.startsWith(
+                    'com.destroystokyo.paper.event.executor.asm.generated.'
+                )
+            ) {
                 const source = sources[node.className];
                 if (source) {
                     node.source = source;
