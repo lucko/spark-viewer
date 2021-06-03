@@ -1,14 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-export default function SearchBar({ searchQuery, setSearchQuery }) {
+export function useSearchQuery() {
+    const [value, setValue] = useState('');
+
+    const matches = (node, parents) => {
+        if (!value) {
+            return true;
+        }
+
+        if (nodeMatchesQuery(value, node)) {
+            return true;
+        }
+        for (const parent of parents) {
+            if (nodeMatchesQuery(value, parent)) {
+                return true;
+            }
+        }
+        return searchMatchesChildren(value, node);
+    };
+
+    return {
+        value,
+        setValue,
+        matches,
+    };
+}
+
+export default function SearchBar({ searchQuery }) {
     function onQueryChanged(e) {
-        setSearchQuery(e.target.value.toLowerCase());
+        searchQuery.setValue(e.target.value.toLowerCase());
     }
     return (
         <input
             className="searchbar"
             type="text"
-            value={searchQuery}
+            value={searchQuery.value}
             onChange={onQueryChanged}
         ></input>
     );
@@ -39,16 +65,4 @@ function searchMatchesChildren(query, node) {
         }
     }
     return false;
-}
-
-export function searchMatches(query, node, parents) {
-    if (nodeMatchesQuery(query, node)) {
-        return true;
-    }
-    for (const parent of parents) {
-        if (nodeMatchesQuery(query, parent)) {
-            return true;
-        }
-    }
-    return searchMatchesChildren(query, node);
 }

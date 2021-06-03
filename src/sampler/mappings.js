@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Pbf from 'pbf';
 import {
     BukkitMappings,
@@ -19,8 +21,9 @@ const MAPPING_DATA_URL = 'https://sparkmappings.lucko.me/dist/';
 // Get the mappings info resource - returns a JSON object
 // containing info about available mappings+versions, as well as
 // information about how mappings can be applied automatically.
-export function getMappingsInfo() {
-    return fetch(MAPPING_DATA_URL + 'mappings.json').then(r => r.json());
+export async function getMappingsInfo() {
+    const resp = await fetch(MAPPING_DATA_URL + 'mappings.json');
+    return await resp.json();
 }
 
 // Attempts to determine which mappings to apply automatically,
@@ -48,10 +51,12 @@ function detectMappings(mappingsInfo, profileData) {
 
 // fetches mappings data of a given type, for a given version, then applies the parseFunc
 // to convert the arraybuffer to a JS object
-function fetchMappings(version, type, schema) {
-    return fetch(MAPPING_DATA_URL + version + '/' + type + '.pbmapping')
-        .then(r => r.arrayBuffer())
-        .then(buf => schema.read(new Pbf(new Uint8Array(buf))));
+async function fetchMappings(version, type, schema) {
+    const resp = await fetch(
+        MAPPING_DATA_URL + version + '/' + type + '.pbmapping'
+    );
+    const buf = await resp.arrayBuffer();
+    return schema.read(new Pbf(new Uint8Array(buf)));
 }
 
 // requests a mappings function '(node) => { ..mappings }' of the given type.
@@ -283,3 +288,55 @@ export function resolveMappings(node, mappings) {
         remappedMethod,
     };
 }
+
+export default function MappingsMenu({ mappingsInfo, mappings, setMappings }) {
+    let groups = [
+        {
+            id: 'none',
+            label: 'None',
+            options: [
+                { id: 'auto', label: 'Auto Detect' },
+                { id: 'none', label: 'No Mappings' },
+            ],
+        },
+    ];
+
+    for (const type of Object.keys(mappingsInfo.types)) {
+        const data = mappingsInfo.types[type];
+        let versions = [];
+        for (const id of Object.keys(data.versions)) {
+            const version = data.versions[id];
+            const label = data.format.replace('%s', version.name);
+            versions.push({ id: type + '-' + id, label });
+        }
+        groups.push({ id: type, label: data.name, options: versions });
+    }
+
+    return (
+        <span className="dropdown" id="mappings-selector">
+            <select
+                title="mappings"
+                value={mappings}
+                onChange={e => setMappings(e.target.value)}
+            >
+                {groups.map(group => (
+                    <MappingsGroup group={group} key={group.id} />
+                ))}
+            </select>
+        </span>
+    );
+}
+
+const MappingsGroup = ({ group }) => {
+    return (
+        <optgroup label={group.label}>
+            {group.options.map(opt => (
+                <MappingsOption option={opt} key={opt.id} />
+            ))}
+        </optgroup>
+    );
+};
+
+const MappingsOption = ({ option }) => {
+    return <option value={option.id}>{option.label}</option>;
+};

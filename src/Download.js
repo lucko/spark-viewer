@@ -15,7 +15,7 @@ export default function Download() {
             return;
         }
 
-        async function getDownloadInfo() {
+        (async () => {
             try {
                 const req = await fetch(
                     `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,artifacts[fileName,relativePath]`
@@ -31,9 +31,7 @@ export default function Download() {
                 console.log(e);
                 setStatus(ERROR);
             }
-        }
-
-        getDownloadInfo().then(_ => {});
+        })();
     }, [status]);
 
     if (status === WAITING) {

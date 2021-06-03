@@ -294,7 +294,7 @@ select {
     border-radius: 6px;
 }
 
-#metadata-and-search {
+#controls {
     display: flex;
     justify-content: space-between;
 }

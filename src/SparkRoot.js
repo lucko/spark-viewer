@@ -5,13 +5,17 @@ import ls from 'local-storage';
 
 import Homepage from './Homepage';
 import Download from './Download';
-import Sampler, { labelData, labelDataWithSource } from './sampler/Sampler';
+import Sampler from './sampler/Sampler';
 import Heap from './heap/Heap';
-import MappingsMenu from './sampler/MappingsMenu';
 import BannerNotice from './misc/BannerNotice';
 
 import { SamplerData, HeapData } from './proto';
-import { getMappingsInfo, requestMappings } from './sampler/mappings';
+
+import MappingsMenu, {
+    getMappingsInfo,
+    requestMappings,
+} from './sampler/mappings';
+import { labelData, labelDataWithSource } from './sampler/preprocessing';
 
 import sparkLogo from './assets/spark-logo.svg';
 
