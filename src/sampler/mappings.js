@@ -72,6 +72,13 @@ export async function requestMappings(type, mappingsInfo, profileData) {
         const version = type.substring('bukkit-mojang-'.length);
         const nmsVersion =
             mappingsInfo.types['bukkit-mojang'].versions[version].nmsVersion;
+        const mojangClassNamesAtRuntime =
+            !!mappingsInfo.types['bukkit-mojang'].versions[version]
+                .mojangClassNamesAtRuntime;
+
+        if (!nmsVersion && !mojangClassNamesAtRuntime) {
+            throw new Error('No NMS version specified!');
+        }
 
         const [mojangMappings, bukkitMappings] = await Promise.all([
             fetchMappings(version, 'mojang', MojangMappings),
@@ -117,7 +124,12 @@ export async function requestMappings(type, mappingsInfo, profileData) {
  */
 
 const bukkitRemap = (outputMappings, bukkitMappings, nmsVersion) => {
-    const expectedPackage = 'net.minecraft.server.' + nmsVersion + '.';
+    let expectedPackage;
+    if (nmsVersion) {
+        expectedPackage = 'net.minecraft.server.' + nmsVersion + '.';
+    } else {
+        expectedPackage = 'net.minecraft.';
+    }
 
     // gen a reverse index
     bukkitMappings.classesObfuscated = {};
@@ -132,7 +144,15 @@ const bukkitRemap = (outputMappings, bukkitMappings, nmsVersion) => {
         }
 
         const nmsClassName = node.className.substring(expectedPackage.length);
-        let bukkitClassData = bukkitMappings.classes[nmsClassName];
+        let bukkitClassData;
+
+        if (nmsVersion) {
+            bukkitClassData = bukkitMappings.classes[nmsClassName];
+        } else {
+            bukkitClassData =
+                bukkitMappings.classes['net.minecraft.' + nmsClassName];
+        }
+
         if (nmsClassName === 'MinecraftServer') {
             bukkitClassData =
                 bukkitMappings.classes['net.minecraft.server.MinecraftServer'];
@@ -181,13 +201,21 @@ const bukkitRemap = (outputMappings, bukkitMappings, nmsVersion) => {
                 // find the mapped bukkit class for the obf'd type.
                 const bukkitMapping = bukkitMappings.classesObfuscated[obfType];
                 if (bukkitMapping) {
-                    return (
-                        'Lnet/minecraft/server/' +
-                        nmsVersion +
-                        '/' +
-                        bukkitMapping.mapped +
-                        ';'
-                    );
+                    if (nmsVersion) {
+                        return (
+                            'Lnet/minecraft/server/' +
+                            nmsVersion +
+                            '/' +
+                            bukkitMapping.mapped +
+                            ';'
+                        );
+                    } else {
+                        return (
+                            'L' +
+                            bukkitMapping.mapped.replaceAll('.', '/') +
+                            ';'
+                        );
+                    }
                 }
 
                 return match;
