@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Metadata from './metadata';
+import Metadata from './meta';
 import SearchBar from './search';
 
 export default function Controls({
