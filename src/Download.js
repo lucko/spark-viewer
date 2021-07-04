@@ -56,8 +56,9 @@ export default function Download() {
 
     return (
         <div className="page">
-            <h1># spark downloads</h1>
-            <p>Below are links to download the latest versions of spark.</p>
+            <h1>spark downloads</h1>
+            <p>See below for links to download the latest version of spark.</p>
+            <br />
 
             <DownloadInfo
                 artifacts={artifacts}

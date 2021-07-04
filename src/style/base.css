@@ -91,12 +91,34 @@ a:active {
     margin: 20px auto;
 }
 
+.page > h1 {
+    font-size: 30pt;
+}
+
 .page > h2 {
-    margin-top: 30px;
+    margin-top: 50px;
+}
+
+.page > h1::before,
+.page > h2::before {
+    content: '# ';
+    color: #ffc93a;
 }
 
 .page h3 > span {
     color: #888;
+}
+
+.homepage {
+    font-size: 120%;
+}
+
+.homepage .tagline {
+    font-weight: bold;
+}
+
+.homepage .links > li {
+    margin-top: 3px;
 }
 
 /* STACK VIEW */

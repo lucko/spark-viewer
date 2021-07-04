@@ -2,9 +2,9 @@ import React from 'react';
 
 export default function Homepage() {
     return (
-        <div className="page">
-            <h1># spark</h1>
-            <p>
+        <div className="homepage page">
+            <h1>spark</h1>
+            <p className="tagline">
                 spark is a performance profiling plugin/mod for Minecraft
                 clients, servers and proxies.
             </p>
@@ -21,22 +21,28 @@ export default function Homepage() {
                     health.
                 </li>
             </ul>
+            <h2>Links</h2>
             <p>
-                You can find{' '}
-                <a href="https://spark.lucko.me/docs">documentation</a> for
-                spark on our docs website.
+                There are a number of other useful resources available for
+                spark.
             </p>
-            <p>
-                You can <a href="download">download</a> the latest version from
-                the downloads page.
-            </p>
-            <p>
-                The source code and more information about the spark plugin is
-                available on <a href="https://github.com/lucko/spark">GitHub</a>
-                .
-            </p>
+            <ul className="links">
+                <li>
+                    <a href="https://spark.lucko.me/docs">documentation</a> can
+                    be found on the docs site.
+                </li>
+                <li>
+                    <a href="download">downloads</a> for the latest version can
+                    be found on the downloads page.
+                </li>
+                <li>
+                    <a href="https://github.com/lucko/spark">source code</a> and
+                    more information about the spark plugin is available on
+                    GitHub.
+                </li>
+            </ul>
 
-            <h2># Viewer</h2>
+            <h2>Viewer</h2>
             <p>This website contains an online viewer for spark profiles.</p>
             <p>
                 It is written using React, and open-source'd on GitHub. Any
