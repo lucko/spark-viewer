@@ -34,20 +34,28 @@ export default function Download() {
         })();
     }, [status]);
 
+    let content;
     if (status === WAITING) {
-        return (
-            <BannerNotice>
-                Obtaining the latest version information, please wait...
-            </BannerNotice>
-        );
-    } else if (status === ERROR) {
-        return (
+        content = <p>Please wait...</p>;
+    } else if (status === OK) {
+        content = <DownloadList info={info} />;
+    } else {
+        content = (
             <BannerNotice>
                 Error: unable to get version information.
             </BannerNotice>
         );
     }
 
+    return (
+        <article className="downloads">
+            <h1>spark downloads</h1>
+            {content}
+        </article>
+    );
+}
+
+const DownloadList = ({ info }) => {
     const artifacts = {};
     for (const { fileName, relativePath } of info.artifacts) {
         artifacts[fileName.slice(0, -4)] =
@@ -55,8 +63,7 @@ export default function Download() {
     }
 
     return (
-        <article className="downloads">
-            <h1>spark downloads</h1>
+        <>
             <p>
                 The list below contains links to download the latest version of
                 spark.
@@ -68,111 +75,76 @@ export default function Download() {
                 name="Bukkit"
                 artifact="spark"
                 installDir="plugins"
-            >
-                <li>
-                    Use <code>/spark</code> to control the plugin.
-                </li>
-            </DownloadInfo>
-
+                controls={{ spark: 'plugin' }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Fabric"
                 artifact="spark-fabric"
                 installDir="mods"
-            >
-                <li>
-                    Use <code>/spark</code> to control the mod. (server-side)
-                </li>
-                <li>
-                    Use <code>/sparkc</code> to control the mod. (client-side)
-                </li>
-            </DownloadInfo>
-
+                controls={{
+                    spark: 'mod (server-side)',
+                    sparkc: 'mod (client-side)',
+                }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
                 artifact="spark-forge"
                 installDir="mods"
-            >
-                <li>
-                    Use <code>/spark</code> to control the mod. (server-side)
-                </li>
-                <li>
-                    Use <code>/sparkc</code> to control the mod. (client-side)
-                </li>
-            </DownloadInfo>
-
+                controls={{
+                    spark: 'mod (server-side)',
+                    sparkc: 'mod (client-side)',
+                }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
                 comment="MC 1.12.2"
                 artifact="spark-forge1122"
                 installDir="mods"
-            >
-                <li>
-                    Use <code>/spark</code> to control the mod. (server-side)
-                </li>
-                <li>
-                    Use <code>/sparkc</code> to control the mod. (client-side)
-                </li>
-            </DownloadInfo>
-
+                controls={{
+                    spark: 'mod (server-side)',
+                    sparkc: 'mod (client-side)',
+                }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Sponge"
                 comment="API 6/7"
                 artifact="spark"
                 installDir="plugins"
-            >
-                <li>
-                    Use <code>/spark</code> to control the plugin.
-                </li>
-            </DownloadInfo>
-
+                controls={{ spark: 'plugin' }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Sponge"
                 comment="API 8"
                 artifact="spark-sponge8"
                 installDir="plugins"
-            >
-                <li>
-                    Use <code>/spark</code> to control the plugin.
-                </li>
-            </DownloadInfo>
-
+                controls={{ spark: 'plugin' }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Nukkit"
                 artifact="spark-nukkit"
                 installDir="plugins"
-            >
-                <li>
-                    Use <code>/spark</code> to control the plugin.
-                </li>
-            </DownloadInfo>
-
+                controls={{ spark: 'plugin' }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="BungeeCord"
                 artifact="spark"
                 installDir="plugins"
-            >
-                <li>
-                    Use <code>/sparkb</code> to control the plugin.
-                </li>
-            </DownloadInfo>
-
+                controls={{ sparkb: 'plugin' }}
+            />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Velocity"
                 artifact="spark-velocity"
                 installDir="plugins"
-            >
-                <li>
-                    Use <code>/sparkv</code> to control the plugin.
-                </li>
-            </DownloadInfo>
+                controls={{ sparkv: 'plugin' }}
+            />
 
             <br />
             <p>
@@ -180,9 +152,9 @@ export default function Download() {
                 <a href="https://spark.lucko.me/docs">documentation</a> to learn
                 how to use it!
             </p>
-        </article>
+        </>
     );
-}
+};
 
 const DownloadInfo = ({
     artifacts,
@@ -190,7 +162,7 @@ const DownloadInfo = ({
     comment,
     artifact,
     installDir,
-    children,
+    controls,
 }) => {
     return (
         <section>
@@ -203,7 +175,11 @@ const DownloadInfo = ({
                     Download <a href={artifacts[artifact]}>{artifact}.jar</a>{' '}
                     and install it in <code>/{installDir}/</code>.
                 </li>
-                {children}
+                {Object.entries(controls).map(([cmd, type]) => (
+                    <li key={cmd}>
+                        Use <code>/{cmd}</code> to control the {type}.
+                    </li>
+                ))}
             </ul>
         </section>
     );
