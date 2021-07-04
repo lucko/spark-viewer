@@ -55,9 +55,12 @@ export default function Download() {
     }
 
     return (
-        <div className="page">
+        <article className="downloads">
             <h1>spark downloads</h1>
-            <p>See below for links to download the latest version of spark.</p>
+            <p>
+                The list below contains links to download the latest version of
+                spark.
+            </p>
             <br />
 
             <DownloadInfo
@@ -177,7 +180,7 @@ export default function Download() {
                 <a href="https://spark.lucko.me/docs">documentation</a> to learn
                 how to use it!
             </p>
-        </div>
+        </article>
     );
 }
 
@@ -190,7 +193,7 @@ const DownloadInfo = ({
     children,
 }) => {
     return (
-        <div>
+        <section>
             <h3>
                 {name}
                 {comment && <span> ({comment})</span>}
@@ -198,10 +201,10 @@ const DownloadInfo = ({
             <ul>
                 <li>
                     Download <a href={artifacts[artifact]}>{artifact}.jar</a>{' '}
-                    and install it in <code>/{installDir}/</code>
+                    and install it in <code>/{installDir}/</code>.
                 </li>
                 {children}
             </ul>
-        </div>
+        </section>
     );
 };

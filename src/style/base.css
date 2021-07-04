@@ -37,7 +37,7 @@ a:active {
 
 /* HEADER & FOOTER */
 
-#header {
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -56,7 +56,7 @@ a:active {
     min-width: 500px;
 }
 
-#header > #logo {
+header > .logo {
     display: flex;
     align-items: center;
     background-color: #252b2d;
@@ -66,19 +66,19 @@ a:active {
     border: 0;
 }
 
-#header > #logo > h1 {
+header > .logo > h1 {
     font-size: 14pt;
     margin: 0;
     font-weight: normal;
     color: #fff;
 }
 
-#header img {
+header img {
     filter: invert(0%);
     padding-right: 5px;
 }
 
-#footer {
+footer {
     color: #888;
     margin-top: 50px;
     font-size: 10pt;
@@ -86,36 +86,38 @@ a:active {
     text-align: right;
 }
 
-.page {
+/* HOMEPAGE & DOWNLOADS */
+
+article {
     max-width: 800px;
     margin: 20px auto;
     font-size: 120%;
 }
 
-.page > h1 {
+article h1 {
     font-size: 30pt;
 }
 
-.page > h2 {
+article h2 {
     margin-top: 50px;
 }
 
-.page > h1::before,
-.page > h2::before {
+article h1::before,
+article h2::before {
     content: '# ';
     color: #ffc93a;
-}
-
-.page h3 > span {
-    color: #888;
 }
 
 .homepage .tagline {
     font-weight: bold;
 }
 
-.homepage .links > li {
+.homepage li {
     margin-top: 3px;
+}
+
+.downloads h3 > span {
+    color: #888;
 }
 
 /* STACK VIEW */

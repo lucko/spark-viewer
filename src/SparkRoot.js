@@ -226,7 +226,7 @@ export default function SparkRoot() {
                 mappings={mappingsType}
                 setMappings={onMappingsRequest}
             />
-            {contents}
+            <main>{contents}</main>
             <Footer />
         </>
     );
@@ -234,21 +234,21 @@ export default function SparkRoot() {
 
 function Header({ isViewer, mappingsInfo, mappings, setMappings }) {
     return (
-        <div id="header">
-            <a href="/" id="logo">
+        <header>
+            <a href="/" className="logo">
                 <img src={sparkLogo} alt="" width="32px" height="32px" />
                 {isViewer ? <h1>spark viewer</h1> : <h1>spark</h1>}
             </a>
             {!!mappingsInfo && (
                 <MappingsMenu {...{ mappingsInfo, mappings, setMappings }} />
             )}
-        </div>
+        </header>
     );
 }
 
 function Footer() {
     return (
-        <div id="footer">
+        <footer>
             <a href="https://github.com/lucko/spark">spark</a> and{' '}
             <a href="https://github.com/lucko/spark-viewer">spark-viewer</a> are
             based on WarmRoast by sk89q.
@@ -256,6 +256,6 @@ function Footer() {
             Copyright &copy; 2018-2021{' '}
             <a href="https://github.com/lucko">lucko</a>,{' '}
             <a href="https://github.com/astei">astei</a> & spark contributors
-        </div>
+        </footer>
     );
 }
