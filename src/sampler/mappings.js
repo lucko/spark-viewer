@@ -239,8 +239,16 @@ const mcpRemap = mcpMappings => node => {
 };
 
 const yarnRemap = yarnMappings => node => {
-    const className = yarnMappings.classes[node.className];
     const methodName = yarnMappings.methods[node.methodName];
+
+    let className;
+    let lambda = node.className.match(/^(.+)(\$\$Lambda.+)$/);
+    if (lambda) {
+        className = (yarnMappings.classes[lambda[1]] || lambda[1]) + lambda[2];
+    } else {
+        className = yarnMappings.classes[node.className];
+    }
+
     return { className, methodName };
 };
 
