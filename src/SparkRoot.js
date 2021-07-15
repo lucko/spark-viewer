@@ -22,6 +22,7 @@ import sparkLogo from './assets/spark-logo.svg';
 const HOMEPAGE = Symbol();
 const DOWNLOAD = Symbol();
 const LOADING_DATA = Symbol();
+const LOADING_FILE = Symbol();
 const PARSING_DATA = Symbol();
 const FAILED_DATA = Symbol();
 const LOADED_PROFILE_DATA = Symbol();
@@ -50,9 +51,23 @@ function getUrlCode() {
     return code;
 }
 
+function readFileAsync(file) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+}
+
 export default function SparkRoot() {
     // the data code from the URL path
     const [code] = useState(getUrlCode);
+    // the 'selected' file
+    const [selectedFile, setSelectedFile] = useState();
     // if raw output mode is enabled -- '?raw=1' flag in the URL
     const [rawMode] = useState(() => {
         const params = new URLSearchParams(window.location.search);
@@ -72,6 +87,12 @@ export default function SparkRoot() {
     });
     // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
+
+    const onFileSelected = file => {
+        setSelectedFile(file);
+        setStatus(LOADING_FILE);
+    };
+
     // the mappings info object currently loaded
     const [mappingsInfo, setMappingsInfo] = useState(null);
     // the current mappings function
@@ -114,20 +135,19 @@ export default function SparkRoot() {
     // On page load, if status is set to LOADING_DATA, make
     // a request to bytebin to load the payload
     useEffect(() => {
-        if (status !== LOADING_DATA) {
+        if (!(status === LOADING_DATA || status === LOADING_FILE)) {
             return;
         }
 
         // Function to parse the data payload from a request given the schema type
-        async function parse(req, schema) {
-            const buf = await req.arrayBuffer();
+        function parse(buf, schema) {
             const pbf = new Pbf(new Uint8Array(buf));
             return schema.read(pbf);
         }
 
         // Loads sampler data from the given request
-        async function loadSampler(req) {
-            const data = await parse(req, SamplerData);
+        function loadSampler(buf) {
+            const data = parse(buf, SamplerData);
             if (!rawMode) {
                 labelData(data.threads, 0);
                 labelDataWithSource(data);
@@ -137,29 +157,44 @@ export default function SparkRoot() {
         }
 
         // Loads heap data from the given request
-        async function loadHeap(req) {
-            const data = await parse(req, HeapData);
+        function loadHeap(buf) {
+            const data = parse(buf, HeapData);
             setLoaded(data);
             setStatus(LOADED_HEAP_DATA);
         }
 
         (async () => {
             try {
-                const req = await fetch(`https://bytebin.lucko.me/${code}`);
-                if (!req.ok) {
-                    setStatus(FAILED_DATA);
-                    return;
+                let type;
+                let buf;
+
+                if (status === LOADING_DATA) {
+                    // load from bytebin
+                    const req = await fetch(`https://bytebin.lucko.me/${code}`);
+                    if (!req.ok) {
+                        setStatus(FAILED_DATA);
+                        return;
+                    }
+
+                    type = req.headers.get('content-type');
+                    buf = await req.arrayBuffer();
+                } else {
+                    // load from selected file
+                    type = {
+                        sparkprofile: 'application/x-spark-sampler',
+                        sparkheap: 'application/x-spark-heap',
+                    }[selectedFile.name.split('.').pop()];
+                    buf = await readFileAsync(selectedFile);
                 }
 
-                const type = req.headers.get('content-type');
                 if (type === 'application/x-spark-sampler') {
                     if (!rawMode) {
                         getMappingsInfo().then(setMappingsInfo);
                     }
 
-                    await loadSampler(req);
+                    loadSampler(buf);
                 } else if (type === 'application/x-spark-heap') {
-                    await loadHeap(req);
+                    loadHeap(buf);
                 } else {
                     setStatus(FAILED_DATA);
                 }
@@ -168,7 +203,7 @@ export default function SparkRoot() {
                 setStatus(FAILED_DATA);
             }
         })();
-    }, [status, code, rawMode]);
+    }, [status, code, selectedFile, rawMode]);
 
     if (
         rawMode &&
@@ -184,7 +219,7 @@ export default function SparkRoot() {
     let contents;
     switch (status) {
         case HOMEPAGE:
-            contents = <Homepage />;
+            contents = <Homepage onFileSelected={onFileSelected} />;
             break;
         case DOWNLOAD:
             contents = <Download />;
@@ -194,6 +229,9 @@ export default function SparkRoot() {
             break;
         case LOADING_DATA:
             contents = <BannerNotice>Downloading...</BannerNotice>;
+            break;
+        case LOADING_FILE:
+            contents = <BannerNotice>Loading file...</BannerNotice>;
             break;
         case PARSING_DATA:
             contents = <BannerNotice>Rendering...</BannerNotice>;

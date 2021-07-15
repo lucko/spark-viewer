@@ -1,6 +1,7 @@
 import React from 'react';
+import FilePicker from './misc/FilePicker';
 
-export default function Homepage() {
+export default function Homepage({ onFileSelected }) {
     return (
         <article className="homepage">
             <section>
@@ -71,10 +72,17 @@ export default function Homepage() {
                         browser.
                     </li>
                     <li>
-                        The data will be available for ~60 days, before
+                        The data will be available for ~90 days, before
                         expiring.
                     </li>
                 </ol>
+                <p>
+                    You can also generate or export a <code>.sparkprofile</code>{' '}
+                    or <code>.sparkheap</code> file directly instead of using
+                    the online upload facility. To view these files, use the box
+                    below.
+                </p>
+                <FilePicker callback={onFileSelected} />
                 <p>
                     The website/viewer is written in JavaScript using the React
                     framework, and open-source'd on GitHub. I appreciate any

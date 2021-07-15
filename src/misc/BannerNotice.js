@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function BannerNotice(props) {
-    return <div className="banner-notice">{props.children}</div>;
+export default function BannerNotice({ children }) {
+    return <div className="banner-notice">{children}</div>;
 }

@@ -315,6 +315,15 @@ select {
     border-radius: 6px;
 }
 
+.file-picker {
+    text-align: center;
+    cursor: pointer;
+}
+
+.file-picker em {
+    font-size: 60%;
+}
+
 #controls {
     display: flex;
     justify-content: space-between;
