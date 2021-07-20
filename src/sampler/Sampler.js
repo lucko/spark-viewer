@@ -10,7 +10,7 @@ import { useSearchQuery } from './search';
 import { Menu, Item, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
 
-export default function Sampler({ data, mappings }) {
+export default function Sampler({ data, mappings, exportCallback }) {
     const { metadata, threads } = data;
 
     const searchQuery = useSearchQuery();
@@ -34,6 +34,7 @@ export default function Sampler({ data, mappings }) {
             <Controls
                 metadata={metadata}
                 data={data}
+                exportCallback={exportCallback}
                 sourceView={sourceView}
                 setSourceView={setSourceView}
                 flameData={flameData}

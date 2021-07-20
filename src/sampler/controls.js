@@ -1,19 +1,36 @@
 import React from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faTimes,
+    faEye,
+    faFileExport,
+} from '@fortawesome/free-solid-svg-icons';
+
 import Metadata from './meta';
 import SearchBar from './search';
 
 export default function Controls({
     metadata,
     data,
+    exportCallback,
     sourceView,
     setSourceView,
     flameData,
     setFlameData,
     searchQuery,
 }) {
-    function exitFlame() {
-        setFlameData(null);
+    if (flameData) {
+        function exitFlame() {
+            setFlameData(null);
+        }
+
+        return (
+            <div id="controls">
+                {!!metadata && <Metadata metadata={metadata} />}
+                <FaButton icon={faTimes} callback={exitFlame} />
+            </div>
+        );
     }
 
     function toggleSourceView() {
@@ -25,16 +42,16 @@ export default function Controls({
     return (
         <div id="controls">
             {!!metadata && <Metadata metadata={metadata} />}
+
             {sourceViewSupported && (
                 <ToggleViewButton
                     state={sourceView}
                     toggle={toggleSourceView}
                 />
             )}
-            {!!flameData ? (
-                <ExitFlameViewButton callback={exitFlame} />
-            ) : (
-                <SearchBar searchQuery={searchQuery} />
+            <SearchBar searchQuery={searchQuery} />
+            {exportCallback && (
+                <FaButton icon={faFileExport} callback={exportCallback} />
             )}
         </div>
     );
@@ -42,16 +59,31 @@ export default function Controls({
 
 const ToggleViewButton = ({ state, toggle }) => {
     return (
-        <div className="metadata-button banner-notice" onClick={toggle}>
-            {state ? 'view: sources' : 'view: all'}
+        <div
+            className="metadata-button banner-notice"
+            onClick={toggle}
+            style={{
+                justifyContent: 'space-between',
+                padding: '0 12px',
+                width: '9em',
+            }}
+        >
+            <FontAwesomeIcon icon={faEye} />
+            <span>{state ? 'sources' : 'all'}</span>
         </div>
     );
 };
 
-const ExitFlameViewButton = ({ callback }) => {
+const FaButton = ({ callback, icon }) => {
     return (
-        <div className="metadata-button banner-notice" onClick={callback}>
-            Exit Flame View
+        <div
+            className="metadata-button banner-notice"
+            onClick={callback}
+            style={{
+                width: '36px',
+            }}
+        >
+            <FontAwesomeIcon icon={icon} />
         </div>
     );
 };

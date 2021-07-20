@@ -63,6 +63,21 @@ function readFileAsync(file) {
     });
 }
 
+function createSamplerExportCallback(code, buf) {
+    return () => {
+        const url = URL.createObjectURL(
+            new Blob([buf], { type: 'application/x-spark-sampler' })
+        );
+
+        const el = document.createElement('a');
+        el.setAttribute('href', url);
+        el.setAttribute('download', `${code}.sparkprofile`);
+        el.click();
+
+        URL.revokeObjectURL(url);
+    };
+}
+
 export default function SparkRoot() {
     // the data code from the URL path
     const [code] = useState(getUrlCode);
@@ -87,6 +102,8 @@ export default function SparkRoot() {
     });
     // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
+    // the export callback
+    const [exportCallback, setExportCallback] = useState(null);
 
     const onFileSelected = file => {
         setSelectedFile(file);
@@ -178,6 +195,11 @@ export default function SparkRoot() {
 
                     type = req.headers.get('content-type');
                     buf = await req.arrayBuffer();
+                    if (type === 'application/x-spark-sampler') {
+                        setExportCallback(() =>
+                            createSamplerExportCallback(code, buf)
+                        );
+                    }
                 } else {
                     // load from selected file
                     type = {
@@ -245,7 +267,13 @@ export default function SparkRoot() {
             );
             break;
         case LOADED_PROFILE_DATA:
-            contents = <Sampler data={loaded} mappings={mappings} />;
+            contents = (
+                <Sampler
+                    data={loaded}
+                    mappings={mappings}
+                    exportCallback={exportCallback}
+                />
+            );
             break;
         case LOADED_HEAP_DATA:
             contents = <Heap data={loaded} />;

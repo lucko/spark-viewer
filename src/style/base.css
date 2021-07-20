@@ -348,9 +348,11 @@ select {
 
 .metadata-button {
     margin: 12px 0 12px 10px;
-    width: 12em;
-    text-align: center;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
 }
 
 .searchbar {
