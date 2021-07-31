@@ -10,12 +10,19 @@ import {
 import Metadata from './meta';
 import SearchBar from './search';
 
+import {
+    VIEWS,
+    VIEW_ALL,
+    VIEW_SOURCES_MERGED,
+    VIEW_SOURCES_SEPARATE,
+} from './views';
+
 export default function Controls({
     metadata,
     data,
     exportCallback,
-    sourceView,
-    setSourceView,
+    view,
+    setView,
     flameData,
     setFlameData,
     searchQuery,
@@ -34,7 +41,7 @@ export default function Controls({
     }
 
     function toggleSourceView() {
-        setSourceView(!sourceView);
+        setView(VIEWS[(VIEWS.indexOf(view) + 1) % VIEWS.length]);
     }
 
     const sourceViewSupported = !!Object.keys(data.classSources).length;
@@ -44,10 +51,7 @@ export default function Controls({
             {!!metadata && <Metadata metadata={metadata} />}
 
             {sourceViewSupported && (
-                <ToggleViewButton
-                    state={sourceView}
-                    toggle={toggleSourceView}
-                />
+                <ToggleViewButton state={view} toggle={toggleSourceView} />
             )}
             <SearchBar searchQuery={searchQuery} />
             {exportCallback && (
@@ -58,6 +62,15 @@ export default function Controls({
 }
 
 const ToggleViewButton = ({ state, toggle }) => {
+    let label;
+    if (state === VIEW_ALL) {
+        label = 'all';
+    } else if (state === VIEW_SOURCES_MERGED) {
+        label = 'sources';
+    } else if (state === VIEW_SOURCES_SEPARATE) {
+        label = '*sources';
+    }
+
     return (
         <div
             className="metadata-button banner-notice"
@@ -69,7 +82,7 @@ const ToggleViewButton = ({ state, toggle }) => {
             }}
         >
             <FontAwesomeIcon icon={faEye} />
-            <span>{state ? 'sources' : 'all'}</span>
+            <span>{label}</span>
         </div>
     );
 };

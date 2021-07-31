@@ -16,13 +16,14 @@ const BaseNode = React.memo(
             return null;
         }
 
+        const directParent =
+            parents.length !== 0 ? parents[parents.length - 1] : null;
+
         const [expanded, setExpanded] = useState(() => {
             if (highlighted.check(node)) {
                 return true;
             }
-            return parents.length === 0
-                ? false
-                : parents[parents.length - 1].children.length === 1;
+            return directParent && directParent.children.length === 1;
         });
         const classNames = classnames({
             node: true,
@@ -39,8 +40,12 @@ const BaseNode = React.memo(
         );
         const threadTime = parents.length === 0 ? node.time : parents[0].time;
 
-        function toggleExpand() {
-            setExpanded(!expanded);
+        function handleClick(e) {
+            if (e.altKey) {
+                highlighted.toggle(node.id);
+            } else {
+                setExpanded(!expanded);
+            }
         }
 
         const { show } = useContextMenu({ id: 'sampler-cm' });
@@ -53,26 +58,36 @@ const BaseNode = React.memo(
         const selfTime =
             node.time - node.children.reduce((acc, n) => acc + n.time, 0);
 
+        let significance;
+        let importance;
+        if (!directParent) {
+            significance = 1;
+            importance = 0;
+        } else {
+            const parentTime = directParent.sourceTime || directParent.time;
+            significance = node.time / parentTime;
+            importance = parentTime !== node.time ? significance : 0;
+        }
+
         return (
             <li className={classNames}>
                 <div
                     className={nameClassNames}
-                    onClick={toggleExpand}
+                    onClick={handleClick}
                     onContextMenu={handleContextMenu}
                 >
                     <NodeInfo
                         time={node.time}
                         selfTime={selfTime}
                         threadTime={threadTime}
+                        importance={importance}
+                        significance={significance}
                         source={node.source}
                         isSourceRoot={isSourceRoot}
                     >
                         <Name node={node} mappings={mappings} />
                         {!!node.parentLineNumber && (
-                            <LineNumber
-                                node={node}
-                                parent={parents[parents.length - 1]}
-                            />
+                            <LineNumber node={node} parent={directParent} />
                         )}
                     </NodeInfo>
                 </div>
@@ -100,6 +115,8 @@ const NodeInfo = ({
     time,
     selfTime,
     threadTime,
+    importance,
+    significance,
     source,
     isSourceRoot,
 }) => {
@@ -109,10 +126,17 @@ const NodeInfo = ({
         time = threadTime - selfTime;
     }
 
+    const filter =
+        `hue-rotate(-${25 * importance}deg)` +
+        ' ' +
+        `saturate(${1 + 13 * importance})`;
+
+    const opacity = significance < 0.01 ? 0.5 + (significance * 100) / 2 : null;
+
     return (
         <>
             {children}
-            <span className="percent">
+            <span className="percent" style={{ filter, opacity }}>
                 {humanFriendlyPercentage(time / threadTime)}
             </span>
             {selfTime > 0 && !isSourceRoot ? (

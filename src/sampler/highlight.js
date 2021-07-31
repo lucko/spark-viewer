@@ -2,6 +2,22 @@ import { useState } from 'react';
 
 import history from 'history/browser';
 
+// some functions for sets which accept either 'value' or '[value1, value2]' parameters
+const setMultiOp = func => (set, value) => {
+    if (Array.isArray(value)) {
+        for (const el of value) {
+            if (func(set, el)) {
+                return true;
+            }
+        }
+    } else {
+        return func(set, value);
+    }
+};
+const setHas = setMultiOp((set, v) => set.has(v));
+const setAdd = setMultiOp((set, v) => set.add(v));
+const setDelete = setMultiOp((set, v) => set.delete(v));
+
 export function useHighlight() {
     const [highlighted, setHighlighted] = useState(() => {
         const set = new Set();
@@ -16,10 +32,10 @@ export function useHighlight() {
     // Toggles the highlighted state of an id
     const toggle = id => {
         const set = new Set(highlighted);
-        if (set.has(id)) {
-            set.delete(id);
+        if (setHas(set, id)) {
+            setDelete(set, id);
         } else {
-            set.add(id);
+            setAdd(set, id);
         }
         setHighlighted(set);
         history.replace({
@@ -33,7 +49,7 @@ export function useHighlight() {
             return false;
         }
 
-        if (highlighted.has(node.id)) {
+        if (setHas(highlighted, node.id)) {
             return true;
         }
         for (const c of node.children) {
@@ -45,7 +61,7 @@ export function useHighlight() {
     };
 
     // Checks whether a node with the given id is in the highlighted set
-    const has = id => highlighted.has(id);
+    const has = id => setHas(highlighted, id);
 
     return { toggle, check, has };
 }

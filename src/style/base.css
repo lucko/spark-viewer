@@ -327,6 +327,7 @@ select {
 #controls {
     display: flex;
     justify-content: space-between;
+    user-select: none;
 }
 
 #metadata {
@@ -352,7 +353,6 @@ select {
     display: flex;
     align-items: center;
     justify-content: center;
-    user-select: none;
 }
 
 .searchbar {

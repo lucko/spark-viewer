@@ -287,7 +287,7 @@ export default function SparkRoot() {
     return (
         <>
             <Header
-                isViewer={code && status !== DOWNLOAD}
+                isViewer={(code && status !== DOWNLOAD) || !!selectedFile}
                 mappingsInfo={mappingsInfo}
                 mappings={mappingsType}
                 setMappings={onMappingsRequest}

@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 
 import Controls from './controls';
-import { AllView, SourcesView } from './views';
+import {
+    AllView,
+    SourcesView,
+    VIEW_ALL,
+    VIEW_SOURCES_MERGED,
+    VIEW_SOURCES_SEPARATE,
+} from './views';
 import Flame from './flamegraph';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
@@ -17,7 +23,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const highlighted = useHighlight();
 
     const [flameData, setFlameData] = useState(null);
-    const [sourceView, setSourceView] = useState(false);
+    const [view, setView] = useState(VIEW_ALL);
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -29,14 +35,37 @@ export default function Sampler({ data, mappings, exportCallback }) {
         setFlameData(props.node);
     }
 
+    let viewComponent;
+    if (view === VIEW_ALL) {
+        viewComponent = (
+            <AllView
+                threads={threads}
+                mappings={mappings}
+                highlighted={highlighted}
+                searchQuery={searchQuery}
+            />
+        );
+    } else if (view === VIEW_SOURCES_MERGED || view === VIEW_SOURCES_SEPARATE) {
+        viewComponent = (
+            <SourcesView
+                classSources={data.classSources}
+                threads={threads}
+                mappings={mappings}
+                highlighted={highlighted}
+                searchQuery={searchQuery}
+                mergeMode={view === VIEW_SOURCES_MERGED}
+            />
+        );
+    }
+
     return (
         <div id="sampler">
             <Controls
                 metadata={metadata}
                 data={data}
                 exportCallback={exportCallback}
-                sourceView={sourceView}
-                setSourceView={setSourceView}
+                view={view}
+                setView={setView}
                 flameData={flameData}
                 setFlameData={setFlameData}
                 searchQuery={searchQuery}
@@ -45,22 +74,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
             <div style={!!flameData ? { display: 'none' } : {}}>
-                {sourceView ? (
-                    <SourcesView
-                        classSources={data.classSources}
-                        threads={threads}
-                        mappings={mappings}
-                        highlighted={highlighted}
-                        searchQuery={searchQuery}
-                    />
-                ) : (
-                    <AllView
-                        threads={threads}
-                        mappings={mappings}
-                        highlighted={highlighted}
-                        searchQuery={searchQuery}
-                    />
-                )}
+                {viewComponent}
             </div>
 
             <Menu id={'sampler-cm'} theme={theme.dark}>
