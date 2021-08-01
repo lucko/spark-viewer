@@ -15,7 +15,11 @@ import MappingsMenu, {
     getMappingsInfo,
     requestMappings,
 } from './sampler/mappings';
-import { labelData, labelDataWithSource } from './sampler/preprocessing';
+import {
+    labelData,
+    labelDataWithSource,
+    generateSourceViews,
+} from './sampler/preprocessing';
 
 import sparkLogo from './assets/spark-logo.svg';
 
@@ -23,7 +27,6 @@ const HOMEPAGE = Symbol();
 const DOWNLOAD = Symbol();
 const LOADING_DATA = Symbol();
 const LOADING_FILE = Symbol();
-const PARSING_DATA = Symbol();
 const FAILED_DATA = Symbol();
 const LOADED_PROFILE_DATA = Symbol();
 const LOADED_HEAP_DATA = Symbol();
@@ -168,6 +171,7 @@ export default function SparkRoot() {
             if (!rawMode) {
                 labelData(data.threads, 0);
                 labelDataWithSource(data);
+                generateSourceViews(data);
             }
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);
@@ -254,9 +258,6 @@ export default function SparkRoot() {
             break;
         case LOADING_FILE:
             contents = <BannerNotice>Loading file...</BannerNotice>;
-            break;
-        case PARSING_DATA:
-            contents = <BannerNotice>Rendering...</BannerNotice>;
             break;
         case FAILED_DATA:
             contents = (

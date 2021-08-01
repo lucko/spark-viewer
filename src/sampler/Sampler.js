@@ -17,8 +17,6 @@ import { Menu, Item, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
 
 export default function Sampler({ data, mappings, exportCallback }) {
-    const { metadata, threads } = data;
-
     const searchQuery = useSearchQuery();
     const highlighted = useHighlight();
 
@@ -39,7 +37,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
     if (view === VIEW_ALL) {
         viewComponent = (
             <AllView
-                threads={threads}
+                threads={data.threads}
                 mappings={mappings}
                 highlighted={highlighted}
                 searchQuery={searchQuery}
@@ -48,12 +46,14 @@ export default function Sampler({ data, mappings, exportCallback }) {
     } else if (view === VIEW_SOURCES_MERGED || view === VIEW_SOURCES_SEPARATE) {
         viewComponent = (
             <SourcesView
-                classSources={data.classSources}
-                threads={threads}
+                data={
+                    view === VIEW_SOURCES_MERGED
+                        ? data.bySource
+                        : data.bySourceSeparate
+                }
                 mappings={mappings}
                 highlighted={highlighted}
                 searchQuery={searchQuery}
-                mergeMode={view === VIEW_SOURCES_MERGED}
             />
         );
     }
@@ -61,7 +61,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
     return (
         <div id="sampler">
             <Controls
-                metadata={metadata}
+                metadata={data.metadata}
                 data={data}
                 exportCallback={exportCallback}
                 view={view}

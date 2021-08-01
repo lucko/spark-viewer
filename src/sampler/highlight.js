@@ -15,8 +15,14 @@ const setMultiOp = func => (set, value) => {
     }
 };
 const setHas = setMultiOp((set, v) => set.has(v));
-const setAdd = setMultiOp((set, v) => set.add(v));
-const setDelete = setMultiOp((set, v) => set.delete(v));
+const setAdd = setMultiOp((set, v) => {
+    set.add(v);
+    return false;
+});
+const setDelete = setMultiOp((set, v) => {
+    set.delete(v);
+    return false;
+});
 
 export function useHighlight() {
     const [highlighted, setHighlighted] = useState(() => {
