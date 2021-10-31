@@ -39,7 +39,7 @@ const CommonMetadata = ({ metadata }) => {
         let avatarUrl;
         if (user.type === CommandSenderData.Type.PLAYER.value) {
             const uuid = user.uniqueId.replace(/-/g, '');
-            avatarUrl = 'https://crafthead.net/avatar/' + uuid + '/20.png';
+            avatarUrl = 'https://crafthead.net/helm/' + uuid + '/20.png';
         } else {
             avatarUrl = 'https://crafthead.net/avatar/Console/20.png';
         }
