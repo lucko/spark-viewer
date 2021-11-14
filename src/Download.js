@@ -18,7 +18,7 @@ export default function Download() {
         (async () => {
             try {
                 const req = await fetch(
-                    `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,artifacts[fileName,relativePath]`
+                    `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,number,artifacts[fileName,relativePath],actions[lastBuiltRevision[SHA1]]`
                 );
                 if (!req.ok) {
                     setStatus(ERROR);
@@ -62,11 +62,25 @@ const DownloadList = ({ info }) => {
             info.url + 'artifact/' + relativePath;
     }
 
+    let commitHash = 'nil';
+    for (const action of info.actions) {
+        if (action._class === 'hudson.plugins.git.util.BuildData') {
+            commitHash = action?.lastBuiltRevision?.SHA1 || 'nil';
+        }
+    }
+
     return (
         <>
             <p>
-                The list below contains links to download the latest version of
-                spark.
+                The latest version is build <b>#{info.number}</b>, which was
+                created at {new Date(info.timestamp).toLocaleString()}.{' '}
+            </p>
+            <p>
+                It is based on commit{' '}
+                <a href={'https://github.com/lucko/spark/commit/' + commitHash}>
+                    {'lucko/spark@' + commitHash.substring(0, 7)}
+                </a>
+                .
             </p>
             <br />
 
