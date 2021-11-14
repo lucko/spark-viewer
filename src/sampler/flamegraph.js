@@ -4,7 +4,7 @@ import { FlameGraph } from 'react-flame-graph';
 import { resolveMappings } from './mappings';
 
 export default function Flame({ flameData, mappings }) {
-    const data = buildFlameGraph(flameData, mappings);
+    const data = toFlameNode(flameData, mappings);
     return (
         <div className="flame" style={{ height: 'calc(100vh - 140px)' }}>
             <AutoSizer>
@@ -22,7 +22,7 @@ export default function Flame({ flameData, mappings }) {
     );
 }
 
-function buildFlameGraph(node, mappings) {
+function toFlameNode(node, mappings) {
     let {
         thread,
         native,
@@ -65,7 +65,7 @@ function buildFlameGraph(node, mappings) {
     obj.children = [];
 
     for (const child of node.children) {
-        obj.children.push(buildFlameGraph(child, mappings));
+        obj.children.push(toFlameNode(child, mappings));
     }
 
     return obj;

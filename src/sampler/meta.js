@@ -36,14 +36,6 @@ const CommonMetadata = ({ metadata }) => {
             .replace(' ', '');
         const startDateStr = start.toLocaleDateString();
 
-        let avatarUrl;
-        if (user.type === CommandSenderData.Type.PLAYER.value) {
-            const uuid = user.uniqueId.replace(/-/g, '');
-            avatarUrl = 'https://crafthead.net/helm/' + uuid + '/20.png';
-        } else {
-            avatarUrl = 'https://crafthead.net/avatar/Console/20.png';
-        }
-
         document.title =
             'Profile' + comment + ' at ' + startTimeStr + ' ' + startDateStr;
 
@@ -61,7 +53,7 @@ const CommonMetadata = ({ metadata }) => {
 
         return (
             <span>
-                Profile {comment} created by <img src={avatarUrl} alt="" />
+                Profile {comment} created by <Avatar user={user} />
                 {user.name} at {startTimeStr} on {startDateStr}, interval{' '}
                 {interval / 1000}ms{ticksOver}
             </span>
@@ -91,4 +83,16 @@ const PlatformMetadata = ({ metadata }) => {
         return <span id="platform-data">{title}</span>;
     }
     return null;
+};
+
+const Avatar = ({ user }) => {
+    let avatarUrl;
+    if (user.type === CommandSenderData.Type.PLAYER.value) {
+        const uuid = user.uniqueId.replace(/-/g, '');
+        avatarUrl = 'https://crafthead.net/helm/' + uuid + '/20.png';
+    } else {
+        avatarUrl = 'https://crafthead.net/avatar/Console/20.png';
+    }
+
+    return <img src={avatarUrl} alt="" />;
 };

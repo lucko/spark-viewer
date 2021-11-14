@@ -28,20 +28,9 @@ export default function Controls({
     searchQuery,
 }) {
     if (flameData) {
-        function exitFlame() {
-            setFlameData(null);
-        }
-
         return (
-            <div id="controls">
-                {!!metadata && <Metadata metadata={metadata} />}
-                <FaButton icon={faTimes} callback={exitFlame} />
-            </div>
+            <FlameControls metadata={metadata} setFlameData={setFlameData} />
         );
-    }
-
-    function toggleSourceView() {
-        setView(VIEWS[(VIEWS.indexOf(view) + 1) % VIEWS.length]);
     }
 
     const sourceViewSupported = !!Object.keys(data.classSources).length;
@@ -51,30 +40,47 @@ export default function Controls({
             {!!metadata && <Metadata metadata={metadata} />}
 
             {sourceViewSupported && (
-                <ToggleViewButton state={view} toggle={toggleSourceView} />
+                <ToggleViewButton view={view} setView={setView} />
             )}
+
             <SearchBar searchQuery={searchQuery} />
-            {exportCallback && (
-                <FaButton icon={faFileExport} callback={exportCallback} />
-            )}
+
+            {exportCallback && <ExportButton callback={exportCallback} />}
         </div>
     );
 }
 
-const ToggleViewButton = ({ state, toggle }) => {
+const FlameControls = ({ metadata, setFlameData }) => {
+    function exitFlame() {
+        setFlameData(null);
+    }
+
+    return (
+        <div id="controls">
+            {!!metadata && <Metadata metadata={metadata} />}
+            <FaButton icon={faTimes} callback={exitFlame} />
+        </div>
+    );
+};
+
+const ToggleViewButton = ({ view, setView }) => {
+    function toggleSourceView() {
+        setView(VIEWS[(VIEWS.indexOf(view) + 1) % VIEWS.length]);
+    }
+
     let label;
-    if (state === VIEW_ALL) {
+    if (view === VIEW_ALL) {
         label = 'all';
-    } else if (state === VIEW_SOURCES_MERGED) {
+    } else if (view === VIEW_SOURCES_MERGED) {
         label = 'sources';
-    } else if (state === VIEW_SOURCES_SEPARATE) {
+    } else if (view === VIEW_SOURCES_SEPARATE) {
         label = '*sources';
     }
 
     return (
         <div
             className="metadata-button banner-notice"
-            onClick={toggle}
+            onClick={toggleSourceView}
             style={{
                 justifyContent: 'space-between',
                 padding: '0 12px',
@@ -85,6 +91,10 @@ const ToggleViewButton = ({ state, toggle }) => {
             <span>{label}</span>
         </div>
     );
+};
+
+const ExportButton = ({ callback }) => {
+    return <FaButton icon={faFileExport} callback={callback} />;
 };
 
 const FaButton = ({ callback, icon }) => {
