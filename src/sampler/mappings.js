@@ -40,6 +40,11 @@ function detectMappings(mappingsInfo, profileData) {
         meta.platform.name &&
         meta.platform.minecraftVersion
     ) {
+        const rc = meta.platform.minecraftVersion.match(/(\d+\.\d+) Release Candidate \d+/);
+        if (rc) {
+            meta.platform.minecraftVersion = rc[1];
+        }
+
         const id =
             meta.platform.name.toLowerCase() +
             '/' +
