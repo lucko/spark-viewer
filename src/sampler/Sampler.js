@@ -9,6 +9,7 @@ import {
     VIEW_SOURCES_SEPARATE,
 } from './views';
 import Flame from './flamegraph';
+import { VersionWarning } from './meta';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
 
@@ -70,6 +71,8 @@ export default function Sampler({ data, mappings, exportCallback }) {
                 setFlameData={setFlameData}
                 searchQuery={searchQuery}
             />
+
+            {!data.metadata.platform && <VersionWarning />}
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 

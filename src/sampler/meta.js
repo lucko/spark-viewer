@@ -1,4 +1,5 @@
 import React from 'react';
+import BannerNotice from '../misc/BannerNotice';
 import { CommandSenderData, PlatformData, SamplerMetadata } from '../proto';
 
 export default function Metadata({ metadata }) {
@@ -96,3 +97,21 @@ const Avatar = ({ user }) => {
 
     return <img src={avatarUrl} alt="" />;
 };
+
+export function VersionWarning() {
+    const warning = (
+        <span role="img" aria-label="warning">
+            ⚠️
+        </span>
+    );
+    return (
+        <BannerNotice style={{ color: 'orange', textAlign: 'center' }}>
+            {warning}
+            <b> This profile was created using an old version of spark! </b>
+            {warning}
+            <br />
+            Some viewer features cannot be supported. Please consider updating
+            to a newer version.
+        </BannerNotice>
+    );
+}

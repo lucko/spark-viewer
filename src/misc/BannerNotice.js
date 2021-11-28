@@ -1,5 +1,9 @@
 import React from 'react';
 
-export default function BannerNotice({ children }) {
-    return <div className="banner-notice">{children}</div>;
+export default function BannerNotice({ children, style = {} }) {
+    return (
+        <div className="banner-notice" style={style}>
+            {children}
+        </div>
+    );
 }
