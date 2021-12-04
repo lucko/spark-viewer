@@ -1,8 +1,8 @@
 import React, { Suspense, useState } from 'react';
 import history from 'history/browser';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
+import SparkRouter from './SparkRouter';
+import SparkPage from './components/SparkPage';
 import BannerNotice from './components/BannerNotice';
 
 import {
@@ -12,33 +12,9 @@ import {
     LOADING_FILE,
     PAGE_NOT_FOUND,
     isViewerStatus,
-} from './statuses';
+} from './status';
 
-const Homepage = React.lazy(() => import('./Homepage'));
-const Download = React.lazy(() => import('./Download'));
 const SparkViewer = React.lazy(() => import('./SparkViewer'));
-
-/**
- * Gets the payload code from the URL.
- * @returns the code, or undefined
- */
-function getUrlCode() {
-    const path = window.location.pathname;
-    const hash = window.location.hash;
-
-    let code;
-    if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
-        code = hash.substring(1);
-        // change URL to remove the hash
-        history.replace({
-            pathname: code,
-            hash: '',
-        });
-    } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
-        code = path.substring(1);
-    }
-    return code;
-}
 
 export default function SparkRoot() {
     // the data code from the URL path
@@ -46,7 +22,7 @@ export default function SparkRoot() {
     // the 'selected' file
     const [selectedFile, setSelectedFile] = useState();
 
-    // the status of this component
+    // the status of the application
     const [status, setStatus] = useState(() => {
         if (code && code === 'download') {
             return DOWNLOAD;
@@ -68,9 +44,9 @@ export default function SparkRoot() {
         return (
             <Suspense
                 fallback={
-                    <Page>
+                    <SparkPage>
                         <BannerNotice>Loading...</BannerNotice>
-                    </Page>
+                    </SparkPage>
                 }
             >
                 <SparkViewer
@@ -81,43 +57,29 @@ export default function SparkRoot() {
                 />
             </Suspense>
         );
+    } else {
+        return <SparkRouter status={status} onFileSelected={onFileSelected} />;
     }
-
-    let contents;
-    switch (status) {
-        case HOMEPAGE:
-            contents = (
-                <Suspense fallback={null}>
-                    <Homepage onFileSelected={onFileSelected} />
-                </Suspense>
-            );
-            break;
-        case DOWNLOAD:
-            contents = (
-                <Suspense fallback={null}>
-                    <Download />
-                </Suspense>
-            );
-            break;
-        case PAGE_NOT_FOUND:
-            contents = <BannerNotice>404 - Page Not Found</BannerNotice>;
-            break;
-        default:
-            contents = (
-                <BannerNotice>Unknown state - this is a bug.</BannerNotice>
-            );
-            break;
-    }
-
-    return <Page>{contents}</Page>;
 }
 
-function Page({ children }) {
-    return (
-        <>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-        </>
-    );
+/**
+ * Gets the payload code from the URL.
+ * @returns the code, or undefined
+ */
+function getUrlCode() {
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+
+    let code;
+    if (path === '/' && /^#[a-zA-Z0-9]+$/.test(hash)) {
+        code = hash.substring(1);
+        // change URL to remove the hash
+        history.replace({
+            pathname: code,
+            hash: '',
+        });
+    } else if (/^\/[a-zA-Z0-9]+$/.test(path)) {
+        code = path.substring(1);
+    }
+    return code;
 }

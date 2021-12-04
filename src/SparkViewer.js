@@ -2,8 +2,8 @@ import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import Pbf from 'pbf';
 import ls from 'local-storage';
 
+import SparkPage from './components/SparkPage';
 import HeaderWithMappings from './components/HeaderWithMappings';
-import Footer from './components/Footer';
 import BannerNotice from './components/BannerNotice';
 
 import { SamplerData, HeapData } from './proto';
@@ -21,10 +21,10 @@ import {
     FAILED_DATA,
     LOADED_PROFILE_DATA,
     LOADED_HEAP_DATA,
-} from './statuses';
+} from './status';
 
-const Heap = React.lazy(() => import('./heap/Heap'));
-const Sampler = React.lazy(() => import('./sampler/Sampler'));
+const Heap = React.lazy(() => import('./heap'));
+const Sampler = React.lazy(() => import('./sampler'));
 
 export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     // if raw output mode is enabled -- '?raw=1' flag in the URL
@@ -207,16 +207,19 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             );
             break;
     }
+
     return (
-        <>
-            <HeaderWithMappings
-                mappingsInfo={mappingsInfo}
-                mappings={mappingsType}
-                setMappings={onMappingsRequest}
-            />
-            <main>{contents}</main>
-            <Footer />
-        </>
+        <SparkPage
+            header={
+                <HeaderWithMappings
+                    mappingsInfo={mappingsInfo}
+                    mappings={mappingsType}
+                    setMappings={onMappingsRequest}
+                />
+            }
+        >
+            {contents}
+        </SparkPage>
     );
 }
 

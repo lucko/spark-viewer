@@ -1,5 +1,5 @@
 import React from 'react';
-import FilePicker from './components/FilePicker';
+import FilePicker from '../components/FilePicker';
 
 export default function Homepage({ onFileSelected }) {
     return (
