@@ -58,7 +58,7 @@ function detectMappings(mappingsInfo, profileData) {
 // to convert the arraybuffer to a JS object
 async function fetchMappings(version, type, schema) {
     const resp = await fetch(
-        MAPPING_DATA_URL + version + '/' + type + '.pbmapping'
+        MAPPING_DATA_URL + version + '/' + type + '.wasm'
     );
     const buf = await resp.arrayBuffer();
     return schema.read(new Pbf(new Uint8Array(buf)));
