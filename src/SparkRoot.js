@@ -87,14 +87,14 @@ export default function SparkRoot() {
     switch (status) {
         case HOMEPAGE:
             contents = (
-                <Suspense fallback={<BannerNotice>Loading...</BannerNotice>}>
+                <Suspense fallback={null}>
                     <Homepage onFileSelected={onFileSelected} />
                 </Suspense>
             );
             break;
         case DOWNLOAD:
             contents = (
-                <Suspense fallback={<BannerNotice>Loading...</BannerNotice>}>
+                <Suspense fallback={null}>
                     <Download />
                 </Suspense>
             );
