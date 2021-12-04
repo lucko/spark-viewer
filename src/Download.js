@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import BannerNotice from './misc/BannerNotice';
+import BannerNotice from './components/BannerNotice';
 
 const WAITING = Symbol();
 const OK = Symbol();

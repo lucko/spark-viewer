@@ -1,5 +1,5 @@
 import React from 'react';
-import BannerNotice from '../misc/BannerNotice';
+import BannerNotice from '../components/BannerNotice';
 import { CommandSenderData, PlatformData, SamplerMetadata } from '../proto';
 
 export default function Metadata({ metadata }) {
