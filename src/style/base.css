@@ -3,6 +3,7 @@
 /* GLOBAL */
 html {
     background-color: #1e2527;
+    color-scheme: dark;
 }
 
 body {
@@ -256,6 +257,11 @@ article h2::before {
     padding: 20px;
     box-sizing: border-box;
     border-radius: 0.5rem;
+}
+
+.flame > div > div {
+    overflow-x: clip !important;
+    overflow-y: auto !important;
 }
 
 /* this feels a bit hacky but I'm not sure the correct way to override this */

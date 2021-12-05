@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FlameGraph } from 'react-flame-graph';
+import { FlameGraph } from '@lucko/react-flame-graph';
 import { resolveMappings } from './mappings';
 
 export default function Flame({ flameData, mappings }) {
@@ -9,27 +9,32 @@ export default function Flame({ flameData, mappings }) {
         <div className="flame" style={{ height: 'calc(100vh - 140px)' }}>
             <AutoSizer>
                 {({ height: autoSizerHeight, width }) => (
-                    <Fragment>
-                        <FlameGraph
-                            data={data}
-                            height={autoSizerHeight}
-                            width={width}
-                        />
-                    </Fragment>
+                    <FlameGraph
+                        data={data}
+                        height={autoSizerHeight}
+                        width={width}
+                    />
                 )}
             </AutoSizer>
         </div>
     );
 }
 
+function simplifyPackageName(packageName, prefix, regex) {
+    if (!packageName) {
+        return packageName;
+    }
+
+    let match = packageName.match(regex);
+    if (match && match.length === 2) {
+        packageName = prefix + match[1];
+    }
+    return packageName;
+}
+
 function toFlameNode(node, mappings) {
-    let {
-        thread,
-        native,
-        className,
-        methodName,
-        packageName,
-    } = resolveMappings(node, mappings);
+    let { thread, native, className, methodName, packageName } =
+        resolveMappings(node, mappings);
 
     const obj = {};
     if (thread) {
@@ -37,20 +42,22 @@ function toFlameNode(node, mappings) {
     } else if (native) {
         obj.name = node.methodName + ' (native)';
     } else {
-        if (packageName) {
-            let match = packageName.match(
-                /^net\.minecraft\.server(?:\.v[0-9R_]+)?\.(.*)$/
-            );
-            if (match && match.length === 2) {
-                packageName = 'nms.' + match[1];
-            }
-            match = packageName.match(
-                /^org\.bukkit\.craftbukkit(?:\.v[0-9R_]+)?\.(.*)$/
-            );
-            if (match && match.length === 2) {
-                packageName = 'obc.' + match[1];
-            }
-        }
+        packageName = simplifyPackageName(
+            packageName,
+            'nms.',
+            /^net\.minecraft\.server(?:\.v[0-9R_]+)?\.(.*)$/
+        );
+        packageName = simplifyPackageName(
+            packageName,
+            'nm.',
+            /^net\.minecraft(?:\.v[0-9R_]+)?\.(.*)$/
+        );
+        packageName = simplifyPackageName(
+            packageName,
+            'obc.',
+            /^org\.bukkit\.craftbukkit(?:\.v[0-9R_]+)?\.(.*)$/
+        );
+
         obj.name =
             (packageName ? packageName : '') +
             className +

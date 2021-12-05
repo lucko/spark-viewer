@@ -5,6 +5,7 @@ import {
     faTimes,
     faEye,
     faFileExport,
+    faFire,
 } from '@fortawesome/free-solid-svg-icons';
 
 import Metadata from './meta';
@@ -31,9 +32,36 @@ export default function Controls({
         return (
             <FlameControls metadata={metadata} setFlameData={setFlameData} />
         );
+    } else {
+        return (
+            <StandardControls
+                metadata={metadata}
+                data={data}
+                exportCallback={exportCallback}
+                view={view}
+                setView={setView}
+                setFlameData={setFlameData}
+                searchQuery={searchQuery}
+            />
+        );
     }
+}
 
+const StandardControls = ({
+    metadata,
+    data,
+    exportCallback,
+    view,
+    setView,
+    setFlameData,
+    searchQuery,
+}) => {
     const sourceViewSupported = !!Object.keys(data.classSources).length;
+
+    let flameCallback;
+    if (data.threads.length === 1) {
+        flameCallback = () => setFlameData(data.threads[0]);
+    }
 
     return (
         <div id="controls">
@@ -45,10 +73,12 @@ export default function Controls({
 
             <SearchBar searchQuery={searchQuery} />
 
+            {flameCallback && <FlameButton callback={flameCallback} />}
+
             {exportCallback && <ExportButton callback={exportCallback} />}
         </div>
     );
-}
+};
 
 const FlameControls = ({ metadata, setFlameData }) => {
     function exitFlame() {
@@ -95,6 +125,10 @@ const ToggleViewButton = ({ view, setView }) => {
 
 const ExportButton = ({ callback }) => {
     return <FaButton icon={faFileExport} callback={callback} />;
+};
+
+const FlameButton = ({ callback }) => {
+    return <FaButton icon={faFire} callback={callback} />;
 };
 
 const FaButton = ({ callback, icon }) => {
