@@ -113,17 +113,6 @@ const DownloadList = ({ info }) => {
             />
             <DownloadInfo
                 artifacts={artifacts}
-                name="Forge"
-                comment="MC 1.12.2"
-                artifact="spark-forge1122"
-                installDir="mods"
-                controls={{
-                    spark: 'mod (server-side)',
-                    sparkc: 'mod (client-side)',
-                }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
                 name="Sponge"
                 comment="API 6/7"
                 artifact="spark"
