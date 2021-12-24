@@ -41,7 +41,7 @@ export default function SearchBar({ searchQuery }) {
 }
 
 function nodeMatchesQuery(query, node) {
-    if (!node.className || !node.methodName) {
+    if (node.className === undefined || node.methodName === undefined) {
         return node.name.toLowerCase().includes(query);
     } else {
         return (
