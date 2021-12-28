@@ -2,7 +2,124 @@ syntax = "proto3";
 
 package spark;
 
-message CommandSenderData {
+// -----------------------------------------------------------------------------------------------------
+// spark
+// -----------------------------------------------------------------------------------------------------
+
+message PlatformMetadata {
+  Type type = 1;
+  string name = 2;
+  string version = 3;
+  string minecraftVersion = 4; // optional
+  int32 sparkVersion = 7;
+
+  // replaced
+  reserved 5, 6;
+
+  enum Type {
+    SERVER = 0;
+    CLIENT = 1;
+    PROXY = 2;
+  }
+}
+
+message SystemStatistics {
+  Cpu cpu = 1;
+  Memory memory = 2;
+  map<string, Gc> gc = 3;
+  Disk disk = 4;
+  Os os = 5;
+  Java java = 6;
+  int64 uptime = 7;
+
+  message Cpu {
+    int32 threads = 1;
+    Usage processUsage = 2;
+    Usage systemUsage = 3;
+
+    message Usage {
+      double last1m = 1;
+      double last15m = 2;
+    }
+  }
+
+  message Memory {
+    MemoryPool physical = 1;
+    MemoryPool swap = 2;
+
+    message MemoryPool {
+      int64 used = 1;
+      int64 total = 2;
+    }
+  }
+
+  message Gc {
+    int64 total = 1;
+    double avgTime = 2;
+    double avgFrequency = 3;
+  }
+
+  message Disk {
+    int64 used = 1;
+    int64 total = 2;
+  }
+
+  message Os {
+    string arch = 1;
+    string name = 2;
+    string version = 3;
+  }
+
+  message Java {
+    string vendor = 1;
+    string version = 2;
+    string vendorVersion = 3;
+  }
+}
+
+message PlatformStatistics {
+  Memory memory = 1;
+  map<string, Gc> gc = 2;
+  int64 uptime = 3;
+  Tps tps = 4; // optional
+  Mspt mspt = 5; // optional
+
+  message Memory {
+    MemoryPool heap = 1;
+
+    message MemoryPool {
+      int64 used = 1;
+      int64 total = 2;
+    }
+  }
+
+  message Gc {
+    int64 total = 1;
+    double avgTime = 2;
+    double avgFrequency = 3;
+  }
+
+  message Tps {
+    double last1m = 1;
+    double last5m = 2;
+    double last15m = 3;
+  }
+
+  message Mspt {
+    Values last1m = 1;
+    Values last5m = 2;
+
+    message Values {
+      double mean = 1;
+      double max = 2;
+      double min = 3;
+      double median = 4;
+      double percentile95 = 5;
+    }
+  }
+}
+
+message CommandSenderMetadata {
   Type type = 1;
   string name = 2;
   string uniqueId = 3;
@@ -13,27 +130,9 @@ message CommandSenderData {
   }
 }
 
-message MemoryData {
-  int64 used = 1;
-  int64 committed = 2;
-  int64 max = 3;
-}
-
-message PlatformData {
-  Type type = 1;
-  string name = 2;
-  string version = 3;
-  string minecraftVersion = 4; // optional
-
-  int32 nCpus = 5; // optional
-  MemoryData heapUsage = 6; // optional
-
-  enum Type {
-    SERVER = 0;
-    CLIENT = 1;
-    PROXY = 2;
-  }
-}
+// -----------------------------------------------------------------------------------------------------
+// spark_heap
+// -----------------------------------------------------------------------------------------------------
 
 message HeapData {
   HeapMetadata metadata = 1;
@@ -41,8 +140,10 @@ message HeapData {
 }
 
 message HeapMetadata {
-  CommandSenderData user = 1;
-  PlatformData platform = 2;
+  CommandSenderMetadata user = 1;
+  PlatformMetadata platform = 2;
+  PlatformStatistics platformStatistics = 3;
+  SystemStatistics systemStatistics = 4;
 }
 
 message HeapEntry {
@@ -52,6 +153,10 @@ message HeapEntry {
   string type = 4;
 }
 
+// -----------------------------------------------------------------------------------------------------
+// spark_sampler
+// -----------------------------------------------------------------------------------------------------
+
 message SamplerData {
   SamplerMetadata metadata = 1;
   repeated ThreadNode threads = 2;
@@ -59,13 +164,15 @@ message SamplerData {
 }
 
 message SamplerMetadata {
-  CommandSenderData user = 1;
+  CommandSenderMetadata user = 1;
   int64 startTime = 2;
   int32 interval = 3;
   ThreadDumper threadDumper = 4;
   DataAggregator dataAggregator = 5;
   string comment = 6;
-  PlatformData platform = 7;
+  PlatformMetadata platform = 7;
+  PlatformStatistics platformStatistics = 8;
+  SystemStatistics systemStatistics = 9;
 
   message ThreadDumper {
     Type type = 1;
@@ -97,6 +204,12 @@ message SamplerMetadata {
   }
 }
 
+message ThreadNode {
+  string name = 1;
+  double time = 2;
+  repeated StackTraceNode children = 3;
+}
+
 message StackTraceNode {
   double time = 1;
   repeated StackTraceNode children = 2;
@@ -107,13 +220,11 @@ message StackTraceNode {
   string methodDesc = 7; // optional
 }
 
-message ThreadNode {
-  string name = 1;
-  double time = 2;
-  repeated StackTraceNode children = 3;
-}
 
+// -----------------------------------------------------------------------------------------------------
 // Mappings
+// -----------------------------------------------------------------------------------------------------
+
 message BukkitMappings {
   map<string, ClassMapping> classes = 1;
 }

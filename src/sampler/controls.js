@@ -6,9 +6,10 @@ import {
     faEye,
     faFileExport,
     faFire,
+    faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
-import Metadata from './meta';
+import { MetadataTitle } from './meta';
 import SearchBar from './search';
 
 import {
@@ -21,6 +22,7 @@ import {
 export default function Controls({
     metadata,
     data,
+    showMetadataCallback,
     exportCallback,
     view,
     setView,
@@ -37,6 +39,7 @@ export default function Controls({
             <StandardControls
                 metadata={metadata}
                 data={data}
+                showMetadataCallback={showMetadataCallback}
                 exportCallback={exportCallback}
                 view={view}
                 setView={setView}
@@ -50,6 +53,7 @@ export default function Controls({
 const StandardControls = ({
     metadata,
     data,
+    showMetadataCallback,
     exportCallback,
     view,
     setView,
@@ -65,7 +69,11 @@ const StandardControls = ({
 
     return (
         <div id="controls">
-            {!!metadata && <Metadata metadata={metadata} />}
+            {!!showMetadataCallback && (
+                <ShowInfoButton callback={showMetadataCallback} />
+            )}
+
+            <MetadataTitle metadata={metadata} />
 
             {sourceViewSupported && (
                 <ToggleViewButton view={view} setView={setView} />
@@ -87,10 +95,14 @@ const FlameControls = ({ metadata, setFlameData }) => {
 
     return (
         <div id="controls">
-            {!!metadata && <Metadata metadata={metadata} />}
+            <MetadataTitle metadata={metadata} />
             <FaButton icon={faTimes} callback={exitFlame} />
         </div>
     );
+};
+
+const ShowInfoButton = ({ callback }) => {
+    return <FaButton icon={faInfoCircle} callback={callback} />;
 };
 
 const ToggleViewButton = ({ view, setView }) => {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatBytes } from '../misc/util';
 
 export default function Heap({ data }) {
     const { entries } = data;
@@ -67,16 +68,3 @@ const HeapEntry = ({ entry, instances, size }) => {
         </tr>
     );
 };
-
-function formatBytes(bytes) {
-    if (bytes === 0) {
-        return '0 bytes';
-    }
-    const sizes = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    const sizeIndex = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (
-        parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(2)) +
-        ' ' +
-        sizes[sizeIndex]
-    );
-}

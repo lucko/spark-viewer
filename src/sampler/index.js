@@ -9,7 +9,9 @@ import {
     VIEW_SOURCES_SEPARATE,
 } from './views';
 import Flame from './flamegraph';
-import { VersionWarning } from './meta';
+import { MetadataDetail, VersionWarning } from './meta';
+import Widgets from './widgets';
+
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
 
@@ -23,6 +25,11 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
+
+    const [showMetadataDetail, setShowMetadataDetail] = useState(false);
+    const showMetadataCallback = !!data.metadata.platform
+        ? () => setShowMetadataDetail(!showMetadataDetail)
+        : null;
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -64,6 +71,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
             <Controls
                 metadata={data.metadata}
                 data={data}
+                showMetadataCallback={showMetadataCallback}
                 exportCallback={exportCallback}
                 view={view}
                 setView={setView}
@@ -73,6 +81,17 @@ export default function Sampler({ data, mappings, exportCallback }) {
             />
 
             {!data.metadata.platform && <VersionWarning />}
+
+            {!!data.metadata.platformStatistics && (
+                <Widgets
+                    metadata={data.metadata}
+                    expanded={showMetadataDetail}
+                />
+            )}
+
+            {!!data.metadata.platform && showMetadataDetail && (
+                <MetadataDetail metadata={data.metadata} />
+            )}
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 

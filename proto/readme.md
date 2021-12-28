@@ -2,7 +2,7 @@ The `.proto` file is compiled to Javascript using:
 
 ```bash
 sudo npm install -g pbf
-pbf spark.proto --browser --no-write >> protos.js
+pbf spark.proto --no-write >> protos.js
 ```
 
 Resultant JavaScript file is `protos.js`.
