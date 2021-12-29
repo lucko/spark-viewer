@@ -9,7 +9,7 @@ export default function HeaderWithMappings({
     setMappings,
 }) {
     return (
-        <Header isViewer={isViewer} title="spark-viewer">
+        <Header isViewer={isViewer} title="spark viewer">
             {!!mappingsInfo && (
                 <MappingsMenu {...{ mappingsInfo, mappings, setMappings }} />
             )}
