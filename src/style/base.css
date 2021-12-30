@@ -356,18 +356,6 @@ select {
     justify-content: center;
 }
 
-.metadata-detail {
-    margin-top: 0;
-}
-
-.metadata-detail p {
-    margin: 0;
-}
-
-.metadata-detail p span {
-    color: #fff;
-}
-
 .searchbar {
     padding: 8px 8px 8px 28px;
     margin: 12px 0;
@@ -381,6 +369,23 @@ select {
 .no-results {
     font-size: 130%;
     color: #800000;
+}
+
+.metadata-and-widgets {
+    max-width: 1900px;
+    margin: auto;
+}
+
+.metadata-detail {
+    margin-top: 0;
+}
+
+.metadata-detail p {
+    margin: 0;
+}
+
+.metadata-detail p span {
+    color: #fff;
 }
 
 .widgets {

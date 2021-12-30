@@ -82,16 +82,18 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
             {!data.metadata.platform && <VersionWarning />}
 
-            {!!data.metadata.platformStatistics && (
-                <Widgets
-                    metadata={data.metadata}
-                    expanded={showMetadataDetail}
-                />
-            )}
+            <div className={showMetadataDetail ? 'metadata-and-widgets' : ''}>
+                {!!data.metadata.platformStatistics && (
+                    <Widgets
+                        metadata={data.metadata}
+                        expanded={showMetadataDetail}
+                    />
+                )}
 
-            {!!data.metadata.platform && showMetadataDetail && (
-                <MetadataDetail metadata={data.metadata} />
-            )}
+                {!!data.metadata.platform && showMetadataDetail && (
+                    <MetadataDetail metadata={data.metadata} />
+                )}
+            </div>
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 

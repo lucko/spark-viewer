@@ -32,7 +32,7 @@ export default function Widgets({ metadata, expanded }) {
                 return (
                     <GcWidget
                         gc={data}
-                        title="GCs During"
+                        title="during"
                         label={label}
                         key={label}
                     />
@@ -42,7 +42,7 @@ export default function Widgets({ metadata, expanded }) {
                 return (
                     <GcWidget
                         gc={data}
-                        title="GCs All"
+                        title="all"
                         label={label}
                         key={'system ' + label}
                     />
@@ -251,7 +251,7 @@ const GcWidget = ({ gc, title, label }) => {
     // thresholds taken from aikar/timings
     // https://github.com/aikar/timings/blob/master/src/js/ui/ServerInfo.jsx#L20
     if (label === 'G1 Young Generation') {
-        label = 'young gen';
+        label = 'G1 Young';
         warningLevels = {
             time: {
                 red: 150,
@@ -263,7 +263,7 @@ const GcWidget = ({ gc, title, label }) => {
             },
         };
     } else if (label === 'G1 Old Generation') {
-        label = 'old gen';
+        label = 'G1 Old';
         warningLevels = {
             time: {
                 red: 50,
@@ -349,7 +349,7 @@ const GcWidget = ({ gc, title, label }) => {
     };
 
     return (
-        <Widget title={title} label={label}>
+        <Widget title="GC" label={label + ', ' + title}>
             <WidgetValue
                 value={gc.total}
                 label="total"
