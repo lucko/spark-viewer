@@ -174,6 +174,7 @@ const MsptWidget = ({ mspt }) => {
     return (
         <Widget title="MSPT" formatter={formatter}>
             <WidgetValue value={mspt.last5m.min} label="min" />
+            <WidgetValue value={mspt.last5m.median} label="med" />
             <WidgetValue value={mspt.last5m.percentile95} label="95%ile" />
             <WidgetValue value={mspt.last5m.max} label="max" />
         </Widget>

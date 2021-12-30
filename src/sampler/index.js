@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 import '../style/sampler.scss';
 
+import classNames from 'classnames';
+
 import Controls from './controls';
 import { AllView, SourcesView, VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
 import Flame from './flamegraph';
@@ -14,7 +16,6 @@ import { useSearchQuery } from './search';
 // context menu
 import { Menu, Item, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
-import classNames from 'classnames';
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
