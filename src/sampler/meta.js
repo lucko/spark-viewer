@@ -58,10 +58,12 @@ export function MetadataDetail({ metadata }) {
                 running version &quot;
                 <span>{platform.version}</span>&quot;.
             </p>
-            <p>
-                The detected Minecraft version is &quot;
-                <span>{platform.minecraftVersion}</span>&quot;.
-            </p>
+            {platform.minecraftVersion && (
+                <p>
+                    The detected Minecraft version is &quot;
+                    <span>{platform.minecraftVersion}</span>&quot;.
+                </p>
+            )}
             {!!systemStatistics && (
                 <>
                     <p>
@@ -72,6 +74,12 @@ export function MetadataDetail({ metadata }) {
                         <span>{systemStatistics.cpu.threads}</span> CPU threads
                         available.
                     </p>
+                    {systemStatistics.cpu.modelName && (
+                        <p>
+                            The CPU is described as an{' '}
+                            <span>{systemStatistics.cpu.modelName}</span>.
+                        </p>
+                    )}
                     <p>
                         The process is using Java{' '}
                         <span>{systemStatistics.java.version}</span> (
@@ -82,6 +90,26 @@ export function MetadataDetail({ metadata }) {
                         The current process uptime is{' '}
                         <span>{formatDuration(systemStatistics.uptime)}</span>.
                     </p>
+                    {systemStatistics.java.vmArgs && (
+                        <>
+                            <br />
+                            <p>
+                                <span>
+                                    The JVM was started with the following
+                                    arguments
+                                </span>
+                                : <br />
+                                <div
+                                    style={{
+                                        maxWidth: '1000px',
+                                        display: 'inline-block',
+                                    }}
+                                >
+                                    {systemStatistics.java.vmArgs}
+                                </div>
+                            </p>
+                        </>
+                    )}
                 </>
             )}
         </div>

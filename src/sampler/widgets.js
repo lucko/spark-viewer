@@ -83,10 +83,10 @@ const WidgetSingleValue = ({ value, total, formatter }) => {
     const { color, format } = formatter ?? useContext(WidgetFormatter);
 
     const percent = (value / total) * 100;
-    const formattedPercent =
+    const formattedPercent = percent ?
         percent.toLocaleString('en-US', {
             maximumFractionDigits: 2,
-        }) + '%';
+        }) + '%' : '';
 
     return (
         <div className="widget-value">

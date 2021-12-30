@@ -89,7 +89,7 @@ SystemStatistics.Cpu = {};
 SystemStatistics.Cpu.read = function (pbf, end) {
     return pbf.readFields(
         SystemStatistics.Cpu._readField,
-        { threads: 0, processUsage: null, systemUsage: null },
+        { threads: 0, processUsage: null, systemUsage: null, modelName: '' },
         end
     );
 };
@@ -105,6 +105,7 @@ SystemStatistics.Cpu._readField = function (tag, obj, pbf) {
             pbf,
             pbf.readVarint() + pbf.pos
         );
+    else if (tag === 4) obj.modelName = pbf.readString();
 };
 
 // SystemStatistics.Cpu.Usage ========================================
@@ -220,7 +221,7 @@ SystemStatistics.Java = {};
 SystemStatistics.Java.read = function (pbf, end) {
     return pbf.readFields(
         SystemStatistics.Java._readField,
-        { vendor: '', version: '', vendorVersion: '' },
+        { vendor: '', version: '', vendorVersion: '', vmArgs: '' },
         end
     );
 };
@@ -228,6 +229,7 @@ SystemStatistics.Java._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.vendor = pbf.readString();
     else if (tag === 2) obj.version = pbf.readString();
     else if (tag === 3) obj.vendorVersion = pbf.readString();
+    else if (tag === 4) obj.vmArgs = pbf.readString();
 };
 
 // SystemStatistics._FieldEntry3 ========================================
