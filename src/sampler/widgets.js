@@ -285,6 +285,10 @@ const GcWidget = ({ gc, title, label }) => {
                 yellow: 2000, // 2s
             },
         };
+    } else if (label.startsWith('Shenandoah ')) {
+        // 'Shenandoah Pauses' => 'Shen Pauses'
+        // 'Shenandoah Cycles' => 'Shen Cycles'
+        label = 'Shen ' + label.substring('Shenandoah '.length)
     }
 
     const timeFormatter = {
