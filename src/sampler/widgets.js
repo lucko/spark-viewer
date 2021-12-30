@@ -238,8 +238,8 @@ const GcWidget = ({ gc, title, label }) => {
     let warningLevels = {
         // if a GC takes > the time in ms
         time: {
-            red: 50,
-            yellow: 30,
+            red: 150,
+            yellow: 50,
         },
         // if the time between GCs is < the time in ms
         frequency: {
@@ -248,18 +248,41 @@ const GcWidget = ({ gc, title, label }) => {
         },
     };
 
+    // thresholds taken from aikar/timings
+    // https://github.com/aikar/timings/blob/master/src/js/ui/ServerInfo.jsx#L20
     if (label === 'G1 Young Generation') {
         label = 'young gen';
+        warningLevels = {
+            time: {
+                red: 150,
+                yellow: 75,
+            },
+            frequency: {
+                red: 2000, // 2s
+                yellow: 5000, // 5s
+            },
+        };
     } else if (label === 'G1 Old Generation') {
         label = 'old gen';
         warningLevels = {
             time: {
-                red: 100,
-                yellow: 50,
+                red: 50,
+                yellow: 30,
             },
             frequency: {
-                red: 30000, // 30s
-                yellow: 60000, // 1m
+                // always show a old gen as red
+                red: 10000000000,
+            },
+        };
+    } else if (label === 'ZGC') {
+        warningLevels = {
+            time: {
+                red: 15,
+                yellow: 10,
+            },
+            frequency: {
+                red: 500, // 0.5s
+                yellow: 2000, // 2s
             },
         };
     }
@@ -278,6 +301,7 @@ const GcWidget = ({ gc, title, label }) => {
             return (
                 value.toLocaleString('en-US', {
                     maximumSignificantDigits: 2,
+                    useGrouping: false,
                 }) + 'ms'
             );
         },
@@ -300,6 +324,7 @@ const GcWidget = ({ gc, title, label }) => {
                 return (
                     value.toLocaleString('en-US', {
                         maximumSignificantDigits: 2,
+                        useGrouping: false,
                     }) + 'ms'
                 );
             }
