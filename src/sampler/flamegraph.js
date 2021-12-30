@@ -1,19 +1,17 @@
 import React from 'react';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import { AutoSizer } from 'react-virtualized';
 import { FlameGraph } from '@lucko/react-flame-graph';
 import { resolveMappings } from './mappings';
 
 export default function Flame({ flameData, mappings }) {
-    const data = toFlameNode(flameData, mappings);
+    const [data, depth] = toFlameNode(flameData, mappings);
+    const calcHeight = Math.min(depth * 20, 5000);
+
     return (
-        <div className="flame" style={{ height: 'calc(100vh - 140px)' }}>
+        <div className="flame" style={{ height: `${calcHeight}px` }}>
             <AutoSizer>
-                {({ height: autoSizerHeight, width }) => (
-                    <FlameGraph
-                        data={data}
-                        height={autoSizerHeight}
-                        width={width}
-                    />
+                {({ width }) => (
+                    <FlameGraph data={data} height={calcHeight} width={width} />
                 )}
             </AutoSizer>
         </div>
@@ -71,9 +69,13 @@ function toFlameNode(node, mappings) {
     obj.value = node.time;
     obj.children = [];
 
+    let depth = 1;
+
     for (const child of node.children) {
-        obj.children.push(toFlameNode(child, mappings));
+        const [childData, childDepth] = toFlameNode(child, mappings);
+        depth = Math.max(depth, childDepth + 1);
+        obj.children.push(childData);
     }
 
-    return obj;
+    return [obj, depth];
 }
