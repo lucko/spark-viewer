@@ -4,7 +4,7 @@ import ls from 'local-storage';
 
 import SparkPage from './components/SparkPage';
 import HeaderWithMappings from './components/HeaderWithMappings';
-import BannerNotice from './components/BannerNotice';
+import TextBox from './components/TextBox';
 
 import { SamplerData, HeapData } from './proto';
 
@@ -170,22 +170,22 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     let contents;
     switch (status) {
         case LOADING_DATA:
-            contents = <BannerNotice>Downloading...</BannerNotice>;
+            contents = <TextBox>Downloading...</TextBox>;
             break;
         case LOADING_FILE:
-            contents = <BannerNotice>Loading file...</BannerNotice>;
+            contents = <TextBox>Loading file...</TextBox>;
             break;
         case FAILED_DATA:
             contents = (
-                <BannerNotice>
+                <TextBox>
                     Unable to load the data. Perhaps it expired? Are you using a
                     recent version?
-                </BannerNotice>
+                </TextBox>
             );
             break;
         case LOADED_PROFILE_DATA:
             contents = (
-                <Suspense fallback={<BannerNotice>Loading...</BannerNotice>}>
+                <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Sampler
                         data={loaded}
                         mappings={mappings}
@@ -196,14 +196,14 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             break;
         case LOADED_HEAP_DATA:
             contents = (
-                <Suspense fallback={<BannerNotice>Loading...</BannerNotice>}>
+                <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Heap data={loaded} />
                 </Suspense>
             );
             break;
         default:
             contents = (
-                <BannerNotice>Unknown state - this is a bug.</BannerNotice>
+                <TextBox>Unknown state - this is a bug.</TextBox>
             );
             break;
     }

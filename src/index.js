@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './style/base.css';
 import SparkRoot from './SparkRoot';
+
+import './style/base.scss';
+import './style/page.scss';
 
 ReactDOM.render(
     <React.StrictMode>

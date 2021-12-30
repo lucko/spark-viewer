@@ -11,7 +11,7 @@ export default function FilePicker({ callback }) {
     });
 
     return (
-        <div {...getRootProps({ className: 'banner-notice file-picker' })}>
+        <div {...getRootProps({ className: 'text-box file-picker' })}>
             <input {...getInputProps()} />
             <p>Drag 'n' drop a profile/heap file here or click to select</p>
             <em>

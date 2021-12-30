@@ -3,7 +3,7 @@ import history from 'history/browser';
 
 import SparkRouter from './SparkRouter';
 import SparkPage from './components/SparkPage';
-import BannerNotice from './components/BannerNotice';
+import TextBox from './components/TextBox';
 
 import {
     HOMEPAGE,
@@ -45,7 +45,7 @@ export default function SparkRoot() {
             <Suspense
                 fallback={
                     <SparkPage>
-                        <BannerNotice>Loading...</BannerNotice>
+                        <TextBox>Loading...</TextBox>
                     </SparkPage>
                 }
             >

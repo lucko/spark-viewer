@@ -13,16 +13,14 @@ import { MetadataTitle } from './meta';
 import SearchBar from './search';
 
 import {
-    VIEWS,
     VIEW_ALL,
     VIEW_SOURCES_MERGED,
-    VIEW_SOURCES_SEPARATE,
 } from './views';
 
 export default function Controls({
-    metadata,
     data,
-    showMetadataCallback,
+    showMetadataDetail,
+    setShowMetadataDetail,
     exportCallback,
     view,
     setView,
@@ -30,129 +28,155 @@ export default function Controls({
     setFlameData,
     searchQuery,
 }) {
-    if (flameData) {
-        return (
-            <FlameControls metadata={metadata} setFlameData={setFlameData} />
-        );
-    } else {
-        return (
-            <StandardControls
+    const { metadata } = data;
+
+    return (
+        <div className="controls">
+            <ShowInfoButton
                 metadata={metadata}
-                data={data}
-                showMetadataCallback={showMetadataCallback}
-                exportCallback={exportCallback}
-                view={view}
-                setView={setView}
-                setFlameData={setFlameData}
-                searchQuery={searchQuery}
+                showMetadataDetail={showMetadataDetail}
+                setShowMetadataDetail={setShowMetadataDetail}
             />
-        );
-    }
+            <MetadataTitle metadata={metadata} />
+            {!flameData ? (
+                <>
+                    <ToggleViewButton
+                        data={data}
+                        view={view}
+                        setView={setView}
+                    />
+                    <SearchBar searchQuery={searchQuery} />
+                    <FlameButton data={data} setFlameData={setFlameData} />
+                    <ExportButton exportCallback={exportCallback} />
+                </>
+            ) : (
+                <ExitFlameButton setFlameData={setFlameData} />
+            )}
+        </div>
+    );
 }
 
-const StandardControls = ({
+const ShowInfoButton = ({
     metadata,
-    data,
-    showMetadataCallback,
-    exportCallback,
-    view,
-    setView,
-    setFlameData,
-    searchQuery,
+    showMetadataDetail,
+    setShowMetadataDetail,
 }) => {
-    const sourceViewSupported = !!Object.keys(data.classSources).length;
+    if (!metadata.platform) {
+        return null;
+    }
 
-    let flameCallback;
-    if (data.threads.length === 1) {
-        flameCallback = () => setFlameData(data.threads[0]);
+    function onClick() {
+        setShowMetadataDetail(!showMetadataDetail);
     }
 
     return (
-        <div id="controls">
-            {!!showMetadataCallback && (
-                <ShowInfoButton callback={showMetadataCallback} />
-            )}
-
-            <MetadataTitle metadata={metadata} />
-
-            {sourceViewSupported && (
-                <ToggleViewButton view={view} setView={setView} />
-            )}
-
-            <SearchBar searchQuery={searchQuery} />
-
-            {flameCallback && <FlameButton callback={flameCallback} />}
-
-            {exportCallback && <ExportButton callback={exportCallback} />}
-        </div>
+        <FaButton
+            icon={faInfoCircle}
+            onClick={onClick}
+            title={
+                !showMetadataDetail
+                    ? 'Click to show more information and statistics about the system'
+                    : 'Click to hide extra information'
+            }
+            style={{ color: showMetadataDetail ? 'white' : undefined }}
+        />
     );
 };
 
-const FlameControls = ({ metadata, setFlameData }) => {
-    function exitFlame() {
-        setFlameData(null);
+const ToggleViewButton = ({ data, view, setView }) => {
+    if (!Object.keys(data.classSources).length) {
+        return null;
     }
 
-    return (
-        <div id="controls">
-            <MetadataTitle metadata={metadata} />
-            <FaButton icon={faTimes} callback={exitFlame} />
-        </div>
-    );
-};
-
-const ShowInfoButton = ({ callback }) => {
-    return <FaButton icon={faInfoCircle} callback={callback} />;
-};
-
-const ToggleViewButton = ({ view, setView }) => {
-    function toggleSourceView() {
-        setView(VIEWS[(VIEWS.indexOf(view) + 1) % VIEWS.length]);
+    function onClick() {
+        if (view === VIEW_ALL) {
+            setView(VIEW_SOURCES_MERGED);
+        } else {
+            setView(VIEW_ALL);
+        }
     }
 
     let label;
     if (view === VIEW_ALL) {
         label = 'all';
-    } else if (view === VIEW_SOURCES_MERGED) {
+    } else {
         label = 'sources';
-    } else if (view === VIEW_SOURCES_SEPARATE) {
-        label = '*sources';
     }
 
     return (
-        <div
-            className="metadata-button banner-notice"
-            onClick={toggleSourceView}
+        <FaButton
+            icon={faEye}
+            onClick={onClick}
+            title="Toggle the view"
             style={{
                 justifyContent: 'space-between',
                 padding: '0 12px',
                 width: '9em',
             }}
         >
-            <FontAwesomeIcon icon={faEye} />
             <span>{label}</span>
-        </div>
+        </FaButton>
     );
 };
 
-const ExportButton = ({ callback }) => {
-    return <FaButton icon={faFileExport} callback={callback} />;
+const ExportButton = ({ exportCallback }) => {
+    if (!exportCallback) {
+        return null;
+    }
+    return (
+        <FaButton
+            icon={faFileExport}
+            onClick={exportCallback}
+            title="Export this profile to a local file"
+        />
+    );
 };
 
-const FlameButton = ({ callback }) => {
-    return <FaButton icon={faFire} callback={callback} />;
+const FlameButton = ({ data, setFlameData }) => {
+    if (data.threads.length !== 1) {
+        return null;
+    }
+
+    function onClick() {
+        setFlameData(data.threads[0]);
+    }
+
+    return (
+        <FaButton
+            icon={faFire}
+            onClick={onClick}
+            title="View the profile as a Flame Graph"
+        />
+    );
 };
 
-const FaButton = ({ callback, icon }) => {
+const ExitFlameButton = ({ setFlameData }) => {
+    function onClick() {
+        setFlameData(null);
+    }
+
+    return (
+        <FaButton
+            icon={faTimes}
+            onClick={onClick}
+            title="Exit the Flame Graph view"
+        />
+    );
+};
+
+const FaButton = ({ icon, onClick, title, style, children }) => {
     return (
         <div
-            className="metadata-button banner-notice"
-            onClick={callback}
+            className="button text-box"
+            onClick={onClick}
+            title={title}
             style={{
                 width: '36px',
+                ...style,
             }}
         >
             <FontAwesomeIcon icon={icon} />
+            {children}
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import BannerNotice from '../components/BannerNotice';
+import TextBox from '../components/TextBox';
 import { formatDuration } from '../misc/util';
 import {
     CommandSenderMetadata,
@@ -35,7 +35,7 @@ export function MetadataTitle({ metadata }) {
     }
 
     return (
-        <div className="banner-notice metadata">
+        <div className="text-box metadata-title">
             <span>
                 Profile {comment} created by <Avatar user={user} />
                 {user.name} at {startTimeStr} on {startDateStr}, interval{' '}
@@ -52,7 +52,7 @@ export function MetadataDetail({ metadata }) {
     ].toLowerCase();
 
     return (
-        <div className="banner-notice metadata-detail">
+        <div className="text-box metadata-detail">
             <p>
                 The platform is a <span>{platform.name}</span> {platformType}{' '}
                 running version &quot;
@@ -135,13 +135,13 @@ export function VersionWarning() {
         </span>
     );
     return (
-        <BannerNotice style={{ color: 'orange', textAlign: 'center' }}>
+        <TextBox style={{ color: 'orange', textAlign: 'center' }}>
             {warning}
             <b> This profile was created using an old version of spark! </b>
             {warning}
             <br />
             Some viewer features cannot be supported. Please consider updating
             to a newer version.
-        </BannerNotice>
+        </TextBox>
     );
 }

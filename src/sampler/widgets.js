@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { useContext } from 'react';
 
 import { formatBytes } from '../misc/util';
@@ -19,7 +20,12 @@ export default function Widgets({ metadata, expanded }) {
     const { platformStatistics: platform, systemStatistics: system } = metadata;
 
     return (
-        <div className={expanded ? 'widgets' : 'widgets widgets-hide'}>
+        <div
+            className={classNames({
+                widgets: true,
+                hide: !expanded,
+            })}
+        >
             {platform.tps && <TpsWidget tps={platform.tps} />}
             {platform.mspt && <MsptWidget mspt={platform.mspt} />}
             <CpuWidget cpu={system.cpu.processUsage} label="process" />
@@ -68,8 +74,20 @@ const Widget = ({ title, label, formatter = defaultFormatter, children }) => {
     );
 };
 
+function useContextWithOverride(context, override) {
+    const res = useContext(context);
+    if (override) {
+        return override;
+    } else {
+        return res;
+    }
+}
+
 const WidgetValue = ({ value, label, formatter }) => {
-    const { color, format } = formatter ?? useContext(WidgetFormatter);
+    const { color, format } = useContextWithOverride(
+        WidgetFormatter,
+        formatter
+    );
 
     return (
         <div className="widget-value">
@@ -80,13 +98,17 @@ const WidgetValue = ({ value, label, formatter }) => {
 };
 
 const WidgetSingleValue = ({ value, total, formatter }) => {
-    const { color, format } = formatter ?? useContext(WidgetFormatter);
+    const { color, format } = useContextWithOverride(
+        WidgetFormatter,
+        formatter
+    );
 
     const percent = (value / total) * 100;
-    const formattedPercent = percent ?
-        percent.toLocaleString('en-US', {
-            maximumFractionDigits: 2,
-        }) + '%' : '';
+    const formattedPercent = percent
+        ? percent.toLocaleString('en-US', {
+              maximumFractionDigits: 2,
+          }) + '%'
+        : '';
 
     return (
         <div className="widget-value">
@@ -288,7 +310,7 @@ const GcWidget = ({ gc, title, label }) => {
     } else if (label.startsWith('Shenandoah ')) {
         // 'Shenandoah Pauses' => 'Shen Pauses'
         // 'Shenandoah Cycles' => 'Shen Cycles'
-        label = 'Shen ' + label.substring('Shenandoah '.length)
+        label = 'Shen ' + label.substring('Shenandoah '.length);
     }
 
     const timeFormatter = {

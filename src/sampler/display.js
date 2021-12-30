@@ -12,10 +12,6 @@ import 'react-contexify/dist/ReactContexify.css';
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
 const BaseNode = React.memo(
     ({ parents, node, searchQuery, highlighted, mappings, isSourceRoot }) => {
-        if (!searchQuery.matches(node, parents)) {
-            return null;
-        }
-
         const directParent =
             parents.length !== 0 ? parents[parents.length - 1] : null;
 
@@ -25,6 +21,18 @@ const BaseNode = React.memo(
             }
             return directParent && directParent.children.length === 1;
         });
+
+        const parentsForChildren = useMemo(
+            () => parents.concat([node]),
+            [parents, node]
+        );
+
+        const { show } = useContextMenu({ id: 'sampler-cm' });
+
+        if (!searchQuery.matches(node, parents)) {
+            return null;
+        }
+
         const classNames = classnames({
             node: true,
             collapsed: !expanded,
@@ -34,10 +42,7 @@ const BaseNode = React.memo(
             name: true,
             bookmarked: highlighted.has(node.id),
         });
-        const parentsForChildren = useMemo(
-            () => parents.concat([node]),
-            [parents, node]
-        );
+        
         const threadTime = parents.length === 0 ? node.time : parents[0].time;
 
         function handleClick(e) {
@@ -47,8 +52,6 @@ const BaseNode = React.memo(
                 setExpanded(!expanded);
             }
         }
-
-        const { show } = useContextMenu({ id: 'sampler-cm' });
 
         function handleContextMenu(event) {
             event.preventDefault();
@@ -150,7 +153,7 @@ const NodeInfo = ({
             {!!source && <span className="time">({source})</span>}
             <span className="bar">
                 <span
-                    className="bar-inner"
+                    className="inner"
                     style={{
                         width: humanFriendlyPercentage(time / threadTime),
                     }}

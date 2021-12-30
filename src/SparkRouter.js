@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 
 import SparkPage from './components/SparkPage';
-import BannerNotice from './components/BannerNotice';
+import TextBox from './components/TextBox';
 
 import { HOMEPAGE, DOWNLOAD, PAGE_NOT_FOUND } from './status';
 
@@ -26,11 +26,11 @@ export default function SparkRouter({ status, onFileSelected }) {
             );
             break;
         case PAGE_NOT_FOUND:
-            contents = <BannerNotice>404 - Page Not Found</BannerNotice>;
+            contents = <TextBox>404 - Page Not Found</TextBox>;
             break;
         default:
             contents = (
-                <BannerNotice>Unknown state - this is a bug.</BannerNotice>
+                <TextBox>Unknown state - this is a bug.</TextBox>
             );
             break;
     }

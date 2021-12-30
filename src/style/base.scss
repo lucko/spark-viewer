@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+html {
+    background-color: #1e2527;
+    color-scheme: dark;
+}
+
+body {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10pt;
+    line-height: 150%;
+    margin: 0;
+    padding: 54px 20px 20px 20px;
+    color: #e0e2e4;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100vh - 74px);
+}
+
+a:link,
+a:visited {
+    color: #f77669;
+    text-decoration: none;
+    border-bottom: 1px solid #909090;
+}
+
+a:hover,
+a:active {
+    color: #f77669;
+    border-color: #ccc;
+    text-decoration: none;
+}
+
+select,
+input,
+button {
+    font-family: 'JetBrains Mono', monospace;
+    background-color: #252b2d;
+    border-style: none;
+    color: #ccc;
+    border-radius: 6px;
+    padding: 5px;
+
+    :focus {
+        outline: none;
+    }
+}
+
+select {
+    appearance: none;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSIjYjViNWI1IiBkPSJNMjA3LjAyOSAzODEuNDc2TDEyLjY4NiAxODcuMTMyYy05LjM3My05LjM3My05LjM3My0yNC41NjkgMC0zMy45NDFsMjIuNjY3LTIyLjY2N2M5LjM1Ny05LjM1NyAyNC41MjItOS4zNzUgMzMuOTAxLS4wNEwyMjQgMjg0LjUwNWwxNTQuNzQ1LTE1NC4wMjFjOS4zNzktOS4zMzUgMjQuNTQ0LTkuMzE3IDMzLjkwMS4wNGwyMi42NjcgMjIuNjY3YzkuMzczIDkuMzczIDkuMzczIDI0LjU2OSAwIDMzLjk0MUwyNDAuOTcxIDM4MS40NzZjLTkuMzczIDkuMzcyLTI0LjU2OSA5LjM3Mi0zMy45NDIgMHoiPjwvcGF0aD48L3N2Zz4=);
+    background-repeat: no-repeat;
+    background-position: 97%;
+    background-size: 10px;
+}
+
+button {
+    cursor: pointer;
+
+    :hover {
+        background-color: #2e383e;
+    }
+}
+
+hr {
+    border: 2px solid #252b2d;
+}
+
+.text-box {
+    font-size: 130%;
+    letter-spacing: -1px;
+    color: #b5b5b5;
+    background: #252b2d;
+    padding: 8px;
+    margin: 12px 0;
+    border-radius: 6px;
+}

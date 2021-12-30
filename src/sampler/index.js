@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 
+import '../style/sampler.scss';
+
 import Controls from './controls';
-import {
-    AllView,
-    SourcesView,
-    VIEW_ALL,
-    VIEW_SOURCES_MERGED,
-    VIEW_SOURCES_SEPARATE,
-} from './views';
+import { AllView, SourcesView, VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
 import Flame from './flamegraph';
 import { MetadataDetail, VersionWarning } from './meta';
 import Widgets from './widgets';
@@ -18,6 +14,7 @@ import { useSearchQuery } from './search';
 // context menu
 import { Menu, Item, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
+import classNames from 'classnames';
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
@@ -27,9 +24,6 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const [view, setView] = useState(VIEW_ALL);
 
     const [showMetadataDetail, setShowMetadataDetail] = useState(false);
-    const showMetadataCallback = !!data.metadata.platform
-        ? () => setShowMetadataDetail(!showMetadataDetail)
-        : null;
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -41,37 +35,12 @@ export default function Sampler({ data, mappings, exportCallback }) {
         setFlameData(props.node);
     }
 
-    let viewComponent;
-    if (view === VIEW_ALL) {
-        viewComponent = (
-            <AllView
-                threads={data.threads}
-                mappings={mappings}
-                highlighted={highlighted}
-                searchQuery={searchQuery}
-            />
-        );
-    } else if (view === VIEW_SOURCES_MERGED || view === VIEW_SOURCES_SEPARATE) {
-        viewComponent = (
-            <SourcesView
-                data={
-                    view === VIEW_SOURCES_MERGED
-                        ? data.bySource
-                        : data.bySourceSeparate
-                }
-                mappings={mappings}
-                highlighted={highlighted}
-                searchQuery={searchQuery}
-            />
-        );
-    }
-
     return (
-        <div id="sampler">
+        <div className="sampler">
             <Controls
-                metadata={data.metadata}
                 data={data}
-                showMetadataCallback={showMetadataCallback}
+                showMetadataDetail={showMetadataDetail}
+                setShowMetadataDetail={setShowMetadataDetail}
                 exportCallback={exportCallback}
                 view={view}
                 setView={setView}
@@ -82,7 +51,12 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
             {!data.metadata.platform && <VersionWarning />}
 
-            <div className={showMetadataDetail ? 'metadata-and-widgets' : ''}>
+            <div
+                className={classNames({
+                    metadata: true,
+                    expanded: showMetadataDetail,
+                })}
+            >
                 {!!data.metadata.platformStatistics && (
                     <Widgets
                         metadata={data.metadata}
@@ -97,8 +71,28 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
-            <div style={!!flameData ? { display: 'none' } : {}}>
-                {viewComponent}
+            <div style={{ display: flameData ? 'none' : null }}>
+                {view === VIEW_ALL ? (
+                    <AllView
+                        threads={data.threads}
+                        mappings={mappings}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
+                    />
+                ) : (
+                    <SourcesView
+                        data={
+                            view === VIEW_SOURCES_MERGED
+                                ? data.bySource
+                                : data.bySourceSeparate
+                        }
+                        mappings={mappings}
+                        view={view}
+                        setView={setView}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
+                    />
+                )}
             </div>
 
             <Menu id={'sampler-cm'} theme={theme.dark}>

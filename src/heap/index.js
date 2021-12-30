@@ -1,4 +1,7 @@
 import React from 'react';
+
+import '../style/heap.scss';
+
 import { formatBytes } from '../misc/util';
 
 export default function Heap({ data }) {
@@ -26,34 +29,32 @@ export default function Heap({ data }) {
     }
 
     return (
-        <div id="heap">
-            <div id="heap-content">
-                <table style={{ borderSpacing: '20px 0' }}>
-                    <thead>
-                        <tr>
-                            <th style={{ textAlign: 'left' }}>Rank</th>
-                            <th style={{ textAlign: 'left' }}>Instances</th>
-                            <th style={{ textAlign: 'left' }}>Size</th>
-                            <th style={{ textAlign: 'left' }}>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Total</td>
-                            <td>{totalInstances.toLocaleString()}</td>
-                            <td>{formatBytes(totalSize)}</td>
-                            <td>n/a</td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td />
-                            <td />
-                            <td />
-                        </tr>
-                        {rows}
-                    </tbody>
-                </table>
-            </div>
+        <div className="heap">
+            <table style={{ borderSpacing: '20px 0' }}>
+                <thead>
+                    <tr>
+                        <th style={{ textAlign: 'left' }}>Rank</th>
+                        <th style={{ textAlign: 'left' }}>Instances</th>
+                        <th style={{ textAlign: 'left' }}>Size</th>
+                        <th style={{ textAlign: 'left' }}>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total</td>
+                        <td>{totalInstances.toLocaleString()}</td>
+                        <td>{formatBytes(totalSize)}</td>
+                        <td>n/a</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td />
+                        <td />
+                        <td />
+                    </tr>
+                    {rows}
+                </tbody>
+            </table>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import BannerNotice from '../components/BannerNotice';
+import TextBox from '../components/TextBox';
 
 const WAITING = Symbol();
 const OK = Symbol();
@@ -41,9 +41,9 @@ export default function Download() {
         content = <DownloadList info={info} />;
     } else {
         content = (
-            <BannerNotice>
+            <TextBox>
                 Error: unable to get version information.
-            </BannerNotice>
+            </TextBox>
         );
     }
 
