@@ -1,71 +1,83 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import '../style/heap.scss';
+import { AutoSizer, Column, Table } from 'react-virtualized';
+import Controls from './controls';
+import { WidgetsAndMetadata } from '../viewer/meta';
 
 import { formatBytes } from '../misc/util';
 
-export default function Heap({ data }) {
-    const { entries } = data;
+import '../style/heap.scss';
+import 'react-virtualized/styles.css';
 
-    let rows = [];
-    let totalInstances = 0;
-    let totalSize = 0;
-
-    for (const entry of entries) {
-        const instances = parseInt(entry.instances);
-        const size = parseInt(entry.size);
-
-        totalInstances += instances;
-        totalSize += size;
-
-        rows.push(
-            <HeapEntry
-                entry={entry}
-                instances={instances}
-                size={size}
-                key={entry.order}
-            />
-        );
-    }
+export default function Heap({ data, exportCallback }) {
+    const [showMetadataDetail, setShowMetadataDetail] = useState(false);
 
     return (
         <div className="heap">
-            <table style={{ borderSpacing: '20px 0' }}>
-                <thead>
-                    <tr>
-                        <th style={{ textAlign: 'left' }}>Rank</th>
-                        <th style={{ textAlign: 'left' }}>Instances</th>
-                        <th style={{ textAlign: 'left' }}>Size</th>
-                        <th style={{ textAlign: 'left' }}>Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Total</td>
-                        <td>{totalInstances.toLocaleString()}</td>
-                        <td>{formatBytes(totalSize)}</td>
-                        <td>n/a</td>
-                    </tr>
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td />
-                        <td />
-                        <td />
-                    </tr>
-                    {rows}
-                </tbody>
-            </table>
+            <Controls
+                data={data}
+                showMetadataDetail={showMetadataDetail}
+                setShowMetadataDetail={setShowMetadataDetail}
+                exportCallback={exportCallback}
+            />
+            <WidgetsAndMetadata
+                metadata={data.metadata}
+                showMetadataDetail={showMetadataDetail}
+            />
+            <div style={{ height: 'calc(100vh - 250px)' }}>
+                <HeapTable data={data} />
+            </div>
         </div>
     );
 }
 
-const HeapEntry = ({ entry, instances, size }) => {
+const HeapTable = ({ data }) => {
+    const { entries } = data;
+
     return (
-        <tr>
-            <td>#{entry.order}</td>
-            <td>{instances.toLocaleString()}</td>
-            <td>{formatBytes(size)}</td>
-            <td>{entry.type}</td>
-        </tr>
+        <AutoSizer>
+            {({ height, width }) => (
+                <Table
+                    width={width}
+                    height={height}
+                    className="heap-table"
+                    headerHeight={40}
+                    rowHeight={20}
+                    rowCount={entries.length}
+                    rowGetter={({ index }) => entries[index]}
+                >
+                    <Column
+                        label="Rank"
+                        dataKey="order"
+                        width={70}
+                        cellRenderer={({ cellData }) => {
+                            return '#' + cellData;
+                        }}
+                    />
+                    <Column
+                        label="Instances"
+                        dataKey="instances"
+                        width={100}
+                        cellRenderer={({ cellData }) => {
+                            return cellData.toLocaleString();
+                        }}
+                    />
+                    <Column
+                        label="Size"
+                        dataKey="size"
+                        width={100}
+                        cellRenderer={({ cellData }) => {
+                            return formatBytes(cellData);
+                        }}
+                    />
+                    <Column
+                        label="Type"
+                        dataKey="type"
+                        width={200}
+                        flexGrow={1}
+                    />
+                </Table>
+            )}
+        </AutoSizer>
     );
 };

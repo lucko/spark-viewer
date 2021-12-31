@@ -1,10 +1,33 @@
 .heap {
-    font-size: 1.1em;
+    flex-grow: 1;
 
-    td:nth-child(1),
-    td:nth-child(2),
-    td:nth-child(3) {
-        white-space: nowrap;
+    .heap-table {
+        font-size: 1.1em;
+        margin-top: 20px;
+    
+        .ReactVirtualized__Table__headerRow {
+            background-color: #252b2d;
+            padding-right: 0 !important;
+            color: #fff;
+            border-radius: 6px 6px 0 0;
+        }
+    
+        .ReactVirtualized__Table__Grid {
+            background-color: #252b2d;
+        }
+    
+        .ReactVirtualized__Table__row {
+            color: #b5b5b5
+        }
+    }
+
+    .widgets {
+        .widget-memory {
+            display: inline !important;
+        }
+        .widget-cpu, .widget-tps, .widget-mspt {
+            display: none;
+        }
     }
 }
 

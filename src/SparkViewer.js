@@ -1,27 +1,26 @@
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
-import Pbf from 'pbf';
-import ls from 'local-storage';
-
-import SparkPage from './components/SparkPage';
-import HeaderWithMappings from './components/HeaderWithMappings';
-import TextBox from './components/TextBox';
-
-import { SamplerData, HeapData } from './proto';
-
-import { getMappingsInfo, requestMappings } from './sampler/mappings';
-import {
-    labelData,
-    labelDataWithSource,
-    generateSourceViews,
-} from './sampler/preprocessing';
+import './style/viewer.scss';
 
 import {
+    FAILED_DATA,
+    LOADED_HEAP_DATA,
+    LOADED_PROFILE_DATA,
     LOADING_DATA,
     LOADING_FILE,
-    FAILED_DATA,
-    LOADED_PROFILE_DATA,
-    LOADED_HEAP_DATA,
 } from './status';
+import { HeapData, SamplerData } from './proto';
+import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import {
+    generateSourceViews,
+    labelData,
+    labelDataWithSource,
+} from './sampler/preprocessing';
+import { getMappingsInfo, requestMappings } from './sampler/mappings';
+
+import HeaderWithMappings from './components/HeaderWithMappings';
+import Pbf from 'pbf';
+import SparkPage from './components/SparkPage';
+import TextBox from './components/TextBox';
+import ls from 'local-storage';
 
 const Heap = React.lazy(() => import('./heap'));
 const Sampler = React.lazy(() => import('./sampler'));
@@ -202,9 +201,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             );
             break;
         default:
-            contents = (
-                <TextBox>Unknown state - this is a bug.</TextBox>
-            );
+            contents = <TextBox>Unknown state - this is a bug.</TextBox>;
             break;
     }
 

@@ -1,9 +1,8 @@
+import { DOWNLOAD, HOMEPAGE, PAGE_NOT_FOUND } from './status';
 import React, { Suspense } from 'react';
 
 import SparkPage from './components/SparkPage';
 import TextBox from './components/TextBox';
-
-import { HOMEPAGE, DOWNLOAD, PAGE_NOT_FOUND } from './status';
 
 const Homepage = React.lazy(() => import('./pages/Homepage'));
 const Download = React.lazy(() => import('./pages/Download'));

@@ -1,21 +1,13 @@
 import React from 'react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faTimes,
-    faEye,
-    faFileExport,
-    faFire,
-    faInfoCircle,
-} from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faEye, faFire } from '@fortawesome/free-solid-svg-icons';
 
-import { MetadataTitle } from './meta';
+import FaButton from '../components/FaButton';
+import { ExportButton, ShowInfoButton } from '../viewer/controls';
+import { ProfileTitle } from './meta';
 import SearchBar from './search';
 
-import {
-    VIEW_ALL,
-    VIEW_SOURCES_MERGED,
-} from './views';
+import { VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
 
 export default function Controls({
     data,
@@ -37,7 +29,7 @@ export default function Controls({
                 showMetadataDetail={showMetadataDetail}
                 setShowMetadataDetail={setShowMetadataDetail}
             />
-            <MetadataTitle metadata={metadata} />
+            <ProfileTitle metadata={metadata} />
             {!flameData ? (
                 <>
                     <ToggleViewButton
@@ -55,33 +47,6 @@ export default function Controls({
         </div>
     );
 }
-
-const ShowInfoButton = ({
-    metadata,
-    showMetadataDetail,
-    setShowMetadataDetail,
-}) => {
-    if (!metadata.platform) {
-        return null;
-    }
-
-    function onClick() {
-        setShowMetadataDetail(!showMetadataDetail);
-    }
-
-    return (
-        <FaButton
-            icon={faInfoCircle}
-            onClick={onClick}
-            title={
-                !showMetadataDetail
-                    ? 'Click to show more information and statistics about the system'
-                    : 'Click to hide extra information'
-            }
-            style={{ color: showMetadataDetail ? 'white' : undefined }}
-        />
-    );
-};
 
 const ToggleViewButton = ({ data, view, setView }) => {
     if (!Object.keys(data.classSources).length) {
@@ -119,19 +84,6 @@ const ToggleViewButton = ({ data, view, setView }) => {
     );
 };
 
-const ExportButton = ({ exportCallback }) => {
-    if (!exportCallback) {
-        return null;
-    }
-    return (
-        <FaButton
-            icon={faFileExport}
-            onClick={exportCallback}
-            title="Export this profile to a local file"
-        />
-    );
-};
-
 const FlameButton = ({ data, setFlameData }) => {
     if (data.threads.length !== 1) {
         return null;
@@ -161,22 +113,5 @@ const ExitFlameButton = ({ setFlameData }) => {
             onClick={onClick}
             title="Exit the Flame Graph view"
         />
-    );
-};
-
-const FaButton = ({ icon, onClick, title, style, children }) => {
-    return (
-        <div
-            className="button text-box"
-            onClick={onClick}
-            title={title}
-            style={{
-                width: '36px',
-                ...style,
-            }}
-        >
-            <FontAwesomeIcon icon={icon} />
-            {children}
-        </div>
     );
 };

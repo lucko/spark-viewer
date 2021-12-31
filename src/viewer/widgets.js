@@ -1,5 +1,6 @@
-import classNames from 'classnames';
 import React, { useContext } from 'react';
+
+import classNames from 'classnames';
 
 import { formatBytes } from '../misc/util';
 
@@ -60,7 +61,7 @@ export default function Widgets({ metadata, expanded }) {
 
 const Widget = ({ title, label, formatter = defaultFormatter, children }) => {
     return (
-        <div className="widget">
+        <div className={`widget widget-${title.toLowerCase()}`}>
             <h1>
                 {title}
                 {label && <span>({label})</span>}

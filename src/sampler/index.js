@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
 
-import '../style/sampler.scss';
-
-import classNames from 'classnames';
-
-import Controls from './controls';
 import { AllView, SourcesView, VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
+import Controls from './controls';
 import Flame from './flamegraph';
-import { MetadataDetail, VersionWarning } from './meta';
-import Widgets from './widgets';
-
+import { VersionWarning, WidgetsAndMetadata } from '../viewer/meta';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
 
-// context menu
 import { Menu, Item, theme } from 'react-contexify';
+
 import 'react-contexify/dist/ReactContexify.css';
+import '../style/sampler.scss';
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
@@ -52,23 +47,10 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
             {!data.metadata.platform && <VersionWarning />}
 
-            <div
-                className={classNames({
-                    metadata: true,
-                    expanded: showMetadataDetail,
-                })}
-            >
-                {!!data.metadata.platformStatistics && (
-                    <Widgets
-                        metadata={data.metadata}
-                        expanded={showMetadataDetail}
-                    />
-                )}
-
-                {!!data.metadata.platform && showMetadataDetail && (
-                    <MetadataDetail metadata={data.metadata} />
-                )}
-            </div>
+            <WidgetsAndMetadata
+                metadata={data.metadata}
+                showMetadataDetail={showMetadataDetail}
+            />
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
