@@ -115,7 +115,7 @@ const DownloadList = ({ info }) => {
                 artifacts={artifacts}
                 name="Sponge"
                 comment="API 6/7"
-                artifact="spark"
+                artifact="spark-sponge7"
                 installDir="plugins"
                 controls={{ spark: 'plugin' }}
             />
