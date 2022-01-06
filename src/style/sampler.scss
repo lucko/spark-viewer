@@ -1,7 +1,11 @@
+html {
+    min-width: min-content;
+}
+
 .sampler {
     .stack {
         margin-top: 20px;
-        margin-left: 20px;
+        padding-left: 10px;
 
         ul {
             margin: 0;
@@ -19,14 +23,20 @@
             }
         }
 
-        .name {
-            color: #bcbcbc;
-            background: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSIjYjViNWI1IiBkPSJNNDQ4IDgwdjM1MmMwIDI2LjUtMjEuNSA0OC00OCA0OEg0OGMtMjYuNSAwLTQ4LTIxLjUtNDgtNDhWODBjMC0yNi41IDIxLjUtNDggNDgtNDhoMzUyYzI2LjUgMCA0OCAyMS41IDQ4IDQ4ek05Mi41IDIyMC41bDEyMyAxMjNjNC43IDQuNyAxMi4zIDQuNyAxNyAwbDEyMy0xMjNjNy42LTcuNiAyLjItMjAuNS04LjUtMjAuNUgxMDFjLTEwLjcgMC0xNi4xIDEyLjktOC41IDIwLjV6Ij48L3BhdGg+PC9zdmc+)
-                center left no-repeat;
-            padding-left: 20px;
+        .node-info {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
             cursor: pointer;
-            background-size: 8px;
-            background-position: 6px 50%;
+
+            .time {
+                display: none;
+                position: absolute;
+                color: #888;
+                font-size: 90%;
+                padding: 0 4px;
+                white-space: normal;
+            }
 
             &:hover {
                 background-color: #2e383e;
@@ -45,6 +55,16 @@
             &.bookmarked {
                 box-shadow: inset 0 0 0 100vmax rgba(134, 0, 0, 0.5);
             }
+        }
+
+        .name {
+            color: #bcbcbc;
+            background: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDggNTEyIj48cGF0aCBmaWxsPSIjYjViNWI1IiBkPSJNNDQ4IDgwdjM1MmMwIDI2LjUtMjEuNSA0OC00OCA0OEg0OGMtMjYuNSAwLTQ4LTIxLjUtNDgtNDhWODBjMC0yNi41IDIxLjUtNDggNDgtNDhoMzUyYzI2LjUgMCA0OCAyMS41IDQ4IDQ4ek05Mi41IDIyMC41bDEyMyAxMjNjNC43IDQuNyAxMi4zIDQuNyAxNyAwbDEyMy0xMjNjNy42LTcuNiAyLjItMjAuNS04LjUtMjAuNUgxMDFjLTEwLjcgMC0xNi4xIDEyLjktOC41IDIwLjV6Ij48L3BhdGg+PC9zdmc+)
+                center left no-repeat;
+            background-size: 8px;
+            background-position: 6px 50%;
+            padding-left: 20px;
+            white-space: nowrap;
         }
 
         .collapsed .name {
@@ -82,14 +102,12 @@
         }
 
         .bar {
-            display: inline-block;
-            width: 100px;
+            display: block;
+            min-width: 100px;
             height: 15px;
             margin-top: 2px;
             margin-left: 20px;
             border: 1px solid #484848;
-            position: absolute;
-            right: 30px;
             background: #293134;
 
             .inner {
@@ -97,20 +115,15 @@
                 height: 15px;
                 background: #e2b671;
             }
+
+            @media screen and (max-width: 880px) {
+                display: none !important;
+            }
         }
 
         h2 > .time {
-            display: initial;
             font-size: 100%;
-        }
-
-        .time {
-            display: none;
-            margin: 0;
             color: #888;
-            font-size: 90%;
-            border-radius: 3px;
-            padding: 0 4px;
         }
     }
 

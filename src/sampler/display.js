@@ -38,11 +38,11 @@ const BaseNode = React.memo(
             collapsed: !expanded,
             parent: parents.length === 0,
         });
-        const nameClassNames = classnames({
-            name: true,
-            bookmarked: highlighted.has(node.id),
+        const nodeInfoClassNames = classnames({
+            'node-info': true,
+            'bookmarked': highlighted.has(node.id),
         });
-        
+
         const threadTime = parents.length === 0 ? node.time : parents[0].time;
 
         function handleClick(e) {
@@ -75,7 +75,7 @@ const BaseNode = React.memo(
         return (
             <li className={classNames}>
                 <div
-                    className={nameClassNames}
+                    className={nodeInfoClassNames}
                     onClick={handleClick}
                     onContextMenu={handleContextMenu}
                 >
@@ -138,27 +138,31 @@ const NodeInfo = ({
 
     return (
         <>
-            {children}
-            <span className="percent" style={{ filter, opacity }}>
-                {humanFriendlyPercentage(time / threadTime)}
-            </span>
-            {selfTime > 0 && !isSourceRoot ? (
-                <span className="time">
-                    {formatTime(time)}ms (self: {formatTime(selfTime)}ms -{' '}
-                    {humanFriendlyPercentage(selfTime / threadTime)})
+            <span className="name">
+                {children}
+                <span className="percent" style={{ filter, opacity }}>
+                    {humanFriendlyPercentage(time / threadTime)}
                 </span>
-            ) : (
-                <span className="time">{formatTime(time)}ms</span>
-            )}
-            {!!source && <span className="time">({source})</span>}
-            <span className="bar">
+                <span className="time">
+                    {selfTime > 0 && !isSourceRoot ? (
+                        <>
+                            {formatTime(time)}ms (self: {formatTime(selfTime)}ms
+                            - {humanFriendlyPercentage(selfTime / threadTime)})
+                        </>
+                    ) : (
+                        <>{formatTime(time)}ms</>
+                    )}
+                    {!!source && <> ({source})</>}
+                </span>
+            </span>
+            <div className="bar">
                 <span
                     className="inner"
                     style={{
                         width: humanFriendlyPercentage(time / threadTime),
                     }}
                 />
-            </span>
+            </div>
         </>
     );
 };
