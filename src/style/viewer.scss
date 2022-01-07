@@ -1,20 +1,60 @@
 .controls {
     display: flex;
     justify-content: space-between;
-    column-gap: 10px;
+    gap: 10px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+
+    flex-basis: 1;
+
+    .text-box {
+        padding: 0;
+        margin: 0;
+    }
+
+    > div,
+    > input {
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 40px;
+    }
 
     .button {
-        margin: 12px 0;
+        max-width: 40px;
+        width: 40px;
         cursor: pointer;
         user-select: none;
         display: flex;
         align-items: center;
         justify-content: center;
+
+        > svg {
+            padding: 0 5px;
+        }
+    }
+
+    .sources-view-button {
+        justify-content: space-around;
+        column-gap: 10px;
+        max-width: 150px;
+        width: unset;
+        padding: 0 3px;
     }
 
     .title {
-        width: 100%;
         text-align: center;
+        flex-grow: 2;
+        vertical-align: middle;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        min-height: 40px;
+        height: fit-content;
+
+        > span {
+            padding: 5px;
+        }
 
         img {
             vertical-align: top;

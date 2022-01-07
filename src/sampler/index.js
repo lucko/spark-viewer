@@ -11,6 +11,7 @@ import { Menu, Item, theme } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';
+import { metadataDetailModes } from '../viewer/controls';
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
@@ -19,7 +20,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
 
-    const [showMetadataDetail, setShowMetadataDetail] = useState(false);
+    const [showMetadataDetail, setShowMetadataDetail] = useState(metadataDetailModes[0]);
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {

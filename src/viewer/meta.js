@@ -16,14 +16,20 @@ export function WidgetsAndMetadata({ metadata, showMetadataDetail }) {
         <div
             className={classNames({
                 metadata: true,
-                expanded: showMetadataDetail,
+                expanded: showMetadataDetail.extraWidgets,
             })}
+            style={{
+                display: showMetadataDetail.widgets ? null : 'none',
+            }}
         >
             {!!metadata.platformStatistics && (
-                <Widgets metadata={metadata} expanded={showMetadataDetail} />
+                <Widgets
+                    metadata={metadata}
+                    expanded={showMetadataDetail.extraWidgets}
+                />
             )}
 
-            {!!metadata.platform && showMetadataDetail && (
+            {!!metadata.platform && showMetadataDetail.extraWidgets && (
                 <MetadataDetail metadata={metadata} />
             )}
         </div>

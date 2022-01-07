@@ -14,6 +14,14 @@ body {
     color: #e0e2e4;
 }
 
+html,
+body {
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+}
+
 main {
     display: flex;
     flex-direction: column;

@@ -24,22 +24,22 @@ export default function Controls({
 
     return (
         <div className="controls">
+            <ProfileTitle metadata={metadata} />
             <ShowInfoButton
                 metadata={metadata}
                 showMetadataDetail={showMetadataDetail}
                 setShowMetadataDetail={setShowMetadataDetail}
             />
-            <ProfileTitle metadata={metadata} />
             {!flameData ? (
                 <>
+                    <FlameButton data={data} setFlameData={setFlameData} />
+                    <ExportButton exportCallback={exportCallback} />
                     <ToggleViewButton
                         data={data}
                         view={view}
                         setView={setView}
                     />
                     <SearchBar searchQuery={searchQuery} />
-                    <FlameButton data={data} setFlameData={setFlameData} />
-                    <ExportButton exportCallback={exportCallback} />
                 </>
             ) : (
                 <ExitFlameButton setFlameData={setFlameData} />
@@ -73,11 +73,7 @@ const ToggleViewButton = ({ data, view, setView }) => {
             icon={faEye}
             onClick={onClick}
             title="Toggle the view"
-            style={{
-                justifyContent: 'space-between',
-                padding: '0 12px',
-                width: '9em',
-            }}
+            extraClassName="sources-view-button"
         >
             <span>{label}</span>
         </FaButton>

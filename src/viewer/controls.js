@@ -4,6 +4,14 @@ import { faInfoCircle, faFileExport } from '@fortawesome/free-solid-svg-icons';
 
 import FaButton from '../components/FaButton';
 
+export const metadataDetailModes = [
+    // cycle: widgets -> widgets+extra -> widgets -> nothing -> widgets
+    { idx: 0, widgets: true, extraWidgets: false },
+    { idx: 1, widgets: true, extraWidgets: true },
+    { idx: 2, widgets: true, extraWidgets: false },
+    { idx: 3, widgets: false, extraWidgets: false },
+];
+
 export const ShowInfoButton = ({
     metadata,
     showMetadataDetail,
@@ -14,19 +22,18 @@ export const ShowInfoButton = ({
     }
 
     function onClick() {
-        setShowMetadataDetail(!showMetadataDetail);
+        setShowMetadataDetail(
+            metadataDetailModes[
+                (showMetadataDetail.idx + 1) % metadataDetailModes.length
+            ]
+        );
     }
 
     return (
         <FaButton
             icon={faInfoCircle}
             onClick={onClick}
-            title={
-                !showMetadataDetail
-                    ? 'Click to show more information and statistics about the system'
-                    : 'Click to hide extra information'
-            }
-            style={{ color: showMetadataDetail ? 'white' : undefined }}
+            title="Click to cycle between the widgets/metadata views"
         />
     );
 };

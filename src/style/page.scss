@@ -2,6 +2,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
     background: #181d1f;
     color: #ccc;
     position: fixed;
@@ -14,7 +15,6 @@ header {
     box-shadow: 0 0 4px #130b00;
     z-index: 20;
     line-height: 100%;
-    min-width: 500px;
 
     > .logo {
         display: flex;
