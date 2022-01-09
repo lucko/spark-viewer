@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { AllView, SourcesView, VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
-import { VersionWarning, WidgetsAndMetadata } from '../viewer/meta';
+import { WidgetsAndMetadata } from '../viewer/meta';
+import VersionWarning from '../components/VersionWarning';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
 
@@ -20,7 +21,9 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
 
-    const [showMetadataDetail, setShowMetadataDetail] = useState(metadataDetailModes[0]);
+    const [showMetadataDetail, setShowMetadataDetail] = useState(
+        metadataDetailModes[0]
+    );
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -31,6 +34,10 @@ export default function Sampler({ data, mappings, exportCallback }) {
     function handleFlame({ props }) {
         setFlameData(props.node);
     }
+
+    const supported =
+        data.metadata?.platform?.sparkVersion &&
+        data.metadata.platform.sparkVersion >= 2;
 
     return (
         <div className="sampler">
@@ -46,7 +53,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
                 searchQuery={searchQuery}
             />
 
-            {!data.metadata.platform && <VersionWarning />}
+            {!supported && <VersionWarning />}
 
             <WidgetsAndMetadata
                 metadata={data.metadata}

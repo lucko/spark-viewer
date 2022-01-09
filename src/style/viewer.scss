@@ -82,6 +82,18 @@
     }
 }
 
+.version-warning {
+    color: orange;
+    text-align: center;
+
+    > svg {
+        float: right;
+        padding: 10px;
+        color: #b5b5b5;
+        cursor: pointer;
+    }
+}
+
 .widgets {
     display: flex;
     justify-content: space-evenly;
