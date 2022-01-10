@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import Controls from './controls';
 import { WidgetsAndMetadata } from '../viewer/meta';
+import { metadataDetailModes } from '../viewer/controls';
 
 import { formatBytes } from '../misc/util';
 
@@ -10,7 +11,9 @@ import '../style/heap.scss';
 import 'react-virtualized/styles.css';
 
 export default function Heap({ data, exportCallback }) {
-    const [showMetadataDetail, setShowMetadataDetail] = useState(false);
+    const [showMetadataDetail, setShowMetadataDetail] = useState(
+        metadataDetailModes[0]
+    );
 
     return (
         <div className="heap">
