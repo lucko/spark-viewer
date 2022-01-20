@@ -364,29 +364,48 @@ PlatformStatistics.Mspt.read = function (pbf, end) {
 };
 PlatformStatistics.Mspt._readField = function (tag, obj, pbf) {
     if (tag === 1)
-        obj.last1m = PlatformStatistics.Mspt.Values.read(
+        obj.last1m = PlatformStatistics.RollingAverageValues.read(
             pbf,
             pbf.readVarint() + pbf.pos
         );
     else if (tag === 2)
-        obj.last5m = PlatformStatistics.Mspt.Values.read(
+        obj.last5m = PlatformStatistics.RollingAverageValues.read(
             pbf,
             pbf.readVarint() + pbf.pos
         );
 };
 
-// PlatformStatistics.Mspt.Values ========================================
+// PlatformStatistics.Ping ========================================
 
-PlatformStatistics.Mspt.Values = {};
+PlatformStatistics.Ping = {};
 
-PlatformStatistics.Mspt.Values.read = function (pbf, end) {
+PlatformStatistics.Ping.read = function (pbf, end) {
     return pbf.readFields(
-        PlatformStatistics.Mspt.Values._readField,
+        PlatformStatistics.Ping._readField,
+        { last15m: null },
+        end
+    );
+};
+PlatformStatistics.Ping._readField = function (tag, obj, pbf) {
+    if (tag === 1)
+        obj.last15m = PlatformStatistics.RollingAverageValues.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+};
+
+// PlatformStatistics.RollingAverageValues ========================================
+
+PlatformStatistics.RollingAverageValues = {};
+
+PlatformStatistics.RollingAverageValues.read = function (pbf, end) {
+    return pbf.readFields(
+        PlatformStatistics.RollingAverageValues._readField,
         { mean: 0, max: 0, min: 0, median: 0, percentile95: 0 },
         end
     );
 };
-PlatformStatistics.Mspt.Values._readField = function (tag, obj, pbf) {
+PlatformStatistics.RollingAverageValues._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.mean = pbf.readDouble();
     else if (tag === 2) obj.max = pbf.readDouble();
     else if (tag === 3) obj.min = pbf.readDouble();
@@ -566,6 +585,7 @@ SamplerMetadata.read = function (pbf, end) {
             platform: null,
             platformStatistics: null,
             systemStatistics: null,
+            serverConfigurations: {},
         },
         end
     );
@@ -598,6 +618,13 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
             pbf,
             pbf.readVarint() + pbf.pos
         );
+    else if (tag === 10) {
+        var entry = SamplerMetadata._FieldEntry10.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.serverConfigurations[entry.key] = entry.value;
+    }
 };
 
 // SamplerMetadata.ThreadDumper ========================================
@@ -673,6 +700,22 @@ SamplerMetadata.DataAggregator.ThreadGrouper = {
         value: 2,
         options: {},
     },
+};
+
+// SamplerMetadata._FieldEntry10 ========================================
+
+SamplerMetadata._FieldEntry10 = {};
+
+SamplerMetadata._FieldEntry10.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerMetadata._FieldEntry10._readField,
+        { key: '', value: '' },
+        end
+    );
+};
+SamplerMetadata._FieldEntry10._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
 };
 
 // ThreadNode ========================================

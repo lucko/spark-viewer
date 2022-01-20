@@ -79,6 +79,29 @@
                 color: #fff;
             }
         }
+
+        .configurations {
+            ul {
+                padding-left: 20px;
+                ul {
+                    border-left: 1px solid #3c3f41;
+                }
+            }
+
+            li {
+                list-style: none;
+            }
+
+            .type-string {
+                color: #f7df97;
+            }
+            .type-boolean {
+                color: #78e6ff;
+            }
+            .type-number {
+                color: #9bffa2;
+            }
+        }
     }
 }
 

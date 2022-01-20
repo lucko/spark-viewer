@@ -35,6 +35,7 @@ export default function Widgets({ metadata, expanded }) {
             <MemoryWidget memory={system.memory.physical} label="physical" />
             <MemoryWidget memory={system.memory.swap} label="swap" />
             <DiskWidget disk={system.disk} />
+            {platform.ping && <PingWidget ping={platform.ping} />}
             {Object.entries(platform.gc).map(([label, data]) => {
                 return (
                     <GcWidget
@@ -178,6 +179,35 @@ const MsptWidget = ({ mspt }) => {
             <WidgetValue value={mspt.last5m.median} label="med" />
             <WidgetValue value={mspt.last5m.percentile95} label="95%ile" />
             <WidgetValue value={mspt.last5m.max} label="max" />
+        </Widget>
+    );
+};
+
+const PingWidget = ({ ping }) => {
+    const formatter = {
+        color: value => {
+            if (value >= 200) {
+                return colors.red;
+            } else if (value >= 100) {
+                return colors.yellow;
+            } else {
+                return colors.green;
+            }
+        },
+        format: value => {
+            return value.toLocaleString('en-US', {
+                maximumSignificantDigits: 3,
+                useGrouping: false,
+            });
+        },
+    };
+
+    return (
+        <Widget title="Ping" formatter={formatter}>
+            <WidgetValue value={ping.last15m.min} label="min" />
+            <WidgetValue value={ping.last15m.median} label="med" />
+            <WidgetValue value={ping.last15m.percentile95} label="95%ile" />
+            <WidgetValue value={ping.last15m.max} label="max" />
         </Widget>
     );
 };

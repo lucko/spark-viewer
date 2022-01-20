@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import classNames from 'classnames';
+import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Widgets from './widgets';
 import { formatDuration } from '../misc/util';
@@ -35,8 +37,20 @@ export function WidgetsAndMetadata({ metadata, showMetadataDetail }) {
     );
 }
 
+export function Avatar({ user }) {
+    let avatarUrl;
+    if (user.type === CommandSenderMetadata.Type.PLAYER.value) {
+        const uuid = user.uniqueId.replace(/-/g, '');
+        avatarUrl = 'https://crafthead.net/helm/' + uuid + '/20.png';
+    } else {
+        avatarUrl = 'https://crafthead.net/avatar/Console/20.png';
+    }
+
+    return <img src={avatarUrl} alt="" />;
+}
+
 export function MetadataDetail({ metadata }) {
-    const { platform, systemStatistics } = metadata;
+    const { platform, systemStatistics, serverConfigurations } = metadata;
     const platformType = Object.keys(PlatformData.Type)[
         platform.type
     ].toLowerCase();
@@ -89,31 +103,82 @@ export function MetadataDetail({ metadata }) {
                                     arguments
                                 </span>
                                 : <br />
-                                <div
+                                <span
                                     style={{
                                         maxWidth: '1000px',
                                         display: 'inline-block',
+                                        color: 'inherit'
                                     }}
                                 >
                                     {systemStatistics.java.vmArgs}
-                                </div>
+                                </span>
                             </p>
                         </>
                     )}
                 </>
             )}
+            {!!serverConfigurations && (
+                <div className="configurations">
+                    <br />
+                    <p>
+                        <span>
+                            The server is using the following configuration
+                            settings
+                        </span>
+                        :
+                    </p>
+                    <ConfigurationObject
+                        data={objectMap(serverConfigurations, JSON.parse)}
+                    />
+                </div>
+            )}
         </div>
     );
 }
 
-export function Avatar({ user }) {
-    let avatarUrl;
-    if (user.type === CommandSenderMetadata.Type.PLAYER.value) {
-        const uuid = user.uniqueId.replace(/-/g, '');
-        avatarUrl = 'https://crafthead.net/helm/' + uuid + '/20.png';
-    } else {
-        avatarUrl = 'https://crafthead.net/avatar/Console/20.png';
+const ConfigurationObject = ({ data }) => {
+    return (
+        <ul>
+            {Object.entries(data).map(([name, value], i) =>
+                typeof value === 'object' ? (
+                    <ObjectValue key={i} name={name} value={value} />
+                ) : (
+                    <ScalarValue key={i} name={name} value={value} />
+                )
+            )}
+        </ul>
+    );
+};
+
+const ObjectValue = ({ name, value }) => {
+    const [open, setOpen] = useState(false);
+
+    function click() {
+        setOpen(!open);
     }
 
-    return <img src={avatarUrl} alt="" />;
-}
+    return (
+        <li>
+            <span style={{ cursor: 'pointer' }} onClick={click}>
+                {name}{' '}
+                <FontAwesomeIcon icon={open ? faMinusSquare : faPlusSquare} />
+            </span>
+            {open && <ConfigurationObject data={value} />}
+        </li>
+    );
+};
+
+const ScalarValue = ({ name, value }) => {
+    return (
+        <li>
+            {name}:{' '}
+            <span className={'type-' + typeof value}>{String(value)}</span>
+        </li>
+    );
+};
+
+const objectMap = (obj, fn) => {
+    return Object.fromEntries(
+        Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])
+    );
+};

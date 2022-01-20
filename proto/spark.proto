@@ -108,16 +108,20 @@ message PlatformStatistics {
   }
 
   message Mspt {
-    Values last1m = 1;
-    Values last5m = 2;
+    RollingAverageValues last1m = 1;
+    RollingAverageValues last5m = 2;
+  }
 
-    message Values {
-      double mean = 1;
-      double max = 2;
-      double min = 3;
-      double median = 4;
-      double percentile95 = 5;
-    }
+  message Ping {
+    RollingAverageValues last15m = 1;
+  }
+
+  message RollingAverageValues {
+    double mean = 1;
+    double max = 2;
+    double min = 3;
+    double median = 4;
+    double percentile95 = 5;
   }
 }
 
@@ -175,6 +179,7 @@ message SamplerMetadata {
   PlatformMetadata platform = 7;
   PlatformStatistics platformStatistics = 8;
   SystemStatistics systemStatistics = 9;
+  map<string, string> serverConfigurations = 10;
 
   message ThreadDumper {
     Type type = 1;
