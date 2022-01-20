@@ -117,7 +117,7 @@ export function MetadataDetail({ metadata }) {
                     )}
                 </>
             )}
-            {!!serverConfigurations && (
+            {!!Object.keys(serverConfigurations).length && (
                 <div className="configurations">
                     <br />
                     <p>
