@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { faInfoCircle, faFileExport } from '@fortawesome/free-solid-svg-icons';
 
@@ -17,14 +17,22 @@ export const ShowInfoButton = ({
     showMetadataDetail,
     setShowMetadataDetail,
 }) => {
+    useEffect(() => {
+        const idx = localStorage.getItem('metadataDetailMode') || 0;
+        setShowMetadataDetail(metadataDetailModes[idx]);
+    }, [])
+
     if (!metadata.platform) {
         return null;
     }
 
     function onClick() {
+        const newIdx = showMetadataDetail.idx + 1;
+        localStorage.setItem('metadataDetailMode', newIdx);
+
         setShowMetadataDetail(
             metadataDetailModes[
-                (showMetadataDetail.idx + 1) % metadataDetailModes.length
+                newIdx % metadataDetailModes.length
             ]
         );
     }
