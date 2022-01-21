@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import Controls from './controls';
 import { WidgetsAndMetadata } from '../viewer/meta';
-import { metadataDetailModes } from '../viewer/controls';
+import { useMetadataDetailState } from '../viewer/controls';
 
 import { formatBytes } from '../misc/util';
 
@@ -11,9 +11,7 @@ import '../style/heap.scss';
 import 'react-virtualized/styles.css';
 
 export default function Heap({ data, exportCallback }) {
-    const [showMetadataDetail, setShowMetadataDetail] = useState(
-        metadataDetailModes[0]
-    );
+    const [showMetadataDetail, setShowMetadataDetail] = useMetadataDetailState();
 
     return (
         <div className="heap">
