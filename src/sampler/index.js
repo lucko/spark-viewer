@@ -4,6 +4,7 @@ import { AllView, SourcesView, VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
 import { WidgetsAndMetadata } from '../viewer/meta';
+import { useMetadataDetailState } from '../viewer/controls';
 import VersionWarning from '../components/VersionWarning';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
@@ -12,7 +13,6 @@ import { Menu, Item, theme } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';
-import { metadataDetailModes } from '../viewer/controls';
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
@@ -21,9 +21,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
 
-    const [showMetadataDetail, setShowMetadataDetail] = useState(
-        metadataDetailModes[0]
-    );
+    const [showMetadataDetail, setShowMetadataDetail] = useMetadataDetailState();
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
