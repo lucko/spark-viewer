@@ -55,6 +55,32 @@ export function MetadataDetail({ metadata }) {
         platform.type
     ].toLowerCase();
 
+    let parsedConfigurations;
+    let onlineMode = "unknown";
+
+    if (!!Object.keys(serverConfigurations).length) {
+        parsedConfigurations = objectMap(serverConfigurations, JSON.parse);
+
+        const serverProperties = parsedConfigurations["server.properties"];
+        const spigotConfig = parsedConfigurations["spigot.yml"];
+        const paperConfig = parsedConfigurations["paper.yml"];
+
+        if (serverProperties["online-mode"] === "true") {
+            onlineMode = "online";
+        } else if (spigotConfig["settings"]["bungeecord"] === "true") {
+            if (paperConfig["settings"]["bungee-online-mode"] === "true") {
+                onlineMode = "bungeecord";
+            } else {
+                onlineMode = "offline";
+            }
+        } else if (paperConfig["settings"]["velocity-support"]["enabled"] === "true"
+            && paperConfig["settings"]["velocity-support"]["online-mode"] === "true") {
+            onlineMode = "velocity";
+        } else {
+            onlineMode = "offline";
+        }
+    }
+
     return (
         <div className="text-box metadata-detail">
             <p>
@@ -66,6 +92,11 @@ export function MetadataDetail({ metadata }) {
                 <p>
                     The detected Minecraft version is &quot;
                     <span>{platform.minecraftVersion}</span>&quot;.
+                </p>
+            )}
+            {platform.name === "Bukkit" && (
+                <p>
+                    The online mode status is <span>{onlineMode}</span>.
                 </p>
             )}
             {!!systemStatistics && (
@@ -128,7 +159,7 @@ export function MetadataDetail({ metadata }) {
                         :
                     </p>
                     <ConfigurationObject
-                        data={objectMap(serverConfigurations, JSON.parse)}
+                        data={parsedConfigurations}
                     />
                 </div>
             )}
