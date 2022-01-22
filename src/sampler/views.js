@@ -5,9 +5,15 @@ import { BaseNode } from './display';
 import { formatTime } from '../misc/util';
 
 export const VIEW_ALL = Symbol();
+export const VIEW_FLAT = Symbol();
 export const VIEW_SOURCES_SEPARATE = Symbol();
 export const VIEW_SOURCES_MERGED = Symbol();
-export const VIEWS = [VIEW_ALL, VIEW_SOURCES_MERGED, VIEW_SOURCES_SEPARATE];
+export const VIEWS = [
+    VIEW_ALL,
+    VIEW_FLAT,
+    VIEW_SOURCES_MERGED,
+    VIEW_SOURCES_SEPARATE,
+];
 
 // The sampler view in which all data is shown in one, single stack.
 export function AllView({ threads, mappings, highlighted, searchQuery }) {
@@ -23,6 +29,26 @@ export function AllView({ threads, mappings, highlighted, searchQuery }) {
                     key={thread.name}
                 />
             ))}
+        </div>
+    );
+}
+
+export function FlatView({ threads, mappings, highlighted, searchQuery }) {
+    return (
+        <div className="sourceview">
+            <FlatViewHeader />
+            <div className="stack">
+                {threads.map(thread => (
+                    <BaseNode
+                        parents={[]}
+                        node={thread}
+                        mappings={mappings}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
+                        key={thread.name}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
@@ -80,6 +106,25 @@ const SourceSection = ({
                     key={thread.name}
                 />
             ))}
+        </div>
+    );
+};
+
+const FlatViewHeader = () => {
+    return (
+        <div className="header">
+            <h2>Flat View</h2>
+            <p>
+                This view shows a flattened representation of the profile, where
+                the slowest 100 method invocations are displayed at the top
+                level. Methods are sorted according to their "self time" (the
+                time spent executing code within the method).
+            </p>
+            <p>
+                In order to see the method calls that led to the top-level
+                invocation, create a bookmark (use the right-click context menu
+                or Alt+Click on a frame) then go back to the 'all' view.
+            </p>
         </div>
     );
 };

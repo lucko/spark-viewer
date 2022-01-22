@@ -10,6 +10,7 @@ import {
 import { HeapData, SamplerData } from './proto';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import {
+    generateFlatView,
     generateSourceViews,
     labelData,
     labelDataWithSource,
@@ -96,6 +97,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
                 labelData(data.threads, 0);
                 labelDataWithSource(data);
                 generateSourceViews(data);
+                generateFlatView(data);
             }
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);

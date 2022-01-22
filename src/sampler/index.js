@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 
-import { AllView, SourcesView, VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
+import {
+    AllView,
+    FlatView,
+    SourcesView,
+    VIEW_ALL,
+    VIEW_FLAT,
+    VIEW_SOURCES_MERGED,
+} from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
 import { WidgetsAndMetadata } from '../viewer/meta';
@@ -21,7 +28,8 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
 
-    const [showMetadataDetail, setShowMetadataDetail] = useMetadataDetailState();
+    const [showMetadataDetail, setShowMetadataDetail] =
+        useMetadataDetailState();
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -64,6 +72,13 @@ export default function Sampler({ data, mappings, exportCallback }) {
                 {view === VIEW_ALL ? (
                     <AllView
                         threads={data.threads}
+                        mappings={mappings}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
+                    />
+                ) : view === VIEW_FLAT ? (
+                    <FlatView
+                        threads={data.flat}
                         mappings={mappings}
                         highlighted={highlighted}
                         searchQuery={searchQuery}

@@ -127,7 +127,8 @@ html {
         }
     }
 
-    .sourceview > .header {
+    .sourceview > .header,
+    .flatview > .header {
         margin: 0 10px;
         max-width: 1000px;
     }

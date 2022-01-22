@@ -37,6 +37,108 @@ export function labelDataWithSource(data) {
     }
 }
 
+function mergeIntoArray(arr, node) {
+    for (const [i, n] of arr.entries()) {
+        if (
+            n.className === node.className &&
+            n.methodName === node.methodName &&
+            n.methodDesc === node.methodDesc
+        ) {
+            // merge
+            arr[i] = mergeNodes(n, node);
+            return;
+        }
+    }
+
+    // just append
+    arr.push(node);
+}
+
+function mergeNodes(a, b) {
+    const children = [];
+    for (const c of a.children) {
+        mergeIntoArray(children, c);
+    }
+    for (const c of b.children) {
+        mergeIntoArray(children, c);
+    }
+    children.sort((a, b) => b.time - a.time);
+
+    return {
+        className: a.className,
+        methodName: a.methodName,
+        methodDesc: a.methodDesc,
+        lineNumber: a.lineNumber,
+        parentLineNumber: 0,
+        source: a.source,
+        time: a.time + b.time,
+        id: [].concat(a.id, b.id),
+        children,
+    };
+}
+
+export function generateFlatView(data) {
+    const { threads } = data;
+
+    function visit(node, acc) {
+        // process children
+        let childTime = 0;
+        for (const child of node.children) {
+            childTime += visit(child, acc);
+        }
+
+        // calc self time
+        const selfTime = node.time - childTime;
+        if (selfTime <= 0) {
+            return node.time;
+        }
+
+        // process self
+        const id = `${node.className}\0${node.methodName}\0${node.methodDesc}`;
+        let nodeAcc = acc.get(id);
+        if (!nodeAcc) {
+            nodeAcc = {
+                nodes: [],
+                time: 0,
+            };
+            acc.set(id, nodeAcc);
+        }
+
+        nodeAcc.nodes.push(node);
+        nodeAcc.time += selfTime;
+
+        return node.time;
+    }
+
+    const out = [];
+    for (const thread of threads) {
+        const flattened = new Map();
+
+        for (const node of thread.children) {
+            visit(node, flattened);
+        }
+
+        const flattenedArray = Array.from(flattened.values())
+            .sort((a, b) => b.time - a.time)
+            .slice(0, 100);
+
+        let acc = [];
+        for (const { nodes } of flattenedArray) {
+            let base = nodes[0];
+            for (const other of nodes.slice(1)) {
+                base = mergeNodes(base, other);
+            }
+            acc.push(base);
+        }
+
+        let copy = Object.assign({}, thread);
+        copy.children = acc;
+        out.push(copy);
+    }
+
+    data.flat = out;
+}
+
 export function generateSourceViews(data) {
     if (!data.classSources) {
         return;
@@ -48,46 +150,6 @@ export function generateSourceViews(data) {
     const sources = classSources
         ? [...new Set(Object.values(classSources))]
         : [];
-
-    function mergeIntoArray(arr, node) {
-        for (const [i, n] of arr.entries()) {
-            if (
-                n.className === node.className &&
-                n.methodName === node.methodName &&
-                n.methodDesc === node.methodDesc
-            ) {
-                // merge
-                arr[i] = mergeNodes(n, node);
-                return;
-            }
-        }
-
-        // just append
-        arr.push(node);
-    }
-
-    function mergeNodes(a, b) {
-        const children = [];
-        for (const c of a.children) {
-            mergeIntoArray(children, c);
-        }
-        for (const c of b.children) {
-            mergeIntoArray(children, c);
-        }
-        children.sort((a, b) => b.time - a.time);
-
-        return {
-            className: a.className,
-            methodName: a.methodName,
-            methodDesc: a.methodDesc,
-            lineNumber: a.lineNumber,
-            parentLineNumber: 0,
-            source: a.source,
-            time: a.time + b.time,
-            id: [].concat(a.id, b.id),
-            children,
-        };
-    }
 
     // function to scan a thread for matches
     function findMatches(acc, mergeMode, source, node) {

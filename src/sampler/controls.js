@@ -7,7 +7,7 @@ import { ExportButton, ShowInfoButton } from '../viewer/controls';
 import { ProfileTitle } from './meta';
 import SearchBar from './search';
 
-import { VIEW_ALL, VIEW_SOURCES_MERGED } from './views';
+import { VIEW_ALL, VIEW_FLAT, VIEW_SOURCES_MERGED } from './views';
 
 export default function Controls({
     data,
@@ -55,6 +55,8 @@ const ToggleViewButton = ({ data, view, setView }) => {
 
     function onClick() {
         if (view === VIEW_ALL) {
+            setView(VIEW_FLAT);
+        } else if (view === VIEW_FLAT) {
             setView(VIEW_SOURCES_MERGED);
         } else {
             setView(VIEW_ALL);
@@ -64,6 +66,8 @@ const ToggleViewButton = ({ data, view, setView }) => {
     let label;
     if (view === VIEW_ALL) {
         label = 'all';
+    } else if (view === VIEW_FLAT) {
+        label = 'flat';
     } else {
         label = 'sources';
     }
