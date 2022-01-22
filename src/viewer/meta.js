@@ -56,28 +56,14 @@ export function MetadataDetail({ metadata }) {
     ].toLowerCase();
 
     let parsedConfigurations;
-    let onlineMode = "unknown";
+    let onlineMode;
 
-    if (!!Object.keys(serverConfigurations).length) {
+    if (Object.keys(serverConfigurations).length) {
         parsedConfigurations = objectMap(serverConfigurations, JSON.parse);
-
-        const serverProperties = parsedConfigurations["server.properties"];
-        const spigotConfig = parsedConfigurations["spigot.yml"];
-        const paperConfig = parsedConfigurations["paper.yml"];
-
-        if (serverProperties["online-mode"] === "true") {
-            onlineMode = "online";
-        } else if (spigotConfig["settings"]["bungeecord"] === "true") {
-            if (paperConfig && paperConfig["settings"]["bungee-online-mode"] !== "true") {
-                onlineMode = "offline";
-            }
-
-            onlineMode = "bungeecord";
-        } else if (paperConfig["settings"]["velocity-support"]["enabled"] === "true"
-            && paperConfig["settings"]["velocity-support"]["online-mode"] === "true") {
-            onlineMode = "velocity";
-        } else {
-            onlineMode = "offline";
+        try {
+            onlineMode = detectOnlineMode(parsedConfigurations);
+        } catch (e) {
+            // ignore
         }
     }
 
@@ -94,9 +80,9 @@ export function MetadataDetail({ metadata }) {
                     <span>{platform.minecraftVersion}</span>&quot;.
                 </p>
             )}
-            {platform.name === "Bukkit" && (
+            {onlineMode && (
                 <p>
-                    The online mode status is <span>{onlineMode}</span>.
+                    The server is running in <span>{onlineMode}</span>.
                 </p>
             )}
             {!!systemStatistics && (
@@ -138,7 +124,7 @@ export function MetadataDetail({ metadata }) {
                                     style={{
                                         maxWidth: '1000px',
                                         display: 'inline-block',
-                                        color: 'inherit'
+                                        color: 'inherit',
                                     }}
                                 >
                                     {systemStatistics.java.vmArgs}
@@ -148,7 +134,7 @@ export function MetadataDetail({ metadata }) {
                     )}
                 </>
             )}
-            {!!Object.keys(serverConfigurations).length && (
+            {parsedConfigurations && (
                 <div className="configurations">
                     <br />
                     <p>
@@ -158,9 +144,7 @@ export function MetadataDetail({ metadata }) {
                         </span>
                         :
                     </p>
-                    <ConfigurationObject
-                        data={parsedConfigurations}
-                    />
+                    <ConfigurationObject data={parsedConfigurations} />
                 </div>
             )}
         </div>
@@ -212,4 +196,39 @@ const objectMap = (obj, fn) => {
     return Object.fromEntries(
         Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])
     );
+};
+
+const detectOnlineMode = parsedConfigurations => {
+    const serverProperties = parsedConfigurations['server.properties'];
+    const spigotConfig = parsedConfigurations['spigot.yml'];
+    const paperConfig = parsedConfigurations['paper.yml'];
+
+    if (serverProperties['online-mode'] === true) {
+        return 'online mode';
+    }
+
+    if (spigotConfig && spigotConfig.settings.bungeecord === true) {
+        if (
+            paperConfig &&
+            paperConfig.settings['bungee-online-mode'] === false
+        ) {
+            return 'BungeeCord (offline mode)';
+        }
+
+        return 'BungeeCord (online mode)';
+    }
+
+    if (
+        paperConfig &&
+        paperConfig.settings['velocity-support'] &&
+        paperConfig.settings['velocity-support']['enabled'] === true
+    ) {
+        if (paperConfig.settings['velocity-support']['online-mode'] === false) {
+            return 'Velocity (offline mode)';
+        }
+
+        return 'Velocity (online mode)';
+    }
+
+    return 'offline mode';
 };
