@@ -68,11 +68,11 @@ export function MetadataDetail({ metadata }) {
         if (serverProperties["online-mode"] === "true") {
             onlineMode = "online";
         } else if (spigotConfig["settings"]["bungeecord"] === "true") {
-            if (paperConfig["settings"]["bungee-online-mode"] === "true") {
-                onlineMode = "bungeecord";
-            } else {
+            if (paperConfig && paperConfig["settings"]["bungee-online-mode"] !== "true") {
                 onlineMode = "offline";
             }
+
+            onlineMode = "bungeecord";
         } else if (paperConfig["settings"]["velocity-support"]["enabled"] === "true"
             && paperConfig["settings"]["velocity-support"]["online-mode"] === "true") {
             onlineMode = "velocity";
