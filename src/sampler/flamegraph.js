@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { FlameGraph } from '@lucko/react-flame-graph';
 import { resolveMappings } from './mappings';
 
 export default function Flame({ flameData, mappings }) {
-    const [data, depth] = toFlameNode(flameData, mappings);
+    const [data, depth] = useMemo(
+        () => toFlameNode(flameData, mappings),
+        [flameData, mappings]
+    );
     const calcHeight = Math.min(depth * 20, 5000);
 
     return (
