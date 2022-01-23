@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
 
 html {
     background-color: #1e2527;
@@ -75,10 +75,6 @@ select {
 
 button {
     cursor: pointer;
-
-    :hover {
-        background-color: #2e383e;
-    }
 }
 
 hr {

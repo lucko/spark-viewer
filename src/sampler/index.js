@@ -35,6 +35,11 @@ export default function Sampler({ data, mappings, exportCallback }) {
         highlighted.toggle(props.node.id);
     }
 
+    // Callback function for the "Clear all bookmarks" context menu button
+    function handleHighlightClear() {
+        highlighted.clear();
+    }
+
     // Callback function for the "View as Flame Graph" context menu button
     function handleFlame({ props }) {
         setFlameData(props.node);
@@ -85,8 +90,8 @@ export default function Sampler({ data, mappings, exportCallback }) {
                     />
                 ) : (
                     <SourcesView
-                        dataMerged={data.bySource}
-                        dataSeparate={data.bySourceSeparate}
+                        dataMerged={data.sourcesMerged}
+                        dataSeparate={data.sourcesSeparate}
                         mappings={mappings}
                         highlighted={highlighted}
                         searchQuery={searchQuery}
@@ -97,6 +102,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
             <Menu id={'sampler-cm'} theme={theme.dark}>
                 <Item onClick={handleFlame}>View as Flame Graph</Item>
                 <Item onClick={handleHighlight}>Toggle bookmark</Item>
+                <Item onClick={handleHighlightClear}>Clear all bookmarks</Item>
             </Menu>
         </div>
     );

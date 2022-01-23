@@ -131,6 +131,29 @@ html {
     .flatview > .header {
         margin: 0 10px;
         max-width: 1000px;
+        font-size: 16px;
+
+        .button {
+            margin-left: 20px;
+            margin-bottom: 20px;
+
+            button {
+                font-size: 16px;
+                padding-left: 10px;
+                padding-right: 10px;
+
+                span {
+                    color: #ffc93a;
+                }
+            }
+
+            p {
+                margin: 5px 0;
+                font-weight: 300;
+                font-size: 14px;
+                color: #b5b5b5;
+            }
+        }
     }
 
     .flame {

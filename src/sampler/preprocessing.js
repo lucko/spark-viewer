@@ -165,7 +165,7 @@ export function generateFlatView(data) {
     // Given a flattened map of nodes for the given thread,
     // generate an array of the top x nodes according to either
     // the selfTime or totalTime (controlled by the selfMode parameter)
-    function generate(thread, flattened, selfMode) {
+    function generate(thread, flattened, selfMode, size) {
         // define a sort function for the flattened nodes
         const sortFunc = selfMode
             ? (a, b) => b.selfTime - a.selfTime
@@ -174,7 +174,7 @@ export function generateFlatView(data) {
         // sort'n'slice the map into an array
         const flattenedArray = Array.from(flattened.values())
             .sort(sortFunc)
-            .slice(0, 100);
+            .slice(0, size);
 
         // iterate through the flattened array and construct
         // a merged node to represent each entry
@@ -205,8 +205,8 @@ export function generateFlatView(data) {
             visit(node, undefined, flattened);
         }
 
-        outSelf.push(generate(thread, flattened, true));
-        outTotal.push(generate(thread, flattened, false));
+        outSelf.push(generate(thread, flattened, true, 250));
+        outTotal.push(generate(thread, flattened, false, 250));
     }
 
     data.flatSelfTime = outSelf;
@@ -277,6 +277,6 @@ export function generateSourceViews(data) {
             .sort((a, b) => b.totalTime - a.totalTime);
     }
 
-    data.bySource = generate(true);
-    data.bySourceSeparate = generate(false);
+    data.sourcesMerged = generate(true);
+    data.sourcesSeparate = generate(false);
 }

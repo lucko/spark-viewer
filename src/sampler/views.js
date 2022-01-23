@@ -1,8 +1,10 @@
 import React, { createContext, useState } from 'react';
 
 import { BaseNode } from './display';
-
 import { formatTime } from '../misc/util';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCogs } from '@fortawesome/free-solid-svg-icons';
 
 export const VIEW_ALL = Symbol();
 export const VIEW_FLAT = Symbol();
@@ -38,12 +40,12 @@ export function FlatView({
     highlighted,
     searchQuery,
 }) {
-    const [bottomUp, setBottomUp] = useState(true);
+    const [bottomUp, setBottomUp] = useState(false);
     const [selfTimeMode, setSelfTimeMode] = useState(false);
     const data = selfTimeMode ? dataSelfTime : dataTotalTime;
 
     return (
-        <div className="sourceview">
+        <div className="flatview">
             <FlatViewHeader
                 bottomUp={bottomUp}
                 setBottomUp={setBottomUp}
@@ -134,62 +136,53 @@ const FlatViewHeader = ({
     selfTimeMode,
     setSelfTimeMode,
 }) => {
-    function onClickDisplay() {
-        setBottomUp(!bottomUp);
-    }
-
-    function onClickSortMode() {
-        setSelfTimeMode(!selfTimeMode);
-    }
-
     return (
         <div className="header">
             <h2>Flat View</h2>
             <p>
                 This view shows a flattened representation of the profile, where
-                the slowest 100 method invocations are displayed at the top
-                level.
+                the slowest 250 method calls are listed at the top level.
             </p>
 
-            <button onClick={onClickDisplay}>
-                Display: {bottomUp ? 'Bottom Up' : 'Top Down'}
-            </button>
-            {bottomUp ? (
-                <p style={{ fontWeight: 'bold' }}>
+            <Button
+                value={bottomUp}
+                setValue={setBottomUp}
+                title="Display"
+                labelTrue="Bottom Up"
+                labelFalse="Top Down"
+            >
+                <p>
                     The call tree is reversed - expanding a node reveals the
                     method that called it.
                 </p>
-            ) : (
-                <p style={{ fontWeight: 'bold' }}>
+                <p>
                     The call tree is "normal" - expanding a node reveals the
                     sub-methods that it calls.
                 </p>
-            )}
+            </Button>
 
-            <button onClick={onClickSortMode}>
-                Sort Mode: {selfTimeMode ? 'Self Time' : 'Total Time'}
-            </button>
-            {selfTimeMode ? (
-                <p style={{ fontWeight: 'bold' }}>
+            <Button
+                value={selfTimeMode}
+                setValue={setSelfTimeMode}
+                title="Sort Mode"
+                labelTrue="Self Time"
+                labelFalse="Total Time"
+            >
+                <p>
                     Methods are sorted according to their "self time" (the time
                     spent executing code within the method)
                 </p>
-            ) : (
-                <p style={{ fontWeight: 'bold' }}>
+                <p>
                     Methods are sorted according to their "total time" (the time
                     spent executing code within the method and the time spent
                     executing sub-calls)
                 </p>
-            )}
+            </Button>
         </div>
     );
 };
 
 const SourcesViewHeader = ({ merged, setMerged }) => {
-    function onClick() {
-        setMerged(!merged);
-    }
-
     return (
         <div className="header">
             <h2>Sources View</h2>
@@ -198,22 +191,47 @@ const SourcesViewHeader = ({ merged, setMerged }) => {
                 down by plugin/mod (source).
             </p>
 
-            <button onClick={onClick}>
-                Merge Mode: {merged ? 'Merge' : 'Separate'}
-            </button>
-            {merged ? (
-                <p style={{ fontWeight: 'bold' }}>
+            <Button
+                value={merged}
+                setValue={setMerged}
+                title="Merge Mode"
+                labelTrue="Merge"
+                labelFalse="Separate"
+            >
+                <p>
                     Method calls with the same signature will be merged
                     together, even though they may not have been invoked by the
                     same calling method.
                 </p>
-            ) : (
-                <p style={{ fontWeight: 'bold' }}>
+                <p>
                     Method calls that have the same signature, but that haven't
                     been invoked by the same calling method will show
                     separately.
                 </p>
-            )}
+            </Button>
+        </div>
+    );
+};
+
+const Button = ({
+    value,
+    setValue,
+    title,
+    labelTrue,
+    labelFalse,
+    children,
+}) => {
+    function onClick() {
+        setValue(!value);
+    }
+
+    return (
+        <div className="button">
+            <button onClick={onClick}>
+                <FontAwesomeIcon icon={faCogs} /> <span>{title}:</span>{' '}
+                {value ? labelTrue : labelFalse}
+            </button>
+            {value ? children[0] : children[1]}
         </div>
     );
 };

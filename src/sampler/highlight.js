@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import history from 'history/browser';
 
@@ -35,6 +35,14 @@ export function useHighlight() {
         return set;
     });
 
+    useEffect(() => {
+        history.replace({
+            search: highlighted.size
+                ? '?hl=' + Array.from(highlighted).join(',')
+                : '',
+        });
+    }, [highlighted]);
+
     // Toggles the highlighted state of an id
     const toggle = id => {
         const set = new Set(highlighted);
@@ -44,9 +52,6 @@ export function useHighlight() {
             setAdd(set, id);
         }
         setHighlighted(set);
-        history.replace({
-            search: '?hl=' + Array.from(set).join(','),
-        });
     };
 
     // Checks if a node, or one of it's children is in the given highlighted set
@@ -69,5 +74,8 @@ export function useHighlight() {
     // Checks whether a node with the given id is in the highlighted set
     const has = id => setHas(highlighted, id);
 
-    return { toggle, check, has };
+    // Clears all current highlights
+    const clear = () => setHighlighted(new Set());
+
+    return { toggle, check, has, clear };
 }

@@ -49,15 +49,15 @@ export default function Controls({
 }
 
 const ToggleViewButton = ({ data, view, setView }) => {
-    if (!Object.keys(data.classSources).length) {
-        return null;
-    }
-
     function onClick() {
         if (view === VIEW_ALL) {
             setView(VIEW_FLAT);
         } else if (view === VIEW_FLAT) {
-            setView(VIEW_SOURCES);
+            if (Object.keys(data.classSources).length) {
+                setView(VIEW_SOURCES);
+            } else {
+                setView(VIEW_ALL);
+            }
         } else {
             setView(VIEW_ALL);
         }

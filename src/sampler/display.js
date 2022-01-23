@@ -173,7 +173,7 @@ const NodeInfo = ({
                     {humanFriendlyPercentage(time / threadTime)}
                 </span>
                 <span className="time">
-                    {selfTime > 0 && !isSourceRoot ? (
+                    {Math.floor(selfTime) > 0 && !isSourceRoot ? (
                         <>
                             {formatTime(time)}ms (self: {formatTime(selfTime)}ms
                             - {humanFriendlyPercentage(selfTime / threadTime)})
