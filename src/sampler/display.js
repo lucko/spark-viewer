@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 
 import classnames from 'classnames';
 
 import { humanFriendlyPercentage, formatTime } from '../misc/util';
 import { resolveMappings } from './mappings';
+import { BottomUpContext } from './views';
 
 // context menu
 import { useContextMenu } from 'react-contexify';
@@ -11,7 +12,17 @@ import 'react-contexify/dist/ReactContexify.css';
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
 const BaseNode = React.memo(
-    ({ parents, node, searchQuery, highlighted, mappings, isSourceRoot }) => {
+    ({
+        parents,
+        node,
+        forcedTime,
+        searchQuery,
+        highlighted,
+        mappings,
+        isSourceRoot,
+    }) => {
+        const bottomUp = useContext(BottomUpContext) && parents.length !== 0;
+
         const directParent =
             parents.length !== 0 ? parents[parents.length - 1] : null;
 
@@ -19,7 +30,15 @@ const BaseNode = React.memo(
             if (highlighted.check(node)) {
                 return true;
             }
-            return directParent && directParent.children.length === 1;
+            if (bottomUp) {
+                return (
+                    directParent &&
+                    directParent.parents &&
+                    directParent.parents.length === 1
+                );
+            } else {
+                return directParent && directParent.children.length === 1;
+            }
         });
 
         const parentsForChildren = useMemo(
@@ -58,8 +77,10 @@ const BaseNode = React.memo(
             show(event, { props: { node } });
         }
 
-        const selfTime =
-            node.time - node.children.reduce((acc, n) => acc + n.time, 0);
+        const time = bottomUp ? forcedTime || node.time : node.time;
+        const selfTime = bottomUp
+            ? 0
+            : time - node.children.reduce((acc, n) => acc + n.time, 0);
 
         let significance;
         let importance;
@@ -68,7 +89,7 @@ const BaseNode = React.memo(
             importance = 0;
         } else {
             const parentTime = directParent.sourceTime || directParent.time;
-            significance = node.time / parentTime;
+            significance = forcedTime ? 0.5 : node.time / parentTime;
             importance = parentTime !== node.time ? significance : 0;
         }
 
@@ -80,7 +101,7 @@ const BaseNode = React.memo(
                     onContextMenu={handleContextMenu}
                 >
                     <NodeInfo
-                        time={node.time}
+                        time={time}
                         selfTime={selfTime}
                         threadTime={threadTime}
                         importance={importance}
@@ -96,16 +117,24 @@ const BaseNode = React.memo(
                 </div>
                 {expanded && (
                     <ul className="children">
-                        {node.children.map((node, i) => (
-                            <BaseNode
-                                node={node}
-                                parents={parentsForChildren}
-                                searchQuery={searchQuery}
-                                highlighted={highlighted}
-                                mappings={mappings}
-                                key={i}
-                            />
-                        ))}
+                        {(bottomUp ? node.parents : node.children).map(
+                            (node, i) => (
+                                <BaseNode
+                                    node={node}
+                                    forcedTime={
+                                        bottomUp &&
+                                        (forcedTime || parents.length === 2)
+                                            ? time
+                                            : undefined
+                                    }
+                                    parents={parentsForChildren}
+                                    searchQuery={searchQuery}
+                                    highlighted={highlighted}
+                                    mappings={mappings}
+                                    key={i}
+                                />
+                            )
+                        )}
                     </ul>
                 )}
             </li>

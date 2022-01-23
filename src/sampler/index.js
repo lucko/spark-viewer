@@ -6,7 +6,6 @@ import {
     SourcesView,
     VIEW_ALL,
     VIEW_FLAT,
-    VIEW_SOURCES_MERGED,
 } from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
@@ -78,21 +77,17 @@ export default function Sampler({ data, mappings, exportCallback }) {
                     />
                 ) : view === VIEW_FLAT ? (
                     <FlatView
-                        threads={data.flat}
+                        dataSelfTime={data.flatSelfTime}
+                        dataTotalTime={data.flatTotalTime}
                         mappings={mappings}
                         highlighted={highlighted}
                         searchQuery={searchQuery}
                     />
                 ) : (
                     <SourcesView
-                        data={
-                            view === VIEW_SOURCES_MERGED
-                                ? data.bySource
-                                : data.bySourceSeparate
-                        }
+                        dataMerged={data.bySource}
+                        dataSeparate={data.bySourceSeparate}
                         mappings={mappings}
-                        view={view}
-                        setView={setView}
                         highlighted={highlighted}
                         searchQuery={searchQuery}
                     />

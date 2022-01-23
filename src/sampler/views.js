@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useState } from 'react';
 
 import { BaseNode } from './display';
 
@@ -6,14 +6,10 @@ import { formatTime } from '../misc/util';
 
 export const VIEW_ALL = Symbol();
 export const VIEW_FLAT = Symbol();
-export const VIEW_SOURCES_SEPARATE = Symbol();
-export const VIEW_SOURCES_MERGED = Symbol();
-export const VIEWS = [
-    VIEW_ALL,
-    VIEW_FLAT,
-    VIEW_SOURCES_MERGED,
-    VIEW_SOURCES_SEPARATE,
-];
+export const VIEW_SOURCES = Symbol();
+export const VIEWS = [VIEW_ALL, VIEW_FLAT, VIEW_SOURCES];
+
+export const BottomUpContext = createContext(false);
 
 // The sampler view in which all data is shown in one, single stack.
 export function AllView({ threads, mappings, highlighted, searchQuery }) {
@@ -33,21 +29,41 @@ export function AllView({ threads, mappings, highlighted, searchQuery }) {
     );
 }
 
-export function FlatView({ threads, mappings, highlighted, searchQuery }) {
+// The sampler view in which the stack is flattened to the top x nodes
+// according to total time or self time.
+export function FlatView({
+    dataSelfTime,
+    dataTotalTime,
+    mappings,
+    highlighted,
+    searchQuery,
+}) {
+    const [bottomUp, setBottomUp] = useState(true);
+    const [selfTimeMode, setSelfTimeMode] = useState(false);
+    const data = selfTimeMode ? dataSelfTime : dataTotalTime;
+
     return (
         <div className="sourceview">
-            <FlatViewHeader />
+            <FlatViewHeader
+                bottomUp={bottomUp}
+                setBottomUp={setBottomUp}
+                selfTimeMode={selfTimeMode}
+                setSelfTimeMode={setSelfTimeMode}
+            />
+            <hr />
             <div className="stack">
-                {threads.map(thread => (
-                    <BaseNode
-                        parents={[]}
-                        node={thread}
-                        mappings={mappings}
-                        highlighted={highlighted}
-                        searchQuery={searchQuery}
-                        key={thread.name}
-                    />
-                ))}
+                <BottomUpContext.Provider value={bottomUp}>
+                    {data.map(thread => (
+                        <BaseNode
+                            parents={[]}
+                            node={thread}
+                            mappings={mappings}
+                            highlighted={highlighted}
+                            searchQuery={searchQuery}
+                            key={thread.name}
+                        />
+                    ))}
+                </BottomUpContext.Provider>
             </div>
         </div>
     );
@@ -55,16 +71,18 @@ export function FlatView({ threads, mappings, highlighted, searchQuery }) {
 
 // The sampler view in which there is a stack displayed for each known source.
 export function SourcesView({
-    data,
+    dataMerged,
+    dataSeparate,
     mappings,
-    view,
-    setView,
     highlighted,
     searchQuery,
 }) {
+    const [merged, setMerged] = useState(true);
+    const data = merged ? dataMerged : dataSeparate;
+
     return (
         <div className="sourceview">
-            <SourcesViewHeader view={view} setView={setView} />
+            <SourcesViewHeader merged={merged} setMerged={setMerged} />
             <hr />
             {data.map(({ source, totalTime, threads }) => (
                 <SourceSection
@@ -110,32 +128,66 @@ const SourceSection = ({
     );
 };
 
-const FlatViewHeader = () => {
+const FlatViewHeader = ({
+    bottomUp,
+    setBottomUp,
+    selfTimeMode,
+    setSelfTimeMode,
+}) => {
+    function onClickDisplay() {
+        setBottomUp(!bottomUp);
+    }
+
+    function onClickSortMode() {
+        setSelfTimeMode(!selfTimeMode);
+    }
+
     return (
         <div className="header">
             <h2>Flat View</h2>
             <p>
                 This view shows a flattened representation of the profile, where
                 the slowest 100 method invocations are displayed at the top
-                level. Methods are sorted according to their "self time" (the
-                time spent executing code within the method).
+                level.
             </p>
-            <p>
-                In order to see the method calls that led to the top-level
-                invocation, create a bookmark (use the right-click context menu
-                or Alt+Click on a frame) then go back to the 'all' view.
-            </p>
+
+            <button onClick={onClickDisplay}>
+                Display: {bottomUp ? 'Bottom Up' : 'Top Down'}
+            </button>
+            {bottomUp ? (
+                <p style={{ fontWeight: 'bold' }}>
+                    The call tree is reversed - expanding a node reveals the
+                    method that called it.
+                </p>
+            ) : (
+                <p style={{ fontWeight: 'bold' }}>
+                    The call tree is "normal" - expanding a node reveals the
+                    sub-methods that it calls.
+                </p>
+            )}
+
+            <button onClick={onClickSortMode}>
+                Sort Mode: {selfTimeMode ? 'Self Time' : 'Total Time'}
+            </button>
+            {selfTimeMode ? (
+                <p style={{ fontWeight: 'bold' }}>
+                    Methods are sorted according to their "self time" (the time
+                    spent executing code within the method)
+                </p>
+            ) : (
+                <p style={{ fontWeight: 'bold' }}>
+                    Methods are sorted according to their "total time" (the time
+                    spent executing code within the method and the time spent
+                    executing sub-calls)
+                </p>
+            )}
         </div>
     );
 };
 
-const SourcesViewHeader = ({ view, setView }) => {
+const SourcesViewHeader = ({ merged, setMerged }) => {
     function onClick() {
-        setView(
-            view === VIEW_SOURCES_MERGED
-                ? VIEW_SOURCES_SEPARATE
-                : VIEW_SOURCES_MERGED
-        );
+        setMerged(!merged);
     }
 
     return (
@@ -145,27 +197,23 @@ const SourcesViewHeader = ({ view, setView }) => {
                 This view shows a filtered representation of the profile broken
                 down by plugin/mod (source).
             </p>
+
             <button onClick={onClick}>
-                Merge Mode:{' '}
-                {view === VIEW_SOURCES_MERGED ? 'Merge' : 'Separate'}
+                Merge Mode: {merged ? 'Merge' : 'Separate'}
             </button>
-            <p>
-                <b>
-                    {view === VIEW_SOURCES_MERGED ? (
-                        <>
-                            Method calls with the same signature will be merged
-                            together, even though they may not have been invoked
-                            by the same calling method.
-                        </>
-                    ) : (
-                        <>
-                            Method calls that have the same signature, but that
-                            haven't been invoked by the same calling method will
-                            show separately.
-                        </>
-                    )}
-                </b>
-            </p>
+            {merged ? (
+                <p style={{ fontWeight: 'bold' }}>
+                    Method calls with the same signature will be merged
+                    together, even though they may not have been invoked by the
+                    same calling method.
+                </p>
+            ) : (
+                <p style={{ fontWeight: 'bold' }}>
+                    Method calls that have the same signature, but that haven't
+                    been invoked by the same calling method will show
+                    separately.
+                </p>
+            )}
         </div>
     );
 };
