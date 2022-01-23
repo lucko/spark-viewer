@@ -13,7 +13,7 @@ export default function FilePicker({ callback }) {
     return (
         <div {...getRootProps({ className: 'text-box file-picker' })}>
             <input {...getInputProps()} />
-            <p>Drag 'n' drop a profile/heap file here or click to select</p>
+            <p>Drag &amp; drop a profile/heap file here or click to select</p>
             <em>
                 (only <code>.sparkprofile</code> or <code>.sparkheap</code>{' '}
                 files are accepted)

@@ -6,11 +6,10 @@ export default function Footer() {
         <footer>
             <a href="https://github.com/lucko/spark">spark</a> and{' '}
             <a href="https://github.com/lucko/spark-viewer">spark-viewer</a> are
-            based on WarmRoast by sk89q.
+            free &amp; open source'd on GitHub.
             <br />
             Copyright &copy; 2018-{year}{' '}
-            <a href="https://github.com/lucko">lucko</a>,{' '}
-            <a href="https://github.com/astei">astei</a> & spark contributors
+            <a href="https://github.com/lucko">lucko</a> &amp; other spark <a href="https://spark.lucko.me/docs/misc/Credits">contributors</a>.
         </footer>
     );
 }

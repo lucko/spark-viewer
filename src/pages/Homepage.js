@@ -25,7 +25,9 @@ export default function Homepage({ onFileSelected }) {
                 </ul>
                 <p>
                     More information about spark can be found on{' '}
-                    <a href="https://github.com/lucko/spark">GitHub</a>.
+                    <a href="https://github.com/lucko/spark">GitHub</a>, or you
+                    can come chat with us on{' '}
+                    <a href="https://discord.gg/PAGT2fu">Discord</a>.
                 </p>
             </section>
 
@@ -85,8 +87,8 @@ export default function Homepage({ onFileSelected }) {
                 <FilePicker callback={onFileSelected} />
                 <p>
                     The website/viewer is written in JavaScript using the React
-                    framework, and open-source'd on GitHub. I appreciate any
-                    contributions!
+                    framework, and open-source'd on GitHub. Pull requests are
+                    much appreciated!
                 </p>
             </section>
         </article>
