@@ -103,13 +103,19 @@ function mergeNodes(a, b) {
 }
 
 // Creates a copy of a node
-function copyNode(n) {
-    return mergeNodes(n, {
-        time: 0,
-        id: [],
-        children: [],
-        parents: [],
-    });
+function shallowCopy(n) {
+    return {
+        className: n.className,
+        methodName: n.methodName,
+        methodDesc: n.methodDesc,
+        lineNumber: n.lineNumber,
+        parentLineNumber: n.parentLineNumber,
+        source: n.source,
+        time: n.time,
+        id: n.id,
+        children: n.children,
+        parents: n.parents,
+    };
 }
 
 // Generates the data required by the viewer "Flat View".
@@ -124,11 +130,21 @@ export function generateFlatView(data) {
 
     // Visits a node in the profiler tree, calculates data
     // about it then appends it to the accumulator
-    function visit(node, parent, acc) {
+    function visit(node, parent, acc, seen) {
+        const key = `${node.className}\0${node.methodName}\0${node.methodDesc}`;
+        const skip = seen.has(key);
+        if (!skip) {
+            seen.add(key);
+        }
+
         // process children
         let childTime = 0;
         for (const child of node.children) {
-            childTime += visit(child, node, acc);
+            childTime += visit(child, node, acc, seen);
+        }
+
+        if (!skip) {
+            seen.delete(key);
         }
 
         // calculate self time
@@ -138,24 +154,25 @@ export function generateFlatView(data) {
         // this is used by the bottom-up view
         node.parents = parent ? [parent] : [];
 
-        // Obtain an accumulator for the node
-        // nodes with the same className+methodName+methodDesc should
-        // use the same accumulator...
-        const key = `${node.className}\0${node.methodName}\0${node.methodDesc}`;
-        let nodeAcc = acc.get(key);
-        if (!nodeAcc) {
-            nodeAcc = {
-                nodes: [],
-                selfTime: 0,
-                totalTime: 0,
-            };
-            acc.set(key, nodeAcc);
-        }
+        if (!skip) {
+            // Obtain an accumulator for the node
+            // nodes with the same className+methodName+methodDesc should
+            // use the same accumulator...
+            let nodeAcc = acc.get(key);
+            if (!nodeAcc) {
+                nodeAcc = {
+                    nodes: [],
+                    selfTime: 0,
+                    totalTime: 0,
+                };
+                acc.set(key, nodeAcc);
+            }
 
-        // Append the node to its accumulator
-        nodeAcc.nodes.push(node);
-        nodeAcc.selfTime += selfTime;
-        nodeAcc.totalTime += node.time;
+            // Append the node to its accumulator
+            nodeAcc.nodes.push(node);
+            nodeAcc.selfTime += selfTime;
+            nodeAcc.totalTime += node.time;
+        }
 
         // return the node time to assist calculating the
         // self-time (see above) inline.
@@ -165,7 +182,23 @@ export function generateFlatView(data) {
     // Given a flattened map of nodes for the given thread,
     // generate an array of the top x nodes according to either
     // the selfTime or totalTime (controlled by the selfMode parameter)
-    function generate(thread, flattened, selfMode, size) {
+    function generate(thread, selfMode, size) {
+        const flattened = new Map();
+        let seen;
+        if (selfMode) {
+            seen = {
+                add: (_) => {},
+                delete: (_) => {},
+                has: (_) => false,
+            }
+        } else {
+            seen = new Set();
+        }
+        
+        for (const node of thread.children) {
+            visit(node, undefined, flattened, seen);
+        }
+
         // define a sort function for the flattened nodes
         const sortFunc = selfMode
             ? (a, b) => b.selfTime - a.selfTime
@@ -179,12 +212,12 @@ export function generateFlatView(data) {
         // iterate through the flattened array and construct
         // a merged node to represent each entry
         let acc = [];
-        for (const { nodes, selfTime, totalTime } of flattenedArray) {
-            let base = copyNode(nodes[0]);
+        for (const { nodes, totalTime } of flattenedArray) {
+            let base = shallowCopy(nodes[0]);
             for (const other of nodes.slice(1)) {
                 base = mergeNodes(base, other);
             }
-            base.time = selfMode ? selfTime : totalTime;
+            base.time = totalTime;
             acc.push(base);
         }
 
@@ -199,14 +232,8 @@ export function generateFlatView(data) {
     const outTotal = [];
 
     for (const thread of threads) {
-        const flattened = new Map();
-
-        for (const node of thread.children) {
-            visit(node, undefined, flattened);
-        }
-
-        outSelf.push(generate(thread, flattened, true, 250));
-        outTotal.push(generate(thread, flattened, false, 250));
+        outSelf.push(generate(thread, true, 250));
+        outTotal.push(generate(thread, false, 250));
     }
 
     data.flatSelfTime = outSelf;
