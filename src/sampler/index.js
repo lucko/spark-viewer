@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     AllView,
@@ -16,9 +16,12 @@ import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
 
 import { Menu, Item, theme } from 'react-contexify';
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';
+
+const preprocessingWorker = createWorkerFactory(() => import('./preprocessingWorker'));
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
@@ -26,6 +29,26 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
+
+    const worker = useWorker(preprocessingWorker);
+    const [flatViewData, setFlatViewData] = useState({
+        flatSelfTime: null,
+        flatTotalTime: null
+    });
+    const [sourcesViewData, setSourcesViewData] = useState({
+        sourcesMerged: null,
+        sourcesSeparate: null
+    });
+
+    // Generate flat & sources view in the background on first load
+    useEffect(() => {
+        worker.generateFlatView(data).then((res) => {
+            setFlatViewData(res);
+        });
+        worker.generateSourceViews(data).then((res) => {
+            setSourcesViewData(res);
+        });
+    }, [worker, data])
 
     const [showMetadataDetail, setShowMetadataDetail] =
         useMetadataDetailState();
@@ -82,16 +105,16 @@ export default function Sampler({ data, mappings, exportCallback }) {
                     />
                 ) : view === VIEW_FLAT ? (
                     <FlatView
-                        dataSelfTime={data.flatSelfTime}
-                        dataTotalTime={data.flatTotalTime}
+                        dataSelfTime={flatViewData.flatSelfTime}
+                        dataTotalTime={flatViewData.flatTotalTime}
                         mappings={mappings}
                         highlighted={highlighted}
                         searchQuery={searchQuery}
                     />
                 ) : (
                     <SourcesView
-                        dataMerged={data.sourcesMerged}
-                        dataSeparate={data.sourcesSeparate}
+                        dataMerged={sourcesViewData.sourcesMerged}
+                        dataSeparate={sourcesViewData.sourcesSeparate}
                         mappings={mappings}
                         highlighted={highlighted}
                         searchQuery={searchQuery}

@@ -5,6 +5,7 @@ import { formatTime } from '../misc/util';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs } from '@fortawesome/free-solid-svg-icons';
+import TextBox from '../components/TextBox';
 
 export const VIEW_ALL = Symbol();
 export const VIEW_FLAT = Symbol();
@@ -53,20 +54,24 @@ export function FlatView({
                 setSelfTimeMode={setSelfTimeMode}
             />
             <hr />
-            <div className="stack">
-                <BottomUpContext.Provider value={bottomUp}>
-                    {data.map(thread => (
-                        <BaseNode
-                            parents={[]}
-                            node={thread}
-                            mappings={mappings}
-                            highlighted={highlighted}
-                            searchQuery={searchQuery}
-                            key={thread.name}
-                        />
-                    ))}
-                </BottomUpContext.Provider>
-            </div>
+            {!data ? (
+                <TextBox>Loading...</TextBox>
+            ) : (
+                <div className="stack">
+                    <BottomUpContext.Provider value={bottomUp}>
+                        {data.map(thread => (
+                            <BaseNode
+                                parents={[]}
+                                node={thread}
+                                mappings={mappings}
+                                highlighted={highlighted}
+                                searchQuery={searchQuery}
+                                key={thread.name}
+                            />
+                        ))}
+                    </BottomUpContext.Provider>
+                </div>
+            )}
         </div>
     );
 }
@@ -86,17 +91,21 @@ export function SourcesView({
         <div className="sourceview">
             <SourcesViewHeader merged={merged} setMerged={setMerged} />
             <hr />
-            {data.map(({ source, totalTime, threads }) => (
-                <SourceSection
-                    source={source}
-                    totalTime={totalTime}
-                    threads={threads}
-                    mappings={mappings}
-                    highlighted={highlighted}
-                    searchQuery={searchQuery}
-                    key={source}
-                />
-            ))}
+            {!data ? (
+                <TextBox>Loading...</TextBox>
+            ) : (
+                data.map(({ source, totalTime, threads }) => (
+                    <SourceSection
+                        source={source}
+                        totalTime={totalTime}
+                        threads={threads}
+                        mappings={mappings}
+                        highlighted={highlighted}
+                        searchQuery={searchQuery}
+                        key={source}
+                    />
+                ))
+            )}
         </div>
     );
 }
