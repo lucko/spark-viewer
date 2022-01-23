@@ -7,6 +7,16 @@
 // practice only a few milliseconds) - but the viewer interactions should then
 // be nice and snappy because the data it needs has been pre-computed.
 
+import { wrap as wrapWorker } from 'comlink';
+
+// Creates a wrapped web-worker for more complex preprocessing
+export function createWorker() {
+    const worker = new Worker(
+        new URL('./preprocessingWorker.js', import.meta.url)
+    );
+    return wrapWorker(worker);
+}
+
 // Deterministically assigns a unique integer id to each node in the data.
 // This is used primarily for bookmarks (the 'id' of the node is added as
 // a query param in the URL), so the that's why the generation of ids needs

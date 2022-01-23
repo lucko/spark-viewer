@@ -1814,11 +1814,6 @@
     schema-utils "^3.0.0"
     source-map "^0.7.3"
 
-"@remote-ui/rpc@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.2.5.tgz#b3a919bb82433e8ae478d739491703d4ec8ea1f6"
-  integrity sha512-yh08pSDuYxHKrw7jlCMshWmMOid1b07lKOlv9MYPC8kLw0sqQh0qY8zqNZTXjtxHhZyHYcJyHR5EOTuIGTNFMw==
-
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-5.3.0.tgz#9cb1c5146ddd6a4968ad96f209c50c62f92f9879"
@@ -1865,32 +1860,6 @@
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@sheerun/mutationobserver-shim/-/mutationobserver-shim-0.3.3.tgz#5405ee8e444ed212db44e79351f0c70a582aae25"
   integrity sha512-DetpxZw1fzPD5xUBrIAoplLChO2VB8DlL5Gg+I1IR9b2wPqYIca2WSUxL5g1vLeR4MsQq1NeWriXAVffV+U1Fw==
-
-"@shopify/react-hooks@^2.1.10":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@shopify/react-hooks/-/react-hooks-2.1.10.tgz#da1efe765175d161350b23d625bff652b17f3a30"
-  integrity sha512-JI7ds5ocMH6WrvWbS1HhHKkKcdRC5kI+8WC6B8lfBpQU5mWFF5zGtdhQ06TaxXXdPA9dVr6TMQyebj6MZnxOGg==
-
-"@shopify/react-web-worker@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@shopify/react-web-worker/-/react-web-worker-4.0.2.tgz#15407e52c4ade8b861aa425cbd7cbfc5e265b2cb"
-  integrity sha512-rVkClAeUg35HQmw9etDmZd5ubP95yUjOCp57AiKEezE9Q9g9BDCYcMym831Kts28gvPmwKsc+iydVq1kxY2fNw==
-  dependencies:
-    "@shopify/react-hooks" "^2.1.10"
-    "@shopify/useful-types" "^3.0.5"
-    "@shopify/web-worker" "^4.0.0"
-
-"@shopify/useful-types@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@shopify/useful-types/-/useful-types-3.0.5.tgz#97f9b5cd83b7874daf90591a6796335c7a0fe04c"
-  integrity sha512-jqF+DpXNIVA8T5Q7HbWNfoB/naNZCOTT0KOzwGYXZDn2l4SEAJKeTmN3lc7Rg+qgte9dW73NpaHdmsAKtajZ1g==
-
-"@shopify/web-worker@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@shopify/web-worker/-/web-worker-4.0.0.tgz#9a03764236021b53133d8f40f4a8da9549cfb83d"
-  integrity sha512-QA1kSo/R7QfMsTlMJdCZ7MSHrxyYVOrIUBHddfoDZIfC3olhfFFzvGkwiMI7WFyNglCU1l3ytoikAXQ340Xr9g==
-  dependencies:
-    "@remote-ui/rpc" "^1.2.5"
 
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
@@ -3748,6 +3717,11 @@ combined-stream@^1.0.8:
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
   dependencies:
     delayed-stream "~1.0.0"
+
+comlink@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.3.1.tgz#0c6b9d69bcd293715c907c33fe8fc45aecad13c5"
+  integrity sha512-+YbhUdNrpBZggBAHWcgQMLPLH1KDF3wJpeqrCKieWQ8RL7atmgsgTQko1XEBK6PsecfopWNntopJ+ByYG1lRaA==
 
 commander@^2.20.0:
   version "2.20.3"

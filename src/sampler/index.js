@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-    AllView,
-    FlatView,
-    SourcesView,
-    VIEW_ALL,
-    VIEW_FLAT,
-} from './views';
+import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
 import { WidgetsAndMetadata } from '../viewer/meta';
@@ -14,14 +8,12 @@ import { useMetadataDetailState } from '../viewer/controls';
 import VersionWarning from '../components/VersionWarning';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
+import { createWorker } from './preprocessing';
 
 import { Menu, Item, theme } from 'react-contexify';
-import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';
-
-const preprocessingWorker = createWorkerFactory(() => import('./preprocessingWorker'));
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
@@ -30,25 +22,25 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
 
-    const worker = useWorker(preprocessingWorker);
     const [flatViewData, setFlatViewData] = useState({
         flatSelfTime: null,
-        flatTotalTime: null
+        flatTotalTime: null,
     });
     const [sourcesViewData, setSourcesViewData] = useState({
         sourcesMerged: null,
-        sourcesSeparate: null
+        sourcesSeparate: null,
     });
 
     // Generate flat & sources view in the background on first load
     useEffect(() => {
-        worker.generateFlatView(data).then((res) => {
+        const worker = createWorker();
+        worker.generateFlatView(data).then(res => {
             setFlatViewData(res);
         });
-        worker.generateSourceViews(data).then((res) => {
+        worker.generateSourceViews(data).then(res => {
             setSourcesViewData(res);
         });
-    }, [worker, data])
+    }, [data]);
 
     const [showMetadataDetail, setShowMetadataDetail] =
         useMetadataDetailState();

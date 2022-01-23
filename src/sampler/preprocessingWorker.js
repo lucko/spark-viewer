@@ -6,6 +6,11 @@
 // on initial load. This means the preprocessing can happen in the background
 // (it can take up to a few seconds) while the rest of the page remains responsive.
 
+import { expose as exposeWorker } from 'comlink';
+
+// Expose methods via comlink
+exposeWorker({ generateFlatView, generateSourceViews });
+
 // Utility function to merge a node into an existing
 // array of nodes if an existing node in the array
 // has the same className+methodName+methodDesc
@@ -80,7 +85,7 @@ function shallowCopy(n) {
 // The view also allows for the nodes to be displayed "top down"
 // or "bottom up", and be sorted according to node self-time or
 // total-time.
-export function generateFlatView(data) {
+function generateFlatView(data) {
     const { threads } = data;
 
     // Visits a node in the profiler tree, calculates data
@@ -200,7 +205,7 @@ export function generateFlatView(data) {
 // Generates the data required by the viewer "Sources View".
 // It shows a filtered representation of the profile broken down
 // by plugin/mod (source).
-export function generateSourceViews(data) {
+function generateSourceViews(data) {
     if (!data.classSources) {
         return;
     }
