@@ -58,7 +58,7 @@ export function MetadataDetail({ metadata }) {
     let parsedConfigurations;
     let onlineMode;
 
-    if (Object.keys(serverConfigurations).length) {
+    if (serverConfigurations && Object.keys(serverConfigurations).length) {
         parsedConfigurations = objectMap(serverConfigurations, JSON.parse);
         try {
             onlineMode = detectOnlineMode(parsedConfigurations);
