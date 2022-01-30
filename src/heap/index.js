@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import Controls from './controls';
@@ -11,7 +11,10 @@ import '../style/heap.scss';
 import 'react-virtualized/styles.css';
 
 export default function Heap({ data, exportCallback }) {
-    const [showMetadataDetail, setShowMetadataDetail] = useMetadataDetailState();
+    const [showMetadataDetail, setShowMetadataDetail] =
+        useMetadataDetailState();
+
+    const [searchQuery, setSearchQuery] = useState('');
 
     return (
         <div className="heap">
@@ -19,6 +22,8 @@ export default function Heap({ data, exportCallback }) {
                 data={data}
                 showMetadataDetail={showMetadataDetail}
                 setShowMetadataDetail={setShowMetadataDetail}
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
                 exportCallback={exportCallback}
             />
             <WidgetsAndMetadata
@@ -26,14 +31,20 @@ export default function Heap({ data, exportCallback }) {
                 showMetadataDetail={showMetadataDetail}
             />
             <div style={{ height: 'calc(100vh - 250px)' }}>
-                <HeapTable data={data} />
+                <HeapTable data={data} searchQuery={searchQuery} />
             </div>
         </div>
     );
 }
 
-const HeapTable = ({ data }) => {
-    const { entries } = data;
+const HeapTable = ({ data, searchQuery }) => {
+    let { entries } = data;
+
+    if (searchQuery) {
+        entries = entries.filter(entry =>
+            entry.type.toLowerCase().includes(searchQuery)
+        );
+    }
 
     return (
         <AutoSizer>

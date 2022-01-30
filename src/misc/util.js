@@ -14,6 +14,7 @@ export function formatBytes(bytes) {
     const sizeIndex = Math.floor(Math.log(bytes) / Math.log(1024));
     return (
         parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(1)) +
+        ' ' +
         sizes[sizeIndex]
     );
 }
