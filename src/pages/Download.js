@@ -40,11 +40,7 @@ export default function Download() {
     } else if (status === OK) {
         content = <DownloadList info={info} />;
     } else {
-        content = (
-            <TextBox>
-                Error: unable to get version information.
-            </TextBox>
-        );
+        content = <TextBox>Error: unable to get version information.</TextBox>;
     }
 
     return (
@@ -57,9 +53,14 @@ export default function Download() {
 
 const DownloadList = ({ info }) => {
     const artifacts = {};
+    let version = 'unknown';
     for (const { fileName, relativePath } of info.artifacts) {
-        artifacts[fileName.slice(0, -4)] =
-            info.url + 'artifact/' + relativePath;
+        const [v, platform] = fileName.slice(0, -4).split('-').slice(1);
+        version = v;
+        artifacts[platform] = {
+            fileName,
+            url: info.url + 'artifact/' + relativePath,
+        };
     }
 
     let commitHash = 'nil';
@@ -72,8 +73,9 @@ const DownloadList = ({ info }) => {
     return (
         <>
             <p>
-                The latest version is build <b>#{info.number}</b>, which was
-                created at {new Date(info.timestamp).toLocaleString()}.{' '}
+                The latest version is v<b>{version}</b> (build #{info.number}),
+                which was created at {new Date(info.timestamp).toLocaleString()}
+                .{' '}
             </p>
             <p>
                 It is based on commit{' '}
@@ -87,14 +89,14 @@ const DownloadList = ({ info }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Bukkit"
-                artifact="spark"
+                artifact="bukkit"
                 installDir="plugins"
                 controls={{ spark: 'plugin' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Fabric"
-                artifact="spark-fabric"
+                artifact="fabric"
                 installDir="mods"
                 controls={{
                     spark: 'mod (server-side)',
@@ -104,7 +106,7 @@ const DownloadList = ({ info }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
-                artifact="spark-forge"
+                artifact="forge"
                 installDir="mods"
                 controls={{
                     spark: 'mod (server-side)',
@@ -115,7 +117,7 @@ const DownloadList = ({ info }) => {
                 artifacts={artifacts}
                 name="Sponge"
                 comment="API 6/7"
-                artifact="spark-sponge7"
+                artifact="sponge7"
                 installDir="plugins"
                 controls={{ spark: 'plugin' }}
             />
@@ -123,28 +125,28 @@ const DownloadList = ({ info }) => {
                 artifacts={artifacts}
                 name="Sponge"
                 comment="API 8"
-                artifact="spark-sponge8"
+                artifact="sponge8"
                 installDir="plugins"
                 controls={{ spark: 'plugin' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Nukkit"
-                artifact="spark-nukkit"
+                artifact="nukkit"
                 installDir="plugins"
                 controls={{ spark: 'plugin' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="BungeeCord"
-                artifact="spark"
+                artifact="bungeecord"
                 installDir="plugins"
                 controls={{ sparkb: 'plugin' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Velocity"
-                artifact="spark-velocity"
+                artifact="velocity"
                 installDir="plugins"
                 controls={{ sparkv: 'plugin' }}
             />
@@ -167,6 +169,8 @@ const DownloadInfo = ({
     installDir,
     controls,
 }) => {
+    const { url, fileName } = artifacts[artifact];
+
     return (
         <section>
             <h3>
@@ -175,8 +179,8 @@ const DownloadInfo = ({
             </h3>
             <ul>
                 <li>
-                    Download <a href={artifacts[artifact]}>{artifact}.jar</a>{' '}
-                    and install it in <code>/{installDir}/</code>.
+                    Download <a href={url}>{fileName}</a> and install it in{' '}
+                    <code>/{installDir}/</code>.
                 </li>
                 {Object.entries(controls).map(([cmd, type]) => (
                     <li key={cmd}>
