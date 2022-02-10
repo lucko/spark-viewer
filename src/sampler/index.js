@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
+import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT, VIEW_SOURCES } from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
 import { WidgetsAndMetadata } from '../viewer/meta';
@@ -19,8 +19,10 @@ export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
     const highlighted = useHighlight();
 
+    const cachedView = localStorage.view;
+
     const [flameData, setFlameData] = useState(null);
-    const [view, setView] = useState(VIEW_ALL);
+    const [view, setView] = useState((cachedView === 'VIEW_FLAT' ? VIEW_FLAT : cachedView === 'VIEW_SOURCES' ? VIEW_SOURCES : VIEW_ALL));
 
     const [flatViewData, setFlatViewData] = useState({
         flatSelfTime: null,

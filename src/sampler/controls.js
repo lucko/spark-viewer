@@ -52,14 +52,18 @@ const ToggleViewButton = ({ data, view, setView }) => {
     function onClick() {
         if (view === VIEW_ALL) {
             setView(VIEW_FLAT);
+            localStorage.setItem("view", "VIEW_FLAT");
         } else if (view === VIEW_FLAT) {
             if (Object.keys(data.classSources).length) {
                 setView(VIEW_SOURCES);
+                localStorage.setItem("view", "VIEW_SOURCES");
             } else {
                 setView(VIEW_ALL);
+                localStorage.removeItem("view");
             }
         } else {
             setView(VIEW_ALL);
+            localStorage.removeItem("view");
         }
     }
 
