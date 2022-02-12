@@ -1,3 +1,5 @@
+import { faArrowCircleDown } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState, useEffect } from 'react';
 
 import TextBox from '../components/TextBox';
@@ -73,9 +75,10 @@ const DownloadList = ({ info }) => {
     return (
         <>
             <p>
-                The latest version is v<b>{version}</b> (build #{info.number}),
-                which was created at {new Date(info.timestamp).toLocaleString()}
-                .{' '}
+                The latest version is{' '}
+                <span className="version-number">v{version}</span> (build #
+                {info.number}), which was created at{' '}
+                {new Date(info.timestamp).toLocaleString()}.{' '}
             </p>
             <p>
                 It is based on commit{' '}
@@ -91,7 +94,7 @@ const DownloadList = ({ info }) => {
                 name="Bukkit"
                 artifact="bukkit"
                 installDir="plugins"
-                controls={{ spark: 'plugin' }}
+                controls={{ '': 'spark' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
@@ -99,8 +102,8 @@ const DownloadList = ({ info }) => {
                 artifact="fabric"
                 installDir="mods"
                 controls={{
-                    spark: 'mod (server-side)',
-                    sparkc: 'mod (client-side)',
+                    server: 'spark',
+                    client: 'sparkc',
                 }}
             />
             <DownloadInfo
@@ -109,8 +112,8 @@ const DownloadList = ({ info }) => {
                 artifact="forge"
                 installDir="mods"
                 controls={{
-                    spark: 'mod (server-side)',
-                    sparkc: 'mod (client-side)',
+                    server: 'spark',
+                    client: 'sparkc',
                 }}
             />
             <DownloadInfo
@@ -119,7 +122,7 @@ const DownloadList = ({ info }) => {
                 comment="API 6/7"
                 artifact="sponge7"
                 installDir="plugins"
-                controls={{ spark: 'plugin' }}
+                controls={{ '': 'spark' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
@@ -127,28 +130,28 @@ const DownloadList = ({ info }) => {
                 comment="API 8"
                 artifact="sponge8"
                 installDir="plugins"
-                controls={{ spark: 'plugin' }}
+                controls={{ '': 'spark' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Nukkit"
                 artifact="nukkit"
                 installDir="plugins"
-                controls={{ spark: 'plugin' }}
+                controls={{ '': 'spark' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="BungeeCord"
                 artifact="bungeecord"
                 installDir="plugins"
-                controls={{ sparkb: 'plugin' }}
+                controls={{ '': 'sparkb' }}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Velocity"
                 artifact="velocity"
                 installDir="plugins"
-                controls={{ sparkv: 'plugin' }}
+                controls={{ '': 'sparkv' }}
             />
 
             <br />
@@ -169,25 +172,30 @@ const DownloadInfo = ({
     installDir,
     controls,
 }) => {
-    const { url, fileName } = artifacts[artifact];
+    const { url } = artifacts[artifact];
 
     return (
         <section>
-            <h3>
-                {name}
-                {comment && <span> ({comment})</span>}
-            </h3>
-            <ul>
-                <li>
-                    Download <a href={url}>{fileName}</a> and install it in{' '}
-                    <code>/{installDir}/</code>.
-                </li>
-                {Object.entries(controls).map(([cmd, type]) => (
-                    <li key={cmd}>
-                        Use <code>/{cmd}</code> to control the {type}.
+            <a href={url}>
+                <div>
+                    <FontAwesomeIcon icon={faArrowCircleDown} />
+                    <h3>
+                        {name}
+                        {comment && <span> ({comment})</span>}
+                    </h3>
+                </div>
+                <ul>
+                    <li>
+                        Install: <code>/{installDir}/</code>
                     </li>
-                ))}
-            </ul>
+                    {Object.entries(controls).map(([type, cmd], i) => (
+                        <li key={i}>
+                            Command: <code>/{cmd}</code>
+                            {type && ' (' + type + ')'}
+                        </li>
+                    ))}
+                </ul>
+            </a>
         </section>
     );
 };

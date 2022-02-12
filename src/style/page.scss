@@ -77,8 +77,60 @@ article {
     }
 }
 
-.downloads h3 > span {
-    color: #888;
+.downloads {
+    .version-number {
+        color: #f77669;
+        font-weight: bold;
+        font-size: larger;
+    }
+
+    section > a {
+        border-bottom: none;
+        border-color: none;
+
+        color: #ccc;
+        background-color: #181d1f;
+        border-radius: 15px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        height: 95px;
+        margin: 10px 0;
+        padding: 0 15px;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            column-gap: 15px;
+
+            font-size: 150%;
+
+            svg {
+                color: #f77669;
+                font-size: 40px;
+            }
+        }
+
+        ul {
+            color: #7e7e7e;
+            width: 250px;
+
+            code {
+                color: #ccc;
+            }
+        }
+    }
+
+    h3 > span {
+        color: #888;
+    }
 }
 
 .file-picker {
