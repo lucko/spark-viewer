@@ -1,4 +1,4 @@
-![](https://i.imgur.com/cJ4sYV5.png)
+![](https://i.imgur.com/ykHn9vx.png)
 
 # spark-viewer
 
