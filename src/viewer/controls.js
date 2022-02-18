@@ -1,53 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { faInfoCircle, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import {
+    faInfoCircle,
+    faFileExport,
+    faGauge,
+} from '@fortawesome/free-solid-svg-icons';
 
 import FaButton from '../components/FaButton';
 
-export const metadataDetailModes = [
-    // cycle: widgets -> widgets+extra -> widgets -> nothing -> widgets
-    { idx: 0, widgets: true, extraWidgets: false },
-    { idx: 1, widgets: true, extraWidgets: true },
-    { idx: 2, widgets: true, extraWidgets: false },
-    { idx: 3, widgets: false, extraWidgets: false },
-];
-
-export function useMetadataDetailState() {
-    const [showMetadataDetail, setShowMetadataDetail] = useState(() => {
-        const idx = localStorage.getItem('metadataDetailMode') || 0;
-        return metadataDetailModes[idx];
-    });
-
-    useEffect(() => {
-        localStorage.setItem('metadataDetailMode', showMetadataDetail.idx);
-    }, [showMetadataDetail]);
-
-    return [showMetadataDetail, setShowMetadataDetail];
-}
-
-export const ShowInfoButton = ({
-    metadata,
-    showMetadataDetail,
-    setShowMetadataDetail,
-}) => {
+export const ShowInfoButton = ({ metadata, metadataToggle }) => {
     if (!metadata.platform) {
         return null;
     }
 
-    function onClick() {
-        setShowMetadataDetail(
-            metadataDetailModes[
-                (showMetadataDetail.idx + 1) % metadataDetailModes.length
-            ]
-        );
-    }
-
     return (
-        <FaButton
-            icon={faInfoCircle}
-            onClick={onClick}
-            title="Click to cycle between the widgets/metadata views"
-        />
+        <>
+            <FaButton
+                icon={faGauge}
+                onClick={metadataToggle.toggleWidgets}
+                title="Click to toggle the widgets"
+                extraClassName={metadataToggle.showWidgets ? 'toggled' : null}
+            />
+            <FaButton
+                icon={faInfoCircle}
+                onClick={metadataToggle.toggleInfo}
+                title="Click to toggle the detailed metadata display"
+                extraClassName={metadataToggle.showInfo ? 'toggled' : null}
+            />
+        </>
     );
 };
 
@@ -63,3 +43,45 @@ export const ExportButton = ({ exportCallback }) => {
         />
     );
 };
+
+export function useMetadataToggle() {
+    const [showWidgets, setShowWidgets, toggleWidgets] = useToggle(
+        'prefShowWidgets',
+        true
+    );
+    const [showInfo, setShowInfo, toggleInfo] = useToggle(
+        'prefShowInfo',
+        false
+    );
+
+    useEffect(() => {
+        if (!showWidgets) {
+            setShowInfo(false);
+        }
+    }, [showWidgets, setShowInfo]);
+
+    useEffect(() => {
+        if (showInfo) {
+            setShowWidgets(true);
+        }
+    }, [showInfo, setShowWidgets]);
+
+    return { showWidgets, showInfo, toggleWidgets, toggleInfo };
+}
+
+function useToggle(name, defaultValue) {
+    const [value, setValue] = useState(() => {
+        const pref = localStorage.getItem(name);
+        return pref !== null ? !!pref : defaultValue;
+    });
+
+    useEffect(() => {
+        localStorage.setItem(name, value);
+    }, [name, value]);
+
+    const toggle = useCallback(() => {
+        setValue(prev => !prev);
+    }, [setValue]);
+
+    return [value, setValue, toggle];
+}

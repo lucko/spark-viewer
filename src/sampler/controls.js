@@ -11,8 +11,7 @@ import { VIEW_ALL, VIEW_FLAT, VIEW_SOURCES } from './views';
 
 export default function Controls({
     data,
-    showMetadataDetail,
-    setShowMetadataDetail,
+    metadataToggle,
     exportCallback,
     view,
     setView,
@@ -27,8 +26,7 @@ export default function Controls({
             <ProfileTitle metadata={metadata} />
             <ShowInfoButton
                 metadata={metadata}
-                showMetadataDetail={showMetadataDetail}
-                setShowMetadataDetail={setShowMetadataDetail}
+                metadataToggle={metadataToggle}
             />
             {!flameData ? (
                 <>

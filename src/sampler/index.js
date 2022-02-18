@@ -4,7 +4,7 @@ import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 import Controls from './controls';
 import Flame from './flamegraph';
 import { WidgetsAndMetadata } from '../viewer/meta';
-import { useMetadataDetailState } from '../viewer/controls';
+import { useMetadataToggle } from '../viewer/controls';
 import VersionWarning from '../components/VersionWarning';
 import { useHighlight } from './highlight';
 import { useSearchQuery } from './search';
@@ -42,8 +42,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
         });
     }, [data]);
 
-    const [showMetadataDetail, setShowMetadataDetail] =
-        useMetadataDetailState();
+    const metadataToggle = useMetadataToggle();
 
     // Callback function for the "Toggle bookmark" context menu button
     function handleHighlight({ props }) {
@@ -68,8 +67,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
         <div className="sampler">
             <Controls
                 data={data}
-                showMetadataDetail={showMetadataDetail}
-                setShowMetadataDetail={setShowMetadataDetail}
+                metadataToggle={metadataToggle}
                 exportCallback={exportCallback}
                 view={view}
                 setView={setView}
@@ -82,7 +80,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
             <WidgetsAndMetadata
                 metadata={data.metadata}
-                showMetadataDetail={showMetadataDetail}
+                metadataToggle={metadataToggle}
             />
 
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}

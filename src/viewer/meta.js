@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import classNames from 'classnames';
-import { faMinusSquare, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Widgets from './widgets';
+import { detectOnlineMode, ServerConfigurations } from './serverConfigs';
 import { formatDuration } from '../misc/util';
 
 import {
@@ -12,25 +11,25 @@ import {
     PlatformMetadata as PlatformData,
 } from '../proto';
 
-export function WidgetsAndMetadata({ metadata, showMetadataDetail }) {
+export function WidgetsAndMetadata({ metadata, metadataToggle }) {
     return (
         <div
             className={classNames({
                 metadata: true,
-                expanded: showMetadataDetail.extraWidgets,
+                expanded: metadataToggle.showInfo,
             })}
             style={{
-                display: showMetadataDetail.widgets ? null : 'none',
+                display: metadataToggle.showWidgets ? null : 'none',
             }}
         >
             {!!metadata.platformStatistics && (
                 <Widgets
                     metadata={metadata}
-                    expanded={showMetadataDetail.extraWidgets}
+                    expanded={metadataToggle.showInfo}
                 />
             )}
 
-            {!!metadata.platform && showMetadataDetail.extraWidgets && (
+            {!!metadata.platform && metadataToggle.showInfo && (
                 <MetadataDetail metadata={metadata} />
             )}
         </div>
@@ -55,20 +54,72 @@ export function MetadataDetail({ metadata }) {
         platform.type
     ].toLowerCase();
 
-    let parsedConfigurations;
-    let onlineMode;
+    const { parsedConfigurations, onlineMode } = useMemo(() => {
+        let parsedConfigurations;
+        let onlineMode;
 
-    if (serverConfigurations && Object.keys(serverConfigurations).length) {
-        parsedConfigurations = objectMap(serverConfigurations, JSON.parse);
-        try {
-            onlineMode = detectOnlineMode(parsedConfigurations);
-        } catch (e) {
-            // ignore
+        if (serverConfigurations && Object.keys(serverConfigurations).length) {
+            parsedConfigurations = objectMap(serverConfigurations, JSON.parse);
+            try {
+                onlineMode = detectOnlineMode(parsedConfigurations);
+            } catch (e) {
+                // ignore
+            }
         }
-    }
+        return { parsedConfigurations, onlineMode };
+    }, [serverConfigurations]);
+
+    const [view, setView] = useState('Platform');
+    const views = {
+        'Platform': () => true,
+        'JVM Flags': () => !!systemStatistics?.java.vmArgs,
+        'Configurations': () => !!parsedConfigurations,
+    };
 
     return (
         <div className="text-box metadata-detail">
+            <ul className="metadata-detail-controls">
+                {Object.entries(views).map(([name, func]) => {
+                    return (
+                        func && (
+                            <li
+                                key={name}
+                                onClick={() => setView(name)}
+                                className={view === name ? 'selected' : null}
+                            >
+                                {name}
+                            </li>
+                        )
+                    );
+                })}
+            </ul>
+
+            {view === 'Platform' ? (
+                <PlatformStatistics
+                    platform={platform}
+                    systemStatistics={systemStatistics}
+                    platformType={platformType}
+                    onlineMode={onlineMode}
+                />
+            ) : view === 'JVM Flags' ? (
+                <JvmStartupArgs systemStatistics={systemStatistics} />
+            ) : (
+                <ServerConfigurations
+                    parsedConfigurations={parsedConfigurations}
+                />
+            )}
+        </div>
+    );
+}
+
+const PlatformStatistics = ({
+    platform,
+    systemStatistics,
+    platformType,
+    onlineMode,
+}) => {
+    return (
+        <>
             <p>
                 The platform is a <span>{platform.name}</span> {platformType}{' '}
                 running version &quot;
@@ -86,109 +137,58 @@ export function MetadataDetail({ metadata }) {
                 </p>
             )}
             {!!systemStatistics && (
-                <>
-                    <p>
-                        The system is running{' '}
-                        <span>{systemStatistics.os.name}</span> (
-                        <span>{systemStatistics.os.arch}</span>) version &quot;
-                        <span>{systemStatistics.os.version}</span>&quot; and has{' '}
-                        <span>{systemStatistics.cpu.threads}</span> CPU threads
-                        available.
-                    </p>
-                    {systemStatistics.cpu.modelName && (
-                        <p>
-                            The CPU is described as an{' '}
-                            <span>{systemStatistics.cpu.modelName}</span>.
-                        </p>
-                    )}
-                    <p>
-                        The process is using Java{' '}
-                        <span>{systemStatistics.java.version}</span> (
-                        <span>{systemStatistics.java.vendorVersion}</span> from{' '}
-                        <span>{systemStatistics.java.vendor}</span>).
-                    </p>
-                    <p>
-                        The current process uptime is{' '}
-                        <span>{formatDuration(systemStatistics.uptime)}</span>.
-                    </p>
-                    {systemStatistics.java.vmArgs && (
-                        <>
-                            <br />
-                            <p>
-                                <span>
-                                    The JVM was started with the following
-                                    arguments
-                                </span>
-                                : <br />
-                                <span
-                                    style={{
-                                        maxWidth: '1000px',
-                                        display: 'inline-block',
-                                        color: 'inherit',
-                                    }}
-                                >
-                                    {systemStatistics.java.vmArgs}
-                                </span>
-                            </p>
-                        </>
-                    )}
-                </>
+                <SystemStatistics systemStatistics={systemStatistics} />
             )}
-            {parsedConfigurations && (
-                <div className="configurations">
-                    <br />
-                    <p>
-                        <span>
-                            The server is using the following configuration
-                            settings
-                        </span>
-                        :
-                    </p>
-                    <ConfigurationObject data={parsedConfigurations} />
-                </div>
-            )}
-        </div>
-    );
-}
-
-const ConfigurationObject = ({ data }) => {
-    return (
-        <ul>
-            {Object.entries(data).map(([name, value], i) =>
-                typeof value === 'object' ? (
-                    <ObjectValue key={i} name={name} value={value} />
-                ) : (
-                    <ScalarValue key={i} name={name} value={value} />
-                )
-            )}
-        </ul>
+        </>
     );
 };
 
-const ObjectValue = ({ name, value }) => {
-    const [open, setOpen] = useState(false);
-
-    function click() {
-        setOpen(!open);
-    }
-
+const SystemStatistics = ({ systemStatistics }) => {
     return (
-        <li>
-            <span style={{ cursor: 'pointer' }} onClick={click}>
-                {name}{' '}
-                <FontAwesomeIcon icon={open ? faMinusSquare : faPlusSquare} />
+        <>
+            <p>
+                The system is running <span>{systemStatistics.os.name}</span> (
+                <span>{systemStatistics.os.arch}</span>) version &quot;
+                <span>{systemStatistics.os.version}</span>&quot; and has{' '}
+                <span>{systemStatistics.cpu.threads}</span> CPU threads
+                available.
+            </p>
+            {systemStatistics.cpu.modelName && (
+                <p>
+                    The CPU is described as an{' '}
+                    <span>{systemStatistics.cpu.modelName}</span>.
+                </p>
+            )}
+            <p>
+                The process is using Java{' '}
+                <span>{systemStatistics.java.version}</span> (
+                <span>{systemStatistics.java.vendorVersion}</span> from{' '}
+                <span>{systemStatistics.java.vendor}</span>).
+            </p>
+            <p>
+                The current process uptime is{' '}
+                <span>{formatDuration(systemStatistics.uptime)}</span>.
+            </p>
+        </>
+    );
+};
+
+const JvmStartupArgs = ({ systemStatistics }) => {
+    return (
+        <p>
+            The JVM was started with the following arguments:
+            <br />
+            <br />
+            <span
+                style={{
+                    maxWidth: '1000px',
+                    display: 'inline-block',
+                    color: 'inherit',
+                }}
+            >
+                {systemStatistics.java.vmArgs}
             </span>
-            {open && <ConfigurationObject data={value} />}
-        </li>
-    );
-};
-
-const ScalarValue = ({ name, value }) => {
-    return (
-        <li>
-            {name}:{' '}
-            <span className={'type-' + typeof value}>{String(value)}</span>
-        </li>
+        </p>
     );
 };
 
@@ -196,39 +196,4 @@ const objectMap = (obj, fn) => {
     return Object.fromEntries(
         Object.entries(obj).map(([k, v], i) => [k, fn(v, k, i)])
     );
-};
-
-const detectOnlineMode = parsedConfigurations => {
-    const serverProperties = parsedConfigurations['server.properties'];
-    const spigotConfig = parsedConfigurations['spigot.yml'];
-    const paperConfig = parsedConfigurations['paper.yml'];
-
-    if (serverProperties['online-mode'] === true) {
-        return 'online mode';
-    }
-
-    if (spigotConfig && spigotConfig.settings.bungeecord === true) {
-        if (
-            paperConfig &&
-            paperConfig.settings['bungee-online-mode'] === false
-        ) {
-            return 'BungeeCord (offline mode)';
-        }
-
-        return 'BungeeCord (online mode)';
-    }
-
-    if (
-        paperConfig &&
-        paperConfig.settings['velocity-support'] &&
-        paperConfig.settings['velocity-support']['enabled'] === true
-    ) {
-        if (paperConfig.settings['velocity-support']['online-mode'] === false) {
-            return 'Velocity (offline mode)';
-        }
-
-        return 'Velocity (online mode)';
-    }
-
-    return 'offline mode';
 };

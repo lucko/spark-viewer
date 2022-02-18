@@ -5,8 +5,7 @@ import { HeapTitle } from './meta';
 
 export default function Controls({
     data,
-    showMetadataDetail,
-    setShowMetadataDetail,
+    metadataToggle,
     searchQuery,
     setSearchQuery,
     exportCallback,
@@ -18,8 +17,7 @@ export default function Controls({
             <HeapTitle metadata={metadata} />
             <ShowInfoButton
                 metadata={metadata}
-                showMetadataDetail={showMetadataDetail}
-                setShowMetadataDetail={setShowMetadataDetail}
+                metadataToggle={metadataToggle}
             />
             <ExportButton exportCallback={exportCallback} />
             <SearchBar

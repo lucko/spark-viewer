@@ -7,6 +7,9 @@ export function formatTime(time, n = 2) {
 }
 
 export function formatBytes(bytes) {
+    if (bytes < 0) {
+        return 'invalid';
+    }
     if (bytes === 0) {
         return '0 bytes';
     }

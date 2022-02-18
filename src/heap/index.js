@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import Controls from './controls';
 import { WidgetsAndMetadata } from '../viewer/meta';
-import { useMetadataDetailState } from '../viewer/controls';
+import { useMetadataToggle } from '../viewer/controls';
 
 import { formatBytes } from '../misc/util';
 
@@ -11,24 +11,21 @@ import '../style/heap.scss';
 import 'react-virtualized/styles.css';
 
 export default function Heap({ data, exportCallback }) {
-    const [showMetadataDetail, setShowMetadataDetail] =
-        useMetadataDetailState();
-
+    const metadataToggle = useMetadataToggle();
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
         <div className="heap">
             <Controls
                 data={data}
-                showMetadataDetail={showMetadataDetail}
-                setShowMetadataDetail={setShowMetadataDetail}
+                metadataToggle={metadataToggle}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 exportCallback={exportCallback}
             />
             <WidgetsAndMetadata
                 metadata={data.metadata}
-                showMetadataDetail={showMetadataDetail}
+                metadataToggle={metadataToggle}
             />
             <div style={{ height: 'calc(100vh - 250px)' }}>
                 <HeapTable data={data} searchQuery={searchQuery} />
