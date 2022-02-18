@@ -81,7 +81,7 @@ export function MetadataDetail({ metadata }) {
             <ul className="metadata-detail-controls">
                 {Object.entries(views).map(([name, func]) => {
                     return (
-                        func && (
+                        func() && (
                             <li
                                 key={name}
                                 onClick={() => setView(name)}

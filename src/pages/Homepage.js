@@ -7,8 +7,8 @@ export default function Homepage({ onFileSelected }) {
             <section>
                 <h1>spark</h1>
                 <p className="tagline">
-                    spark is a performance profiling plugin/mod for Minecraft
-                    clients, servers and proxies.
+                    spark is a performance profiler for Minecraft clients,
+                    servers and proxies.
                 </p>
                 <p>spark is made up of three separate components:</p>
                 <ul>

@@ -72,7 +72,7 @@ export function useMetadataToggle() {
 function useToggle(name, defaultValue) {
     const [value, setValue] = useState(() => {
         const pref = localStorage.getItem(name);
-        return pref !== null ? !!pref : defaultValue;
+        return pref !== null ? pref === 'true' : defaultValue;
     });
 
     useEffect(() => {
