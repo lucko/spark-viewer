@@ -99,6 +99,7 @@ const DownloadList = ({ info }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Fabric"
+                comment="MC 1.18"
                 artifact="fabric"
                 installDir="mods"
                 controls={{
@@ -109,6 +110,7 @@ const DownloadList = ({ info }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
+                comment="MC 1.18"
                 artifact="forge"
                 installDir="mods"
                 controls={{
@@ -159,6 +161,15 @@ const DownloadList = ({ info }) => {
                 Once you've got spark installed, head over to the{' '}
                 <a href="https://spark.lucko.me/docs">documentation</a> to learn
                 how to use it!
+            </p>
+            <p>
+                Unless stated otherwise, the downloads on this page target the
+                latest versions for each platform. Historic releases of spark
+                (for older Minecraft versions) can be downloaded from{' '}
+                <a href="https://www.curseforge.com/minecraft/mc-mods/spark">
+                    CurseForge
+                </a>
+                .
             </p>
         </>
     );
