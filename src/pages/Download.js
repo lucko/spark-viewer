@@ -186,27 +186,25 @@ const DownloadInfo = ({
     const { url } = artifacts[artifact];
 
     return (
-        <section>
-            <a href={url}>
-                <div>
-                    <FontAwesomeIcon icon={faArrowCircleDown} />
-                    <h3>
-                        {name}
-                        {comment && <span> ({comment})</span>}
-                    </h3>
-                </div>
-                <ul>
-                    <li>
-                        Install: <code>/{installDir}/</code>
+        <a className="link" href={url}>
+            <div className="link-title">
+                <FontAwesomeIcon icon={faArrowCircleDown} />
+                <h3>
+                    {name}
+                    {comment && <span> ({comment})</span>}
+                </h3>
+            </div>
+            <ul className="link-description">
+                <li>
+                    Install: <code>/{installDir}/</code>
+                </li>
+                {Object.entries(controls).map(([type, cmd], i) => (
+                    <li key={i}>
+                        Command: <code>/{cmd}</code>
+                        {type && ' (' + type + ')'}
                     </li>
-                    {Object.entries(controls).map(([type, cmd], i) => (
-                        <li key={i}>
-                            Command: <code>/{cmd}</code>
-                            {type && ' (' + type + ')'}
-                        </li>
-                    ))}
-                </ul>
-            </a>
-        </section>
+                ))}
+            </ul>
+        </a>
     );
 };

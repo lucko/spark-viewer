@@ -12,3 +12,21 @@ export default function Header({ children, title = 'spark' }) {
         </header>
     );
 }
+
+export function HomepageHeader() {
+    return (
+        <div className="homepage-header">
+            <div>
+                <img src={sparkLogo} alt="" />
+                <div>
+                    <h1>spark</h1>
+                    <div>
+                        A performance profiler for Minecraft
+                        <br />
+                        clients, servers and proxies.
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

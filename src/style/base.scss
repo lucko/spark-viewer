@@ -10,7 +10,6 @@ body {
     font-size: 10pt;
     line-height: 150%;
     margin: 0;
-    padding: 54px 20px 20px 20px;
     color: #e0e2e4;
 }
 
@@ -23,6 +22,7 @@ body {
 }
 
 main {
+    padding: 0 20px 20px 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -40,14 +40,13 @@ a:link,
 a:visited {
     color: #f77669;
     text-decoration: none;
-    border-bottom: 1px solid #909090;
 }
 
 a:hover,
 a:active {
     color: #f77669;
-    border-color: #ccc;
     text-decoration: none;
+    border-bottom: 1px solid #f77669;
 }
 
 select,
