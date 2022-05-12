@@ -49,7 +49,12 @@ export function Avatar({ user }) {
 }
 
 export function MetadataDetail({ metadata }) {
-    const { platform, systemStatistics, serverConfigurations } = metadata;
+    const {
+        platform,
+        platformStatistics,
+        systemStatistics,
+        serverConfigurations,
+    } = metadata;
     const platformType = Object.keys(PlatformData.Type)[
         platform.type
     ].toLowerCase();
@@ -97,6 +102,7 @@ export function MetadataDetail({ metadata }) {
             {view === 'Platform' ? (
                 <PlatformStatistics
                     platform={platform}
+                    platformStatistics={platformStatistics}
                     systemStatistics={systemStatistics}
                     platformType={platformType}
                     onlineMode={onlineMode}
@@ -114,6 +120,7 @@ export function MetadataDetail({ metadata }) {
 
 const PlatformStatistics = ({
     platform,
+    platformStatistics,
     systemStatistics,
     platformType,
     onlineMode,
@@ -134,6 +141,13 @@ const PlatformStatistics = ({
             {onlineMode && (
                 <p>
                     The server is running in <span>{onlineMode}</span>.
+                </p>
+            )}
+            {platformStatistics?.playerCount && (
+                <p>
+                    The server had a player count of{' '}
+                    <span>{platformStatistics.playerCount}</span> when the
+                    profile completed.
                 </p>
             )}
             {!!systemStatistics && (

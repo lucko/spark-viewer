@@ -55,6 +55,7 @@ SystemStatistics.read = function (pbf, end) {
             os: null,
             java: null,
             uptime: 0,
+            net: {},
         },
         end
     );
@@ -80,6 +81,13 @@ SystemStatistics._readField = function (tag, obj, pbf) {
     else if (tag === 6)
         obj.java = SystemStatistics.Java.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 7) obj.uptime = pbf.readVarint(true);
+    else if (tag === 8) {
+        entry = SystemStatistics._FieldEntry8.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.net[entry.key] = entry.value;
+    }
 };
 
 // SystemStatistics.Cpu ========================================
@@ -232,6 +240,45 @@ SystemStatistics.Java._readField = function (tag, obj, pbf) {
     else if (tag === 4) obj.vmArgs = pbf.readString();
 };
 
+// SystemStatistics.NetInterface ========================================
+
+SystemStatistics.NetInterface = {};
+
+SystemStatistics.NetInterface.read = function (pbf, end) {
+    return pbf.readFields(
+        SystemStatistics.NetInterface._readField,
+        {
+            rxBytesPerSecond: null,
+            txBytesPerSecond: null,
+            rxPacketsPerSecond: null,
+            txPacketsPerSecond: null,
+        },
+        end
+    );
+};
+SystemStatistics.NetInterface._readField = function (tag, obj, pbf) {
+    if (tag === 1)
+        obj.rxBytesPerSecond = RollingAverageValues.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+    else if (tag === 2)
+        obj.txBytesPerSecond = RollingAverageValues.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+    else if (tag === 3)
+        obj.rxPacketsPerSecond = RollingAverageValues.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+    else if (tag === 4)
+        obj.txPacketsPerSecond = RollingAverageValues.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+};
+
 // SystemStatistics._FieldEntry3 ========================================
 
 SystemStatistics._FieldEntry3 = {};
@@ -249,6 +296,26 @@ SystemStatistics._FieldEntry3._readField = function (tag, obj, pbf) {
         obj.value = SystemStatistics.Gc.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
+// SystemStatistics._FieldEntry8 ========================================
+
+SystemStatistics._FieldEntry8 = {};
+
+SystemStatistics._FieldEntry8.read = function (pbf, end) {
+    return pbf.readFields(
+        SystemStatistics._FieldEntry8._readField,
+        { key: '', value: null },
+        end
+    );
+};
+SystemStatistics._FieldEntry8._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2)
+        obj.value = SystemStatistics.NetInterface.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+};
+
 // PlatformStatistics ========================================
 
 var PlatformStatistics = (exports.PlatformStatistics = {});
@@ -256,7 +323,15 @@ var PlatformStatistics = (exports.PlatformStatistics = {});
 PlatformStatistics.read = function (pbf, end) {
     return pbf.readFields(
         PlatformStatistics._readField,
-        { memory: null, gc: {}, uptime: 0, tps: null, mspt: null },
+        {
+            memory: null,
+            gc: {},
+            uptime: 0,
+            tps: null,
+            mspt: null,
+            ping: null,
+            playerCount: 0,
+        },
         end
     );
 };
@@ -280,6 +355,12 @@ PlatformStatistics._readField = function (tag, obj, pbf) {
             pbf,
             pbf.readVarint() + pbf.pos
         );
+    else if (tag === 6)
+        obj.ping = PlatformStatistics.Ping.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+    else if (tag === 7) obj.playerCount = pbf.readVarint(true);
 };
 
 // PlatformStatistics.Memory ========================================
@@ -364,15 +445,9 @@ PlatformStatistics.Mspt.read = function (pbf, end) {
 };
 PlatformStatistics.Mspt._readField = function (tag, obj, pbf) {
     if (tag === 1)
-        obj.last1m = PlatformStatistics.RollingAverageValues.read(
-            pbf,
-            pbf.readVarint() + pbf.pos
-        );
+        obj.last1m = RollingAverageValues.read(pbf, pbf.readVarint() + pbf.pos);
     else if (tag === 2)
-        obj.last5m = PlatformStatistics.RollingAverageValues.read(
-            pbf,
-            pbf.readVarint() + pbf.pos
-        );
+        obj.last5m = RollingAverageValues.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // PlatformStatistics.Ping ========================================
@@ -388,29 +463,10 @@ PlatformStatistics.Ping.read = function (pbf, end) {
 };
 PlatformStatistics.Ping._readField = function (tag, obj, pbf) {
     if (tag === 1)
-        obj.last15m = PlatformStatistics.RollingAverageValues.read(
+        obj.last15m = RollingAverageValues.read(
             pbf,
             pbf.readVarint() + pbf.pos
         );
-};
-
-// PlatformStatistics.RollingAverageValues ========================================
-
-PlatformStatistics.RollingAverageValues = {};
-
-PlatformStatistics.RollingAverageValues.read = function (pbf, end) {
-    return pbf.readFields(
-        PlatformStatistics.RollingAverageValues._readField,
-        { mean: 0, max: 0, min: 0, median: 0, percentile95: 0 },
-        end
-    );
-};
-PlatformStatistics.RollingAverageValues._readField = function (tag, obj, pbf) {
-    if (tag === 1) obj.mean = pbf.readDouble();
-    else if (tag === 2) obj.max = pbf.readDouble();
-    else if (tag === 3) obj.min = pbf.readDouble();
-    else if (tag === 4) obj.median = pbf.readDouble();
-    else if (tag === 5) obj.percentile95 = pbf.readDouble();
 };
 
 // PlatformStatistics._FieldEntry2 ========================================
@@ -428,6 +484,25 @@ PlatformStatistics._FieldEntry2._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
     else if (tag === 2)
         obj.value = PlatformStatistics.Gc.read(pbf, pbf.readVarint() + pbf.pos);
+};
+
+// RollingAverageValues ========================================
+
+var RollingAverageValues = (exports.RollingAverageValues = {});
+
+RollingAverageValues.read = function (pbf, end) {
+    return pbf.readFields(
+        RollingAverageValues._readField,
+        { mean: 0, max: 0, min: 0, median: 0, percentile95: 0 },
+        end
+    );
+};
+RollingAverageValues._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.mean = pbf.readDouble();
+    else if (tag === 2) obj.max = pbf.readDouble();
+    else if (tag === 3) obj.min = pbf.readDouble();
+    else if (tag === 4) obj.median = pbf.readDouble();
+    else if (tag === 5) obj.percentile95 = pbf.readDouble();
 };
 
 // CommandSenderMetadata ========================================

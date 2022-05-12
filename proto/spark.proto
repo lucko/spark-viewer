@@ -31,6 +31,7 @@ message SystemStatistics {
   Os os = 5;
   Java java = 6;
   int64 uptime = 7;
+  map<string, NetInterface> net = 8;
 
   message Cpu {
     int32 threads = 1;
@@ -77,6 +78,13 @@ message SystemStatistics {
     string vendorVersion = 3;
     string vmArgs = 4;
   }
+
+  message NetInterface {
+    RollingAverageValues rxBytesPerSecond = 1;
+    RollingAverageValues txBytesPerSecond = 2;
+    RollingAverageValues rxPacketsPerSecond = 3;
+    RollingAverageValues txPacketsPerSecond = 4;
+  }
 }
 
 message PlatformStatistics {
@@ -85,6 +93,8 @@ message PlatformStatistics {
   int64 uptime = 3;
   Tps tps = 4; // optional
   Mspt mspt = 5; // optional
+  Ping ping = 6; // optional
+  int64 playerCount = 7; // optional
 
   message Memory {
     MemoryPool heap = 1;
@@ -115,14 +125,14 @@ message PlatformStatistics {
   message Ping {
     RollingAverageValues last15m = 1;
   }
+}
 
-  message RollingAverageValues {
-    double mean = 1;
-    double max = 2;
-    double min = 3;
-    double median = 4;
-    double percentile95 = 5;
-  }
+message RollingAverageValues {
+  double mean = 1;
+  double max = 2;
+  double min = 3;
+  double median = 4;
+  double percentile95 = 5;
 }
 
 message CommandSenderMetadata {
