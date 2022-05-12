@@ -74,6 +74,11 @@ export function MetadataDetail({ metadata }) {
         return { parsedConfigurations, onlineMode };
     }, [serverConfigurations]);
 
+    const runningTime =
+        metadata.endTime && metadata.startTime
+            ? metadata.endTime - metadata.startTime
+            : undefined;
+
     const [view, setView] = useState('Platform');
     const views = {
         'Platform': () => true,
@@ -106,6 +111,7 @@ export function MetadataDetail({ metadata }) {
                     systemStatistics={systemStatistics}
                     platformType={platformType}
                     onlineMode={onlineMode}
+                    runningTime={runningTime}
                 />
             ) : view === 'JVM Flags' ? (
                 <JvmStartupArgs systemStatistics={systemStatistics} />
@@ -124,6 +130,7 @@ const PlatformStatistics = ({
     systemStatistics,
     platformType,
     onlineMode,
+    runningTime,
 }) => {
     return (
         <>
@@ -143,7 +150,7 @@ const PlatformStatistics = ({
                     The server is running in <span>{onlineMode}</span>.
                 </p>
             )}
-            {platformStatistics?.playerCount && (
+            {platformStatistics?.playerCount > 0 && (
                 <p>
                     The server had a player count of{' '}
                     <span>{platformStatistics.playerCount}</span> when the
@@ -152,6 +159,11 @@ const PlatformStatistics = ({
             )}
             {!!systemStatistics && (
                 <SystemStatistics systemStatistics={systemStatistics} />
+            )}
+            {runningTime && (
+                <p>
+                    The profiler was running for <span>{formatDuration(runningTime)}</span>.
+                </p>
             )}
         </>
     );

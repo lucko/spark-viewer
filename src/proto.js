@@ -661,6 +661,7 @@ SamplerMetadata.read = function (pbf, end) {
             platformStatistics: null,
             systemStatistics: null,
             serverConfigurations: {},
+            endTime: 0,
         },
         end
     );
@@ -699,7 +700,7 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
             pbf.readVarint() + pbf.pos
         );
         obj.serverConfigurations[entry.key] = entry.value;
-    }
+    } else if (tag === 11) obj.endTime = pbf.readVarint(true);
 };
 
 // SamplerMetadata.ThreadDumper ========================================

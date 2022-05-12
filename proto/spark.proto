@@ -190,6 +190,7 @@ message SamplerMetadata {
   PlatformStatistics platformStatistics = 8;
   SystemStatistics systemStatistics = 9;
   map<string, string> serverConfigurations = 10;
+  int64 endTime = 11;
 
   message ThreadDumper {
     Type type = 1;
