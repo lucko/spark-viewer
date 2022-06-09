@@ -99,7 +99,7 @@ const DownloadList = ({ info }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Fabric"
-                comment="MC 1.18"
+                comment="MC 1.19"
                 artifact="fabric"
                 installDir="mods"
                 controls={{
@@ -110,7 +110,7 @@ const DownloadList = ({ info }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
-                comment="MC 1.18"
+                comment="MC 1.19"
                 artifact="forge"
                 installDir="mods"
                 controls={{
