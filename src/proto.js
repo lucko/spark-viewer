@@ -331,6 +331,7 @@ PlatformStatistics.read = function (pbf, end) {
             mspt: null,
             ping: null,
             playerCount: 0,
+            world: null,
         },
         end
     );
@@ -361,6 +362,8 @@ PlatformStatistics._readField = function (tag, obj, pbf) {
             pbf.readVarint() + pbf.pos
         );
     else if (tag === 7) obj.playerCount = pbf.readVarint(true);
+    else if (tag === 8)
+        obj.world = WorldStatistics.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // PlatformStatistics.Memory ========================================
@@ -503,6 +506,126 @@ RollingAverageValues._readField = function (tag, obj, pbf) {
     else if (tag === 3) obj.min = pbf.readDouble();
     else if (tag === 4) obj.median = pbf.readDouble();
     else if (tag === 5) obj.percentile95 = pbf.readDouble();
+};
+
+// WorldStatistics ========================================
+
+var WorldStatistics = (exports.WorldStatistics = {});
+
+WorldStatistics.read = function (pbf, end) {
+    return pbf.readFields(
+        WorldStatistics._readField,
+        { totalEntities: 0, entityCounts: {}, worlds: [] },
+        end
+    );
+};
+WorldStatistics._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.totalEntities = pbf.readVarint(true);
+    else if (tag === 2) {
+        var entry = WorldStatistics._FieldEntry2.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.entityCounts[entry.key] = entry.value;
+    } else if (tag === 3)
+        obj.worlds.push(
+            WorldStatistics.World.read(pbf, pbf.readVarint() + pbf.pos)
+        );
+};
+
+// WorldStatistics.World ========================================
+
+WorldStatistics.World = {};
+
+WorldStatistics.World.read = function (pbf, end) {
+    return pbf.readFields(
+        WorldStatistics.World._readField,
+        { name: '', totalEntities: 0, regions: [] },
+        end
+    );
+};
+WorldStatistics.World._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.name = pbf.readString();
+    else if (tag === 2) obj.totalEntities = pbf.readVarint(true);
+    else if (tag === 3)
+        obj.regions.push(
+            WorldStatistics.Region.read(pbf, pbf.readVarint() + pbf.pos)
+        );
+};
+
+// WorldStatistics.Region ========================================
+
+WorldStatistics.Region = {};
+
+WorldStatistics.Region.read = function (pbf, end) {
+    return pbf.readFields(
+        WorldStatistics.Region._readField,
+        { totalEntities: 0, chunks: [] },
+        end
+    );
+};
+WorldStatistics.Region._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.totalEntities = pbf.readVarint(true);
+    else if (tag === 2)
+        obj.chunks.push(
+            WorldStatistics.Chunk.read(pbf, pbf.readVarint() + pbf.pos)
+        );
+};
+
+// WorldStatistics.Chunk ========================================
+
+WorldStatistics.Chunk = {};
+
+WorldStatistics.Chunk.read = function (pbf, end) {
+    return pbf.readFields(
+        WorldStatistics.Chunk._readField,
+        { x: 0, z: 0, totalEntities: 0, entityCounts: {} },
+        end
+    );
+};
+WorldStatistics.Chunk._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.x = pbf.readVarint(true);
+    else if (tag === 2) obj.z = pbf.readVarint(true);
+    else if (tag === 3) obj.totalEntities = pbf.readVarint(true);
+    else if (tag === 4) {
+        var entry = WorldStatistics.Chunk._FieldEntry4.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.entityCounts[entry.key] = entry.value;
+    }
+};
+
+// WorldStatistics.Chunk._FieldEntry4 ========================================
+
+WorldStatistics.Chunk._FieldEntry4 = {};
+
+WorldStatistics.Chunk._FieldEntry4.read = function (pbf, end) {
+    return pbf.readFields(
+        WorldStatistics.Chunk._FieldEntry4._readField,
+        { key: '', value: 0 },
+        end
+    );
+};
+WorldStatistics.Chunk._FieldEntry4._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readVarint(true);
+};
+
+// WorldStatistics._FieldEntry2 ========================================
+
+WorldStatistics._FieldEntry2 = {};
+
+WorldStatistics._FieldEntry2.read = function (pbf, end) {
+    return pbf.readFields(
+        WorldStatistics._FieldEntry2._readField,
+        { key: '', value: 0 },
+        end
+    );
+};
+WorldStatistics._FieldEntry2._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readVarint(true);
 };
 
 // CommandSenderMetadata ========================================

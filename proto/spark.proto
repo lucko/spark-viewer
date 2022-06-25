@@ -95,6 +95,7 @@ message PlatformStatistics {
   Mspt mspt = 5; // optional
   Ping ping = 6; // optional
   int64 playerCount = 7; // optional
+  WorldStatistics world = 8; // optional
 
   message Memory {
     MemoryPool heap = 1;
@@ -133,6 +134,30 @@ message RollingAverageValues {
   double min = 3;
   double median = 4;
   double percentile95 = 5;
+}
+
+message WorldStatistics {
+  int32 totalEntities = 1;
+  map<string, int32> entityCounts = 2;
+  repeated World worlds = 3;
+
+  message World {
+    string name = 1;
+    int32 totalEntities = 2;
+    repeated Region regions = 3;
+  }
+
+  message Region {
+    int32 totalEntities = 1;
+    repeated Chunk chunks = 2;
+  }
+
+  message Chunk {
+    int32 x = 1;
+    int32 z = 2;
+    int32 totalEntities = 3;
+    map<string, int32> entityCounts = 4;
+  }
 }
 
 message CommandSenderMetadata {

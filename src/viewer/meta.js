@@ -10,6 +10,7 @@ import {
     CommandSenderMetadata,
     PlatformMetadata as PlatformData,
 } from '../proto';
+import { WorldStatistics } from './world';
 
 export function WidgetsAndMetadata({ metadata, metadataToggle }) {
     return (
@@ -84,6 +85,8 @@ export function MetadataDetail({ metadata }) {
         'Platform': () => true,
         'JVM Flags': () => !!systemStatistics?.java.vmArgs,
         'Configurations': () => !!parsedConfigurations,
+        'World': () =>
+            platformStatistics.world && platformStatistics.world.totalEntities,
     };
 
     return (
@@ -115,10 +118,12 @@ export function MetadataDetail({ metadata }) {
                 />
             ) : view === 'JVM Flags' ? (
                 <JvmStartupArgs systemStatistics={systemStatistics} />
-            ) : (
+            ) : view === 'Configurations' ? (
                 <ServerConfigurations
                     parsedConfigurations={parsedConfigurations}
                 />
+            ) : (
+                <WorldStatistics worldStatistics={platformStatistics.world} />
             )}
         </div>
     );
@@ -162,7 +167,8 @@ const PlatformStatistics = ({
             )}
             {runningTime && (
                 <p>
-                    The profiler was running for <span>{formatDuration(runningTime)}</span>.
+                    The profiler was running for{' '}
+                    <span>{formatDuration(runningTime)}</span>.
                 </p>
             )}
         </>
