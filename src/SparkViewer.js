@@ -9,11 +9,11 @@ import {
 } from './status';
 import { HeapData, SamplerData } from './proto';
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import { getMappingsInfo, requestMappings } from './sampler/mappings';
 import {
     labelData,
     labelDataWithSource,
 } from './sampler/preprocessing';
-import { getMappingsInfo, requestMappings } from './sampler/mappings';
 
 import HeaderWithMappings from './components/HeaderWithMappings';
 import Pbf from 'pbf';

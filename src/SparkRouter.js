@@ -1,9 +1,9 @@
 import { DOWNLOAD, HOMEPAGE, PAGE_NOT_FOUND } from './status';
+import Header, { HomepageHeader } from './components/Header';
 import React, { Suspense } from 'react';
 
 import SparkPage from './components/SparkPage';
 import TextBox from './components/TextBox';
-import Header, { HomepageHeader } from './components/Header';
 
 const Homepage = React.lazy(() => import('./pages/Homepage'));
 const Download = React.lazy(() => import('./pages/Download'));

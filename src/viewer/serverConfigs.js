@@ -67,10 +67,10 @@ export function detectOnlineMode(parsedConfigurations) {
             paperConfig &&
             paperConfig.settings['bungee-online-mode'] === false
         ) {
-            return 'BungeeCord (offline mode)';
+            return 'offline mode (BungeeCord)';
         }
 
-        return 'BungeeCord (online mode)';
+        return 'online mode (BungeeCord)';
     }
 
     if (
@@ -79,10 +79,10 @@ export function detectOnlineMode(parsedConfigurations) {
         paperConfig.settings['velocity-support']['enabled'] === true
     ) {
         if (paperConfig.settings['velocity-support']['online-mode'] === false) {
-            return 'Velocity (offline mode)';
+            return 'offline mode (Velocity)';
         }
 
-        return 'Velocity (online mode)';
+        return 'online mode (Velocity)';
     }
 
     return 'offline mode';
