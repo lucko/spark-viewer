@@ -80,6 +80,9 @@ export function MetadataDetail({ metadata }) {
             ? metadata.endTime - metadata.startTime
             : undefined;
 
+    const numberOfTicks = metadata.numberOfTicks;
+    const numberOfIncludedTicks = metadata.dataAggregator.numberOfIncludedTicks;
+
     const [view, setView] = useState('Platform');
     const views = {
         'Platform': () => true,
@@ -115,6 +118,8 @@ export function MetadataDetail({ metadata }) {
                     platformType={platformType}
                     onlineMode={onlineMode}
                     runningTime={runningTime}
+                    numberOfTicks={numberOfTicks}
+                    numberOfIncludedTicks={numberOfIncludedTicks}
                 />
             ) : view === 'JVM Flags' ? (
                 <JvmStartupArgs systemStatistics={systemStatistics} />
@@ -136,6 +141,8 @@ const PlatformStatistics = ({
     platformType,
     onlineMode,
     runningTime,
+    numberOfTicks,
+    numberOfIncludedTicks,
 }) => {
     return (
         <>
@@ -168,7 +175,21 @@ const PlatformStatistics = ({
             {runningTime && (
                 <p>
                     The profiler was running for{' '}
-                    <span>{formatDuration(runningTime)}</span>.
+                    <span>{formatDuration(runningTime)}</span>
+                    {!!numberOfTicks && (
+                        <>
+                            {' '}
+                            (<span>{numberOfTicks}</span> ticks)
+                        </>
+                    )}
+                    .
+                    {!!numberOfIncludedTicks && (
+                        <>
+                            {' '}
+                            <span>{numberOfIncludedTicks}</span> ticks exceeded
+                            the 'only ticks over' threshold.
+                        </>
+                    )}
                 </p>
             )}
         </>

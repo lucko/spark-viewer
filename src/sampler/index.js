@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext } from 'react';
 
 import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 import Controls from './controls';
@@ -15,9 +15,16 @@ import { Menu, Item, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';
 
+export const MappingsContext = createContext();
+export const HighlightedContext = createContext();
+export const SearchQueryContext = createContext();
+export const MetadataContext = createContext();
+export const LabelModeContext = createContext();
+
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
     const highlighted = useHighlight();
+    const [labelMode, setLabelMode] = useState(false);
 
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
@@ -86,30 +93,32 @@ export default function Sampler({ data, mappings, exportCallback }) {
             {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
 
             <div style={{ display: flameData ? 'none' : null }}>
-                {view === VIEW_ALL ? (
-                    <AllView
-                        threads={data.threads}
-                        mappings={mappings}
-                        highlighted={highlighted}
-                        searchQuery={searchQuery}
-                    />
-                ) : view === VIEW_FLAT ? (
-                    <FlatView
-                        dataSelfTime={flatViewData.flatSelfTime}
-                        dataTotalTime={flatViewData.flatTotalTime}
-                        mappings={mappings}
-                        highlighted={highlighted}
-                        searchQuery={searchQuery}
-                    />
-                ) : (
-                    <SourcesView
-                        dataMerged={sourcesViewData.sourcesMerged}
-                        dataSeparate={sourcesViewData.sourcesSeparate}
-                        mappings={mappings}
-                        highlighted={highlighted}
-                        searchQuery={searchQuery}
-                    />
-                )}
+                <SamplerContext
+                    mappings={mappings}
+                    highlighted={highlighted}
+                    searchQuery={searchQuery}
+                    labelMode={labelMode}
+                    metadata={data.metadata}
+                >
+                    {view === VIEW_ALL ? (
+                        <AllView
+                            threads={data.threads}
+                            setLabelMode={setLabelMode}
+                        />
+                    ) : view === VIEW_FLAT ? (
+                        <FlatView
+                            dataSelfTime={flatViewData.flatSelfTime}
+                            dataTotalTime={flatViewData.flatTotalTime}
+                            setLabelMode={setLabelMode}
+                        />
+                    ) : (
+                        <SourcesView
+                            dataMerged={sourcesViewData.sourcesMerged}
+                            dataSeparate={sourcesViewData.sourcesSeparate}
+                            setLabelMode={setLabelMode}
+                        />
+                    )}
+                </SamplerContext>
             </div>
 
             <Menu id={'sampler-cm'} theme={theme.dark}>
@@ -120,3 +129,27 @@ export default function Sampler({ data, mappings, exportCallback }) {
         </div>
     );
 }
+
+const SamplerContext = ({
+    mappings,
+    highlighted,
+    searchQuery,
+    labelMode,
+    metadata,
+    children,
+}) => {
+    // :]
+    return (
+        <MappingsContext.Provider value={mappings}>
+            <HighlightedContext.Provider value={highlighted}>
+                <SearchQueryContext.Provider value={searchQuery}>
+                    <LabelModeContext.Provider value={labelMode}>
+                        <MetadataContext.Provider value={metadata}>
+                            {children}
+                        </MetadataContext.Provider>
+                    </LabelModeContext.Provider>
+                </SearchQueryContext.Provider>
+            </HighlightedContext.Provider>
+        </MappingsContext.Provider>
+    );
+};

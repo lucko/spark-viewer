@@ -127,8 +127,9 @@ html {
         }
     }
 
-    .sourceview > .header,
-    .flatview > .header {
+    .allview > .header,
+    .flatview > .header,
+    .sourceview > .header {
         margin: 0 10px;
         max-width: 1000px;
         font-size: 16px;

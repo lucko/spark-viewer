@@ -785,6 +785,7 @@ SamplerMetadata.read = function (pbf, end) {
             systemStatistics: null,
             serverConfigurations: {},
             endTime: 0,
+            numberOfTicks: 0,
         },
         end
     );
@@ -824,6 +825,7 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
         );
         obj.serverConfigurations[entry.key] = entry.value;
     } else if (tag === 11) obj.endTime = pbf.readVarint(true);
+    else if (tag === 12) obj.numberOfTicks = pbf.readVarint(true);
 };
 
 // SamplerMetadata.ThreadDumper ========================================
@@ -865,7 +867,12 @@ SamplerMetadata.DataAggregator = {};
 SamplerMetadata.DataAggregator.read = function (pbf, end) {
     return pbf.readFields(
         SamplerMetadata.DataAggregator._readField,
-        { type: 0, threadGrouper: 0, tickLengthThreshold: 0 },
+        {
+            type: 0,
+            threadGrouper: 0,
+            tickLengthThreshold: 0,
+            numberOfIncludedTicks: 0,
+        },
         end
     );
 };
@@ -873,6 +880,7 @@ SamplerMetadata.DataAggregator._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.type = pbf.readVarint();
     else if (tag === 2) obj.threadGrouper = pbf.readVarint();
     else if (tag === 3) obj.tickLengthThreshold = pbf.readVarint(true);
+    else if (tag === 4) obj.numberOfIncludedTicks = pbf.readVarint(true);
 };
 
 SamplerMetadata.DataAggregator.Type = {
