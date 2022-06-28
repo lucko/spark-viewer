@@ -89,7 +89,8 @@ export function MetadataDetail({ metadata }) {
         'JVM Flags': () => !!systemStatistics?.java.vmArgs,
         'Configurations': () => !!parsedConfigurations,
         'World': () =>
-            platformStatistics.world && platformStatistics.world.totalEntities,
+            platformStatistics?.world &&
+            platformStatistics?.world?.totalEntities,
     };
 
     return (
