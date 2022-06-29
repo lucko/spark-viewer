@@ -86,8 +86,8 @@ export function MetadataDetail({ metadata }) {
     const [view, setView] = useState('Platform');
     const views = {
         'Platform': () => true,
-        'JVM Flags': () => !!systemStatistics?.java.vmArgs,
-        'Configurations': () => !!parsedConfigurations,
+        'JVM Flags': () => systemStatistics?.java.vmArgs,
+        'Configurations': () => parsedConfigurations,
         'World': () =>
             platformStatistics?.world &&
             platformStatistics?.world?.totalEntities,
@@ -98,7 +98,7 @@ export function MetadataDetail({ metadata }) {
             <ul className="metadata-detail-controls">
                 {Object.entries(views).map(([name, func]) => {
                     return (
-                        func() && (
+                        !!func() && (
                             <li
                                 key={name}
                                 onClick={() => setView(name)}
