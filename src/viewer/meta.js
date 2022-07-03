@@ -81,7 +81,7 @@ export function MetadataDetail({ metadata }) {
             : undefined;
 
     const numberOfTicks = metadata.numberOfTicks;
-    const numberOfIncludedTicks = metadata.dataAggregator.numberOfIncludedTicks;
+    const numberOfIncludedTicks = metadata.dataAggregator?.numberOfIncludedTicks;
 
     const [view, setView] = useState('Platform');
     const views = {
