@@ -6,40 +6,34 @@
 // on initial load. This means the preprocessing can happen in the background
 // (it can take up to a few seconds) while the rest of the page remains responsive.
 
-import { expose as exposeWorker } from 'comlink';
+import { expose } from 'comlink';
 
 // Expose methods via comlink
-exposeWorker({ generateFlatView, generateSourceViews });
+expose({ generateFlatView, generateSourceViews });
 
 // Utility function to merge a node into an existing
-// array of nodes if an existing node in the array
+// map of nodes if an existing node in the map
 // has the same className+methodName+methodDesc
-function mergeIntoArray(arr, node) {
-    for (const [i, n] of arr.entries()) {
-        if (
-            n.className === node.className &&
-            n.methodName === node.methodName &&
-            n.methodDesc === node.methodDesc
-        ) {
-            // merge
-            arr[i] = mergeNodes(n, node);
-            return;
-        }
+function mergeIntoAccumulator(map, node) {
+    const key = keyForNode(node);
+    const existing = map.get(key);
+    if (existing !== undefined) {
+        map.set(key, mergeNodes(existing, node));
+    } else {
+        map.set(key, node);
     }
-
-    // just append
-    arr.push(node);
 }
 
 // Merges two nodes together into a new node.
 function mergeNodes(a, b) {
-    const children = [];
+    const childrenMap = new Map();
     for (const c of a.children) {
-        mergeIntoArray(children, c);
+        mergeIntoAccumulator(childrenMap, c);
     }
     for (const c of b.children) {
-        mergeIntoArray(children, c);
+        mergeIntoAccumulator(childrenMap, c);
     }
+    const children = Array.from(childrenMap.values());
     children.sort((a, b) => b.time - a.time);
 
     let parents;
@@ -78,6 +72,10 @@ function shallowCopy(n) {
     };
 }
 
+function keyForNode(node) {
+    return `${node.className}\0${node.methodName}\0${node.methodDesc}`;
+}
+
 // Generates the data required by the viewer "Flat View".
 // It shows a flattened representation of the profile where the
 // slowest x methods invocations are displayed at the top level.
@@ -91,7 +89,7 @@ function generateFlatView(data) {
     // Visits a node in the profiler tree, calculates data
     // about it then appends it to the accumulator
     function visit(node, parent, acc, seen) {
-        const key = `${node.className}\0${node.methodName}\0${node.methodDesc}`;
+        const key = keyForNode(node);
         const skip = seen.has(key);
         if (!skip) {
             seen.add(key);
@@ -223,9 +221,9 @@ function generateSourceViews(data) {
         if (node.source === source) {
             // if the source of the node matches, add it to the accumulator
             if (mergeMode) {
-                mergeIntoArray(acc, node);
+                mergeIntoAccumulator(acc, node);
             } else {
-                acc.push(node);
+                acc.set(node.id, node);
             }
         } else {
             // otherwise, search the nodes children (recursively...)
@@ -247,8 +245,9 @@ function generateSourceViews(data) {
                 let totalTime = 0;
 
                 for (const thread of threads) {
-                    const acc = [];
-                    findMatches(acc, mergeMode, source, thread);
+                    const accMap = new Map();
+                    findMatches(accMap, mergeMode, source, thread);
+                    const acc = Array.from(accMap.values());
                     acc.sort((a, b) => b.time - a.time);
 
                     if (acc.length) {

@@ -40,12 +40,15 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
     // Generate flat & sources view in the background on first load
     useEffect(() => {
-        const worker = createWorker();
-        worker.generateFlatView(data).then(res => {
-            setFlatViewData(res);
+        createWorker(worker => {
+            worker.generateFlatView(data).then(res => {
+                setFlatViewData(res);
+            });
         });
-        worker.generateSourceViews(data).then(res => {
-            setSourcesViewData(res);
+        createWorker(worker => {
+            worker.generateSourceViews(data).then(res => {
+                setSourcesViewData(res);
+            });
         });
     }, [data]);
 

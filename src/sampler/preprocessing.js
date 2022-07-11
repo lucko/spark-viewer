@@ -7,14 +7,16 @@
 // practice only a few milliseconds) - but the viewer interactions should then
 // be nice and snappy because the data it needs has been pre-computed.
 
-import { wrap as wrapWorker } from 'comlink';
+import { releaseProxy, wrap } from 'comlink';
 
 // Creates a wrapped web-worker for more complex preprocessing
-export function createWorker() {
+export function createWorker(func) {
     const worker = new Worker(
         new URL('./preprocessingWorker.js', import.meta.url)
     );
-    return wrapWorker(worker);
+    const proxy = wrap(worker);
+    func(proxy);
+    proxy[releaseProxy]();
 }
 
 // Deterministically assigns a unique integer id to each node in the data.
