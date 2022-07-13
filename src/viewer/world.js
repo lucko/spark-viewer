@@ -49,11 +49,13 @@ const WorldTotalEntities = ({ totalEntities, worlds }) => {
                 <b>Entities</b> (total): <span>{totalEntities}</span>
             </p>
             <ul>
-                {worlds.map(world => (
-                    <li key={world.name}>
-                        {world.name}: <span>{world.totalEntities}</span>
-                    </li>
-                ))}
+                {worlds
+                    .sort((a, b) => b.totalEntities - a.totalEntities)
+                    .map(world => (
+                        <li key={world.name}>
+                            {world.name}: <span>{world.totalEntities}</span>
+                        </li>
+                    ))}
             </ul>
         </>
     );
@@ -78,11 +80,13 @@ const WorldTotalChunks = ({ worlds }) => {
                 <b>Chunks</b> (total): <span>{totalChunks}</span>
             </p>
             <ul>
-                {worlds.map(world => (
-                    <li key={world.name}>
-                        {world.name}: <span>{world.totalChunks}</span>
-                    </li>
-                ))}
+                {worlds
+                    .sort((a, b) => b.totalChunks - a.totalChunks)
+                    .map(world => (
+                        <li key={world.name}>
+                            {world.name}: <span>{world.totalChunks}</span>
+                        </li>
+                    ))}
             </ul>
         </>
     );
