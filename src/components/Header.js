@@ -23,7 +23,7 @@ export function HomepageHeader() {
                     <div>
                         A performance profiler for Minecraft
                         <br />
-                        clients, servers and proxies.
+                        clients, servers, and proxies.
                     </div>
                 </div>
             </div>
