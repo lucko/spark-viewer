@@ -25,12 +25,6 @@ const Heap = React.lazy(() => import('./heap'));
 const Sampler = React.lazy(() => import('./sampler'));
 
 export default function SparkViewer({ status, setStatus, code, selectedFile }) {
-    // if raw output mode is enabled -- '?raw=1' flag in the URL
-    const [rawMode] = useState(() => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('raw') !== null;
-    });
-
     // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
     // the export callback
@@ -91,10 +85,8 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
         // Loads sampler data from the given request
         function loadSampler(buf) {
             const data = parse(buf, SamplerData);
-            if (!rawMode) {
-                labelData(data.threads, 0);
-                labelDataWithSource(data);
-            }
+            labelData(data.threads, 0);
+            labelDataWithSource(data);
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);
         }
@@ -136,10 +128,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
                 }
 
                 if (type === 'application/x-spark-sampler') {
-                    if (!rawMode) {
-                        getMappingsInfo().then(setMappingsInfo);
-                    }
-
+                    getMappingsInfo().then(setMappingsInfo);
                     loadSampler(buf);
                 } else if (type === 'application/x-spark-heap') {
                     loadHeap(buf);
@@ -151,18 +140,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
                 setStatus(FAILED_DATA);
             }
         })();
-    }, [status, setStatus, code, selectedFile, rawMode]);
-
-    if (
-        rawMode &&
-        (status === LOADED_PROFILE_DATA || status === LOADED_HEAP_DATA)
-    ) {
-        return (
-            <pre style={{ position: 'absolute', top: 0 }}>
-                {JSON.stringify(loaded, null, 2)}
-            </pre>
-        );
-    }
+    }, [status, setStatus, code, selectedFile]);
 
     let contents;
     switch (status) {
