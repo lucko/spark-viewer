@@ -15,19 +15,19 @@
     }
 
     h1 {
-        font-size: 55px;
+        font-size: 65px;
     }
 
     h2 {
         font-size: 22px;
         font-weight: normal;
         color: #a1a1a1;
-        margin-top: 3px;
+        margin-top: 10px;
     }
 
     p {
         margin: auto 0;
-        font-size: 18px;
+        font-size: 20px;
 
         img {
             padding-right: 5px;
@@ -40,8 +40,18 @@
     }
 
     .stats > p {
-        font-size: 22px;
+        font-size: 26px;
         margin: 10px 0;
+        
+        color: #a1a1a1;
+
+        svg {
+            color: #f77669;
+        }
+
+        span {
+            color: #fff;
+        }
     }
 
     .footer {

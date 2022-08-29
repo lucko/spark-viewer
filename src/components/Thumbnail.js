@@ -48,25 +48,13 @@ export default function Thumbnail({ data, code }) {
     return (
         <div ref={ref} className="thumbnail">
             <div>
-                <h1>Spark {data.threads ? 'Profile' : 'Heap Summary'}</h1>
+                <h1>spark {data.threads ? 'profiler' : 'heap summary'}</h1>
                 <h2>/{code}</h2>
             </div>
 
             <Widgets metadata={metadata} expanded={false}></Widgets>
 
             <div className="stats">
-                {runningTime && (
-                    <p>
-                        <FontAwesomeIcon fixedWidth={true} icon={faClock} />{' '}
-                        <span>{formatDuration(runningTime)}</span>
-                        {!!numberOfTicks && (
-                            <>
-                                {' '}
-                                (<span>{numberOfTicks}</span> ticks)
-                            </>
-                        )}
-                    </p>
-                )}
                 <p>
                     <FontAwesomeIcon fixedWidth={true} icon={faServer} />{' '}
                     <span>{platform.name}</span> {platformType} &quot;
@@ -77,6 +65,18 @@ export default function Thumbnail({ data, code }) {
                         <FontAwesomeIcon fixedWidth={true} icon={faGamepad} />{' '}
                         <span>{platformStatistics.playerCount}</span> players
                         online
+                    </p>
+                )}
+                {runningTime && (
+                    <p>
+                        <FontAwesomeIcon fixedWidth={true} icon={faClock} />{' '}
+                        Duration <span>{formatDuration(runningTime)}</span>
+                        {!!numberOfTicks && (
+                            <>
+                                {' '}
+                                (<span>{numberOfTicks}</span> ticks)
+                            </>
+                        )}
                     </p>
                 )}
             </div>
