@@ -7,16 +7,7 @@ export function ProfileTitle({ metadata }) {
     const { user, startTime, interval, dataAggregator } = metadata;
 
     const comment = metadata.comment ? '"' + metadata.comment + '"' : '';
-
-    const start = new Date(startTime);
-    const startTimeStr = start
-        .toLocaleTimeString([], {
-            hour12: true,
-            hour: '2-digit',
-            minute: '2-digit',
-        })
-        .replace(' ', '');
-    const startDateStr = start.toLocaleDateString();
+    const [startTimeStr, startDateStr] = formatTime(startTime);
 
     document.title =
         'Profile' + comment + ' at ' + startTimeStr + ' ' + startDateStr;
@@ -39,4 +30,17 @@ export function ProfileTitle({ metadata }) {
             </span>
         </div>
     );
+}
+
+export function formatTime(startTime) {
+    const start = new Date(startTime);
+    const time = start
+        .toLocaleTimeString([], {
+            hour12: true,
+            hour: '2-digit',
+            minute: '2-digit',
+        })
+        .replace(' ', '');
+    const date = start.toLocaleDateString();
+    return [time, date];
 }

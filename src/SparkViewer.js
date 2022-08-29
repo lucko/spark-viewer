@@ -8,12 +8,15 @@ import {
     LOADING_FILE,
 } from './status';
 import { HeapData, SamplerData } from './proto';
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import React, {
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import { getMappingsInfo, requestMappings } from './sampler/mappings';
-import {
-    labelData,
-    labelDataWithSource,
-} from './sampler/preprocessing';
+import { labelData, labelDataWithSource } from './sampler/preprocessing';
 
 import HeaderWithMappings from './components/HeaderWithMappings';
 import Pbf from 'pbf';
@@ -23,12 +26,19 @@ import ls from 'local-storage';
 
 const Heap = React.lazy(() => import('./heap'));
 const Sampler = React.lazy(() => import('./sampler'));
+const Thumbnail = React.lazy(() => import('./components/Thumbnail'));
 
 export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
     // the export callback
     const [exportCallback, setExportCallback] = useState(null);
+
+    // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
+    const thumbnailOnly = useMemo(() => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('x-render-thumbnail') !== null;
+    }, []);
 
     // the mappings info object currently loaded
     const [mappingsInfo, setMappingsInfo] = useState(null);
@@ -85,8 +95,10 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
         // Loads sampler data from the given request
         function loadSampler(buf) {
             const data = parse(buf, SamplerData);
-            labelData(data.threads, 0);
-            labelDataWithSource(data);
+            if (!thumbnailOnly) {
+                labelData(data.threads, 0);
+                labelDataWithSource(data);
+            }
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);
         }
@@ -128,7 +140,9 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
                 }
 
                 if (type === 'application/x-spark-sampler') {
-                    getMappingsInfo().then(setMappingsInfo);
+                    if (!thumbnailOnly) {
+                        getMappingsInfo().then(setMappingsInfo);
+                    }
                     loadSampler(buf);
                 } else if (type === 'application/x-spark-heap') {
                     loadHeap(buf);
@@ -140,7 +154,18 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
                 setStatus(FAILED_DATA);
             }
         })();
-    }, [status, setStatus, code, selectedFile]);
+    }, [status, setStatus, code, selectedFile, thumbnailOnly]);
+
+    if (
+        thumbnailOnly &&
+        (status === LOADED_PROFILE_DATA || status === LOADED_HEAP_DATA)
+    ) {
+        return (
+            <Suspense>
+                <Thumbnail code={code} data={loaded} />
+            </Suspense>
+        );
+    }
 
     let contents;
     switch (status) {
@@ -152,7 +177,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             break;
         case FAILED_DATA:
             contents = (
-                <TextBox>
+                <TextBox extraClassName="loading-error">
                     Unable to load the data. Perhaps it expired? Are you using a
                     recent version?
                 </TextBox>

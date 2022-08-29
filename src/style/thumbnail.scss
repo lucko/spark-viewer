@@ -1,0 +1,61 @@
+.thumbnail {
+    height: 100%;
+    background-color: #1e2527;
+    overflow: hidden;
+    padding: 60px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    h1,
+    h2 {
+        line-height: 100%;
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 55px;
+    }
+
+    h2 {
+        font-size: 22px;
+        font-weight: normal;
+        color: #a1a1a1;
+        margin-top: 3px;
+    }
+
+    p {
+        margin: auto 0;
+        font-size: 18px;
+
+        img {
+            padding-right: 5px;
+            vertical-align: top;
+        }
+    }
+
+    .widget {
+        width: unset;
+    }
+
+    .stats > p {
+        font-size: 22px;
+        margin: 10px 0;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+        }
+    }
+}
+
+html {
+    background-color: white;
+}
