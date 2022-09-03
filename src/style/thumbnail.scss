@@ -45,6 +45,10 @@
         
         color: #a1a1a1;
 
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
         svg {
             color: #f77669;
         }

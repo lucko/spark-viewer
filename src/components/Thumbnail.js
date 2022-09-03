@@ -48,11 +48,13 @@ export default function Thumbnail({ data, code }) {
     return (
         <div ref={ref} className="thumbnail">
             <div>
-                <h1>spark {data.threads ? 'profiler' : 'heap summary'}</h1>
+                <h1>spark {data.threads ? 'profile' : 'heap summary'}</h1>
                 <h2>/{code}</h2>
             </div>
 
-            <Widgets metadata={metadata} expanded={false}></Widgets>
+            {platformStatistics && (
+                <Widgets metadata={metadata} expanded={false}></Widgets>
+            )}
 
             <div className="stats">
                 <p>
