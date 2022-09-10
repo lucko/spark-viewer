@@ -204,16 +204,19 @@ function generateFlatView(data) {
 // It shows a filtered representation of the profile broken down
 // by plugin/mod (source).
 function generateSourceViews(data) {
-    if (!data.classSources) {
+    if (!data.classSources && !data.methodSources) {
         return;
     }
 
-    const { classSources, threads } = data;
+    const { classSources, methodSources, threads } = data;
 
     // get a list of each distinct source
-    const sources = classSources
+    let sources = classSources
         ? [...new Set(Object.values(classSources))]
         : [];
+    sources = methodSources
+        ? [...sources, ...new Set(Object.values(methodSources))]
+        : sources;
 
     // Recursively scan through 'node' until a match for 'source' is found.
     // If found, add the node to the 'acc'-ulmulator using the given 'mergeMode'

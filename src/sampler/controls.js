@@ -51,7 +51,7 @@ const ToggleViewButton = ({ data, view, setView }) => {
         if (view === VIEW_ALL) {
             setView(VIEW_FLAT);
         } else if (view === VIEW_FLAT) {
-            if (Object.keys(data.classSources).length) {
+            if (Object.keys(data.classSources).length || Object.keys(data.methodSources).length) {
                 setView(VIEW_SOURCES);
             } else {
                 setView(VIEW_ALL);

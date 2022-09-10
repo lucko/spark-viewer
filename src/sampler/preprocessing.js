@@ -56,9 +56,34 @@ export function labelDataWithSource(data) {
         }
     }
 
+    function visitMethodSources(sources, nodes) {
+        for (const node of nodes) {
+            if (
+                node.className &&
+                node.methodName &&
+                node.methodDesc &&
+                !node.className.startsWith(
+                    'com.destroystokyo.paper.event.executor.asm.generated.'
+                )
+            ) {
+                const source = sources[node.className + ";" + node.methodName + ";" + node.methodDesc];
+                if (source) {
+                    node.source = source;
+                }
+            }
+            visitMethodSources(sources, node.children);
+        }
+    }
+
     if (data.classSources) {
         for (const thread of data.threads) {
             visit(data.classSources, thread.children);
+        }
+    }
+
+    if (data.methodSources) {
+        for (const thread of data.threads) {
+            visitMethodSources(data.methodSources, thread.children);
         }
     }
 }
