@@ -221,10 +221,15 @@ function generateSourceViews(data) {
         ? [...sources, ...new Set(Object.values(lineSources))]
         : sources;
 
+    // forgive carpet replacing the entire tick loop
+    function hideNode(node) {
+        return node.className && node.methodName && node.className.startsWith("net.minecraft.server.MinecraftServer") && node.methodName.endsWith('modifiedRunLoop') && node.source.includes('carpet');
+    }
+
     // Recursively scan through 'node' until a match for 'source' is found.
     // If found, add the node to the 'acc'-ulmulator using the given 'mergeMode'
     function findMatches(acc, mergeMode, source, node) {
-        if (node.source === source) {
+        if (node.source === source && !hideNode(node)) {
             // if the source of the node matches, add it to the accumulator
             if (mergeMode) {
                 mergeIntoAccumulator(acc, node);
