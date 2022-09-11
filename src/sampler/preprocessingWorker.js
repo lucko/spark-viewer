@@ -204,11 +204,11 @@ function generateFlatView(data) {
 // It shows a filtered representation of the profile broken down
 // by plugin/mod (source).
 function generateSourceViews(data) {
-    if (!data.classSources && !data.methodSources) {
+    if (!data.classSources && !data.methodSources && !data.lineSources) {
         return;
     }
 
-    const { classSources, methodSources, threads } = data;
+    const { classSources, methodSources, lineSources, threads } = data;
 
     // get a list of each distinct source
     let sources = classSources
@@ -216,6 +216,9 @@ function generateSourceViews(data) {
         : [];
     sources = methodSources
         ? [...sources, ...new Set(Object.values(methodSources))]
+        : sources;
+    sources = lineSources
+        ? [...sources, ...new Set(Object.values(lineSources))]
         : sources;
 
     // Recursively scan through 'node' until a match for 'source' is found.

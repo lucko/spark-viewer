@@ -203,6 +203,7 @@ message SamplerData {
   repeated ThreadNode threads = 2;
   map<string, string> classSources = 3; // optional
   map<string, string> methodSources = 4; // optional
+  map<string, string> lineSources = 5; // optional
 }
 
 message SamplerMetadata {

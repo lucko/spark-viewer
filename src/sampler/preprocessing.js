@@ -75,6 +75,24 @@ export function labelDataWithSource(data) {
         }
     }
 
+    function visitLineSources(sources, nodes) {
+        for (const node of nodes) {
+            if (
+                node.className &&
+                node.lineNumber &&
+                !node.className.startsWith(
+                    'com.destroystokyo.paper.event.executor.asm.generated.'
+                )
+            ) {
+                const source = sources[node.className + ":" + node.lineNumber];
+                if (source) {
+                    node.source = source;
+                }
+            }
+            visitLineSources(sources, node.children);
+        }
+    }
+
     if (data.classSources) {
         for (const thread of data.threads) {
             visit(data.classSources, thread.children);
@@ -84,6 +102,12 @@ export function labelDataWithSource(data) {
     if (data.methodSources) {
         for (const thread of data.threads) {
             visitMethodSources(data.methodSources, thread.children);
+        }
+    }
+
+    if (data.lineSources) {
+        for (const thread of data.threads) {
+            visitLineSources(data.lineSources, thread.children);
         }
     }
 }
