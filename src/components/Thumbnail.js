@@ -32,7 +32,16 @@ export default function Thumbnail({ data, code }) {
         bodyElement.style.height = '600px';
     });
 
-    const { platform, platformStatistics } = metadata;
+    let { platform, platformStatistics } = metadata;
+
+    if (!platform) {
+        platform = {
+            name: 'Unknown',
+            version: 'unknown',
+            type: 0,
+        };
+    }
+
     const platformType = Object.keys(PlatformData.Type)[
         platform.type
     ].toLowerCase();
