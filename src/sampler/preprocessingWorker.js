@@ -211,22 +211,24 @@ function generateSourceViews(data) {
     const { classSources, methodSources, lineSources, threads } = data;
 
     // get a list of each distinct source
-    let sources = classSources
-        ? [...Object.values(classSources)]
-        : [];
-    sources = methodSources
-        ? [...sources, ...Object.values(methodSources)]
-        : sources;
-    sources = lineSources
-        ? [...sources, ...Object.values(lineSources)]
-        : sources;
-
-    sources = [...new Set(sources)]
+    const sources = [
+        ...new Set([
+            ...Object.values(classSources || {}),
+            ...Object.values(methodSources || {}),
+            ...Object.values(lineSources || {}),
+        ]),
+    ];
 
     // forgive carpet replacing the entire tick loop
     function hideNode(node) {
-        return node.className && node.methodName && node.className.startsWith("net.minecraft.server.MinecraftServer") &&
-            (node.methodName.endsWith('modifiedRunLoop') || node.methodName.endsWith('fixUpdateSuppressionCrashTick')) && node.source.includes('carpet');
+        return (
+            node.className &&
+            node.methodName &&
+            node.className.startsWith('net.minecraft.server.MinecraftServer') &&
+            (node.methodName.endsWith('modifiedRunLoop') ||
+                node.methodName.endsWith('fixUpdateSuppressionCrashTick')) &&
+            node.source.includes('carpet')
+        );
     }
 
     // Recursively scan through 'node' until a match for 'source' is found.
