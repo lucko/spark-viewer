@@ -35,30 +35,61 @@ export function labelData(nodes, i) {
     return i;
 }
 
-// Uses the 'data.classSources' map to annotate node objects with their source.
+// Uses the 'data.<type>Sources' maps to annotate node objects with their source.
 // This saves the need for the source information to be duplicated across lots of
 // nodes with the same class.
 export function labelDataWithSource(data) {
+    const excludes = node =>
+        node.className.startsWith(
+            'com.destroystokyo.paper.event.executor.asm.generated.'
+        );
+
     function visit(sources, nodes) {
         for (const node of nodes) {
-            if (
-                node.className &&
-                !node.className.startsWith(
-                    'com.destroystokyo.paper.event.executor.asm.generated.'
-                )
-            ) {
-                const source = sources[node.className];
+            if (node.className && !excludes(node)) {
+                let source;
+
+                // classSources
+                if (sources.classSources) {
+                    source = sources.classSources[node.className];
+                }
+
+                // methodSources
+                if (
+                    !source &&
+                    sources.methodSources &&
+                    node.methodName &&
+                    node.methodDesc
+                ) {
+                    const key = `${node.className};${node.methodName};${node.methodDesc}`;
+                    source = sources.methodSources[key];
+                }
+
+                // lineSources
+                if (!source && sources.lineSources && node.lineNumber) {
+                    const key = `${node.className};${node.lineNumber}`;
+                    source = sources.lineSources[key];
+                }
+
                 if (source) {
                     node.source = source;
                 }
             }
+
+            // recursively
             visit(sources, node.children);
         }
     }
 
-    if (data.classSources) {
+    if (data.classSources || data.methodSources || data.lineSources) {
+        const sources = {
+            classSources: data.classSources,
+            methodSources: data.methodSources,
+            lineSources: data.lineSources,
+        };
+
         for (const thread of data.threads) {
-            visit(data.classSources, thread.children);
+            visit(sources, thread.children);
         }
     }
 }

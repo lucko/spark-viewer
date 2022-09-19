@@ -732,7 +732,13 @@ var SamplerData = (exports.SamplerData = {});
 SamplerData.read = function (pbf, end) {
     return pbf.readFields(
         SamplerData._readField,
-        { metadata: null, threads: [], classSources: {} },
+        {
+            metadata: null,
+            threads: [],
+            classSources: {},
+            methodSources: {},
+            lineSources: {},
+        },
         end
     );
 };
@@ -747,6 +753,12 @@ SamplerData._readField = function (tag, obj, pbf) {
             pbf.readVarint() + pbf.pos
         );
         obj.classSources[entry.key] = entry.value;
+    } else if (tag === 4) {
+        entry = SamplerData._FieldEntry4.read(pbf, pbf.readVarint() + pbf.pos);
+        obj.methodSources[entry.key] = entry.value;
+    } else if (tag === 5) {
+        entry = SamplerData._FieldEntry5.read(pbf, pbf.readVarint() + pbf.pos);
+        obj.lineSources[entry.key] = entry.value;
     }
 };
 
@@ -762,6 +774,38 @@ SamplerData._FieldEntry3.read = function (pbf, end) {
     );
 };
 SamplerData._FieldEntry3._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
+};
+
+// SamplerData._FieldEntry4 ========================================
+
+SamplerData._FieldEntry4 = {};
+
+SamplerData._FieldEntry4.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerData._FieldEntry4._readField,
+        { key: '', value: '' },
+        end
+    );
+};
+SamplerData._FieldEntry4._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
+};
+
+// SamplerData._FieldEntry5 ========================================
+
+SamplerData._FieldEntry5 = {};
+
+SamplerData._FieldEntry5.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerData._FieldEntry5._readField,
+        { key: '', value: '' },
+        end
+    );
+};
+SamplerData._FieldEntry5._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
     else if (tag === 2) obj.value = pbf.readString();
 };

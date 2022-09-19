@@ -204,21 +204,37 @@ function generateFlatView(data) {
 // It shows a filtered representation of the profile broken down
 // by plugin/mod (source).
 function generateSourceViews(data) {
-    if (!data.classSources) {
+    if (!data.classSources && !data.methodSources && !data.lineSources) {
         return;
     }
 
-    const { classSources, threads } = data;
+    const { classSources, methodSources, lineSources, threads } = data;
 
     // get a list of each distinct source
-    const sources = classSources
-        ? [...new Set(Object.values(classSources))]
-        : [];
+    const sources = [
+        ...new Set([
+            ...Object.values(classSources || {}),
+            ...Object.values(methodSources || {}),
+            ...Object.values(lineSources || {}),
+        ]),
+    ];
+
+    // forgive carpet replacing the entire tick loop
+    function hideNode(node) {
+        return (
+            node.className &&
+            node.methodName &&
+            node.className.startsWith('net.minecraft.server.MinecraftServer') &&
+            (node.methodName.endsWith('modifiedRunLoop') ||
+                node.methodName.endsWith('fixUpdateSuppressionCrashTick')) &&
+            node.source.includes('carpet')
+        );
+    }
 
     // Recursively scan through 'node' until a match for 'source' is found.
     // If found, add the node to the 'acc'-ulmulator using the given 'mergeMode'
     function findMatches(acc, mergeMode, source, node) {
-        if (node.source === source) {
+        if (node.source === source && !hideNode(node)) {
             // if the source of the node matches, add it to the accumulator
             if (mergeMode) {
                 mergeIntoAccumulator(acc, node);
