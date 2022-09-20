@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
 import { BaseNode } from './display';
-import { formatTime } from '../misc/util';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs } from '@fortawesome/free-solid-svg-icons';
@@ -106,26 +105,39 @@ export function SourcesView({ dataMerged, dataSeparate, setLabelMode }) {
                 {!data ? (
                     <TextBox>Loading...</TextBox>
                 ) : (
-                    data.map(({ source, totalTime, threads }) => (
-                        <SourceSection
-                            source={source}
-                            totalTime={totalTime}
-                            threads={threads}
-                            key={source}
-                        />
-                    ))
+                    <>
+                        {data.map(({ source, totalTime, threads }) => (
+                            <SourceSection
+                                source={source}
+                                totalTime={totalTime}
+                                threads={threads}
+                                key={source}
+                            />
+                        ))}
+                        <OtherSourcesSection data={data} />
+                    </>
                 )}
             </LabelModeContext.Provider>
         </div>
     );
 }
 
+const formatVersion = version => {
+    return version.startsWith('v') ? version : 'v' + version;
+};
+
 const SourceSection = ({ source, totalTime, threads }) => {
+    const metadata = useContext(MetadataContext);
+    const sourceInfo = metadata.sources[source.toLowerCase()];
+    let version = formatVersion(sourceInfo.version);
+
     return (
         <div className="stack">
             <h2>
                 {source}{' '}
-                <span className="time">({formatTime(totalTime)}ms)</span>
+                {sourceInfo && (
+                    <span className="version">({formatVersion(version)})</span>
+                )}
             </h2>
             {threads.map(thread => (
                 <BaseNode
@@ -135,6 +147,43 @@ const SourceSection = ({ source, totalTime, threads }) => {
                     key={thread.name}
                 />
             ))}
+        </div>
+    );
+};
+
+const OtherSourcesSection = ({ data }) => {
+    const metadata = useContext(MetadataContext);
+    if (!metadata.sources) {
+        return null;
+    }
+
+    const alreadyShown = data.map(s => s.source);
+    const otherSources = Object.values(metadata.sources).filter(
+        source => !alreadyShown.includes(source.name)
+    );
+
+    if (!otherSources) {
+        return null;
+    }
+
+    const sourceNoun = ['Fabric', 'Forge'].includes(metadata?.platform?.name)
+        ? 'mods'
+        : 'plugins';
+
+    return (
+        <div className="other-sources">
+            <h2>Other</h2>
+            <p>
+                The following other {sourceNoun} are installed, but didn't show
+                up in this profile. Yay!
+            </p>
+            <ul>
+                {otherSources.map(({ name, version }) => (
+                    <li key={name}>
+                        {name} <span>({formatVersion(version)})</span>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };
@@ -235,12 +284,17 @@ const SelfTimeModeButton = ({ selfTimeMode, setSelfTimeMode }) => {
 };
 
 const SourcesViewHeader = ({ children }) => {
+    const metadata = useContext(MetadataContext);
+    const sourceNoun = ['Fabric', 'Forge'].includes(metadata?.platform?.name)
+        ? { singular: 'mod', plural: 'Mods' }
+        : { singular: 'plugin', plural: 'Plugins' };
+
     return (
         <div className="header">
-            <h2>Sources View</h2>
+            <h2>{sourceNoun.plural} View</h2>
             <p>
                 This view shows a filtered representation of the profile broken
-                down by plugin/mod (source).
+                down by {sourceNoun.singular}.
             </p>
             {children}
         </div>

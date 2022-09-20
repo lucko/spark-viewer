@@ -830,6 +830,7 @@ SamplerMetadata.read = function (pbf, end) {
             serverConfigurations: {},
             endTime: 0,
             numberOfTicks: 0,
+            sources: {},
         },
         end
     );
@@ -870,6 +871,13 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
         obj.serverConfigurations[entry.key] = entry.value;
     } else if (tag === 11) obj.endTime = pbf.readVarint(true);
     else if (tag === 12) obj.numberOfTicks = pbf.readVarint(true);
+    else if (tag === 13) {
+        entry = SamplerMetadata._FieldEntry13.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.sources[entry.key] = entry.value;
+    }
 };
 
 // SamplerMetadata.ThreadDumper ========================================
@@ -953,6 +961,22 @@ SamplerMetadata.DataAggregator.ThreadGrouper = {
     },
 };
 
+// SamplerMetadata.SourceMetadata ========================================
+
+SamplerMetadata.SourceMetadata = {};
+
+SamplerMetadata.SourceMetadata.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerMetadata.SourceMetadata._readField,
+        { name: '', version: '' },
+        end
+    );
+};
+SamplerMetadata.SourceMetadata._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.name = pbf.readString();
+    else if (tag === 2) obj.version = pbf.readString();
+};
+
 // SamplerMetadata._FieldEntry10 ========================================
 
 SamplerMetadata._FieldEntry10 = {};
@@ -967,6 +991,26 @@ SamplerMetadata._FieldEntry10.read = function (pbf, end) {
 SamplerMetadata._FieldEntry10._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
     else if (tag === 2) obj.value = pbf.readString();
+};
+
+// SamplerMetadata._FieldEntry13 ========================================
+
+SamplerMetadata._FieldEntry13 = {};
+
+SamplerMetadata._FieldEntry13.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerMetadata._FieldEntry13._readField,
+        { key: '', value: null },
+        end
+    );
+};
+SamplerMetadata._FieldEntry13._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2)
+        obj.value = SamplerMetadata.SourceMetadata.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
 };
 
 // ThreadNode ========================================

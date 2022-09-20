@@ -278,6 +278,7 @@ function generateSourceViews(data) {
 
                 return { source, totalTime, threads: out };
             })
+            .filter(data => data.threads.length && data.totalTime)
             .sort((a, b) => b.totalTime - a.totalTime);
     }
 

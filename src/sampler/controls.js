@@ -30,13 +30,13 @@ export default function Controls({
             />
             {!flameData ? (
                 <>
-                    <FlameButton data={data} setFlameData={setFlameData} />
-                    <ExportButton exportCallback={exportCallback} />
                     <ToggleViewButton
                         data={data}
                         view={view}
                         setView={setView}
                     />
+                    <FlameButton data={data} setFlameData={setFlameData} />
+                    <ExportButton exportCallback={exportCallback} />
                     <SearchBar searchQuery={searchQuery} />
                 </>
             ) : (
@@ -47,39 +47,53 @@ export default function Controls({
 }
 
 const ToggleViewButton = ({ data, view, setView }) => {
-    function onClick() {
-        if (view === VIEW_ALL) {
-            setView(VIEW_FLAT);
-        } else if (view === VIEW_FLAT) {
-            if (Object.keys(data.classSources).length || Object.keys(data.methodSources).length || Object.keys(data.lineSources).length) {
-                setView(VIEW_SOURCES);
-            } else {
-                setView(VIEW_ALL);
-            }
-        } else {
-            setView(VIEW_ALL);
+    const sourcesViewSupported =
+        Object.keys(data.classSources).length ||
+        Object.keys(data.methodSources).length ||
+        Object.keys(data.lineSources).length;
+
+    const supportedViews = [
+        VIEW_ALL,
+        VIEW_FLAT,
+        ...(sourcesViewSupported ? [VIEW_SOURCES] : []),
+    ];
+
+    return supportedViews.map(v => {
+        function onClick() {
+            setView(v);
         }
-    }
 
-    let label;
-    if (view === VIEW_ALL) {
-        label = 'all';
-    } else if (view === VIEW_FLAT) {
-        label = 'flat';
-    } else {
-        label = 'sources';
-    }
+        let label;
+        if (v === VIEW_ALL) {
+            label = 'all';
+        } else if (v === VIEW_FLAT) {
+            label = 'flat';
+        } else {
+            const noun = ['Fabric', 'Forge'].includes(
+                data?.metadata?.platform?.name
+            )
+                ? 'mods'
+                : 'plugins';
 
-    return (
-        <FaButton
-            icon={faEye}
-            onClick={onClick}
-            title="Toggle the view"
-            extraClassName="sources-view-button"
-        >
-            <span>{label}</span>
-        </FaButton>
-    );
+            label = noun;
+        }
+
+        return (
+            <FaButton
+                key={label}
+                icon={faEye}
+                onClick={onClick}
+                title="Toggle the view"
+                extraClassName={
+                    view === v
+                        ? 'sources-view-button toggled'
+                        : 'sources-view-button'
+                }
+            >
+                <span>{label}</span>
+            </FaButton>
+        );
+    });
 };
 
 const FlameButton = ({ data, setFlameData }) => {

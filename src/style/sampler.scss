@@ -120,10 +120,28 @@ html {
                 display: none !important;
             }
         }
+    }
 
-        h2 > .time {
-            font-size: 100%;
-            color: #888;
+    .sourceview {
+        .stack {
+            margin-bottom: 40px;
+
+            > li {
+                margin-left: 10px;
+            }
+
+            > h2 > span {
+                font-size: 100%;
+                color: #888;
+            }
+        }
+
+        .other-sources {
+            padding-left: 10px;
+
+            li > span {
+                color: #888;
+            }
         }
     }
 
