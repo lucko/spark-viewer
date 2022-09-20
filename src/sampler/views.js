@@ -129,14 +129,13 @@ const formatVersion = version => {
 const SourceSection = ({ source, totalTime, threads }) => {
     const metadata = useContext(MetadataContext);
     const sourceInfo = metadata.sources[source.toLowerCase()];
-    let version = formatVersion(sourceInfo.version);
 
     return (
         <div className="stack">
             <h2>
                 {source}{' '}
                 {sourceInfo && (
-                    <span className="version">({formatVersion(version)})</span>
+                    <span className="version">({formatVersion(sourceInfo.version)})</span>
                 )}
             </h2>
             {threads.map(thread => (
@@ -162,7 +161,7 @@ const OtherSourcesSection = ({ data }) => {
         source => !alreadyShown.includes(source.name)
     );
 
-    if (!otherSources) {
+    if (!otherSources.length) {
         return null;
     }
 
