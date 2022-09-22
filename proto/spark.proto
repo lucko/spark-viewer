@@ -220,6 +220,7 @@ message SamplerMetadata {
   int64 endTime = 11;
   int32 numberOfTicks = 12;
   map<string, SourceMetadata> sources = 13;
+  map<string, string> extraPlatformMetadata = 14;
 
   message ThreadDumper {
     Type type = 1;

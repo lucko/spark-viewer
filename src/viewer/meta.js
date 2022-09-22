@@ -3,7 +3,11 @@ import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
 
 import Widgets from './widgets';
-import { detectOnlineMode, ServerConfigurations } from './serverConfigs';
+import {
+    detectOnlineMode,
+    ExtraMetadata,
+    ServerConfigurations,
+} from './serverConfigs';
 import { formatDuration } from '../misc/util';
 
 import {
@@ -55,6 +59,7 @@ export function MetadataDetail({ metadata }) {
         platformStatistics,
         systemStatistics,
         serverConfigurations,
+        extraPlatformMetadata,
     } = metadata;
     const platformType = Object.keys(PlatformData.Type)[
         platform.type
@@ -75,13 +80,25 @@ export function MetadataDetail({ metadata }) {
         return { parsedConfigurations, onlineMode };
     }, [serverConfigurations]);
 
+    const parsedExtraMetadata = useMemo(() => {
+        if (
+            extraPlatformMetadata &&
+            Object.keys(extraPlatformMetadata).length
+        ) {
+            return objectMap(extraPlatformMetadata, JSON.parse);
+        } else {
+            return null;
+        }
+    }, [extraPlatformMetadata]);
+
     const runningTime =
         metadata.endTime && metadata.startTime
             ? metadata.endTime - metadata.startTime
             : undefined;
 
     const numberOfTicks = metadata.numberOfTicks;
-    const numberOfIncludedTicks = metadata.dataAggregator?.numberOfIncludedTicks;
+    const numberOfIncludedTicks =
+        metadata.dataAggregator?.numberOfIncludedTicks;
 
     const [view, setView] = useState('Platform');
     const views = {
@@ -91,6 +108,7 @@ export function MetadataDetail({ metadata }) {
         'World': () =>
             platformStatistics?.world &&
             platformStatistics?.world?.totalEntities,
+        'Misc': () => !!parsedExtraMetadata,
     };
 
     return (
@@ -111,26 +129,34 @@ export function MetadataDetail({ metadata }) {
                 })}
             </ul>
 
-            {view === 'Platform' ? (
-                <PlatformStatistics
-                    platform={platform}
-                    platformStatistics={platformStatistics}
-                    systemStatistics={systemStatistics}
-                    platformType={platformType}
-                    onlineMode={onlineMode}
-                    runningTime={runningTime}
-                    numberOfTicks={numberOfTicks}
-                    numberOfIncludedTicks={numberOfIncludedTicks}
-                />
-            ) : view === 'JVM Flags' ? (
-                <JvmStartupArgs systemStatistics={systemStatistics} />
-            ) : view === 'Configurations' ? (
-                <ServerConfigurations
-                    parsedConfigurations={parsedConfigurations}
-                />
-            ) : (
-                <WorldStatistics worldStatistics={platformStatistics.world} />
-            )}
+            <div className="metadata-detail-content">
+                {view === 'Platform' ? (
+                    <PlatformStatistics
+                        platform={platform}
+                        platformStatistics={platformStatistics}
+                        systemStatistics={systemStatistics}
+                        platformType={platformType}
+                        onlineMode={onlineMode}
+                        runningTime={runningTime}
+                        numberOfTicks={numberOfTicks}
+                        numberOfIncludedTicks={numberOfIncludedTicks}
+                    />
+                ) : view === 'JVM Flags' ? (
+                    <JvmStartupArgs systemStatistics={systemStatistics} />
+                ) : view === 'Configurations' ? (
+                    <ServerConfigurations
+                        parsedConfigurations={parsedConfigurations}
+                    />
+                ) : view === 'World' ? (
+                    <WorldStatistics
+                        worldStatistics={platformStatistics.world}
+                    />
+                ) : view === 'Misc' ? (
+                    <ExtraMetadata data={parsedExtraMetadata} />
+                ) : (
+                    <p>Unknown view.</p>
+                )}
+            </div>
         </div>
     );
 }

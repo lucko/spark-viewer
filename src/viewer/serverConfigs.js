@@ -12,6 +12,15 @@ export function ServerConfigurations({ parsedConfigurations }) {
     );
 }
 
+export function ExtraMetadata({ data }) {
+    return (
+        <div className="configurations">
+            <p>Some extra metadata was provided by the platform:</p>
+            <ConfigurationObject data={data} />
+        </div>
+    );
+}
+
 const ConfigurationObject = ({ data }) => {
     return (
         <ul>
@@ -66,7 +75,8 @@ export function detectOnlineMode(parsedConfigurations) {
     if (spigotConfig?.settings?.bungeecord === true) {
         if (
             oldPaperConfig?.['settings']?.['bungee-online-mode'] === false ||
-            newPaperConfig?.['proxies']?.['bungee-cord']?.['online-mode'] === false
+            newPaperConfig?.['proxies']?.['bungee-cord']?.['online-mode'] ===
+                false
         ) {
             return 'offline mode (BungeeCord)';
         }
@@ -79,8 +89,10 @@ export function detectOnlineMode(parsedConfigurations) {
         newPaperConfig?.['proxies']?.['velocity']?.enabled === true
     ) {
         if (
-            (oldPaperConfig?.['settings']?.['velocity-support']?.['online-mode'] === false) ||
-            (newPaperConfig?.['proxies']?.['velocity']?.['online-mode'] === false)
+            oldPaperConfig?.['settings']?.['velocity-support']?.[
+                'online-mode'
+            ] === false ||
+            newPaperConfig?.['proxies']?.['velocity']?.['online-mode'] === false
         ) {
             return 'offline mode (Velocity)';
         }

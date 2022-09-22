@@ -831,6 +831,7 @@ SamplerMetadata.read = function (pbf, end) {
             endTime: 0,
             numberOfTicks: 0,
             sources: {},
+            extraPlatformMetadata: {},
         },
         end
     );
@@ -877,6 +878,12 @@ SamplerMetadata._readField = function (tag, obj, pbf) {
             pbf.readVarint() + pbf.pos
         );
         obj.sources[entry.key] = entry.value;
+    } else if (tag === 14) {
+        entry = SamplerMetadata._FieldEntry14.read(
+            pbf,
+            pbf.readVarint() + pbf.pos
+        );
+        obj.extraPlatformMetadata[entry.key] = entry.value;
     }
 };
 
@@ -1011,6 +1018,22 @@ SamplerMetadata._FieldEntry13._readField = function (tag, obj, pbf) {
             pbf,
             pbf.readVarint() + pbf.pos
         );
+};
+
+// SamplerMetadata._FieldEntry14 ========================================
+
+SamplerMetadata._FieldEntry14 = {};
+
+SamplerMetadata._FieldEntry14.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerMetadata._FieldEntry14._readField,
+        { key: '', value: '' },
+        end
+    );
+};
+SamplerMetadata._FieldEntry14._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readString();
+    else if (tag === 2) obj.value = pbf.readString();
 };
 
 // ThreadNode ========================================

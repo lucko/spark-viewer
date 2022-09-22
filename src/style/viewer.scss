@@ -111,6 +111,11 @@
             }
         }
 
+        .metadata-detail-content > p,
+        .metadata-detail-content > .configurations > p {
+            margin: 0 5px;
+        }
+
         .configurations {
             ul {
                 padding-left: 20px;
