@@ -49,14 +49,8 @@ export function labelDataWithSource(data) {
             if (node.className && !excludes(node)) {
                 let source;
 
-                // classSources
-                if (sources.classSources) {
-                    source = sources.classSources[node.className];
-                }
-
                 // methodSources
                 if (
-                    !source &&
                     sources.methodSources &&
                     node.methodName &&
                     node.methodDesc
@@ -71,7 +65,12 @@ export function labelDataWithSource(data) {
                     source = sources.lineSources[key];
                 }
 
-                if (source) {
+                // classSources
+                if (!source && sources.classSources) {
+                    source = sources.classSources[node.className];
+                }
+
+                if (source && !['minecraft', 'java'].includes(source)) {
                     node.source = source;
                 }
             }
