@@ -2,12 +2,12 @@ import './style/base.scss';
 import './style/page.scss';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import SparkRoot from './SparkRoot';
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
     <React.StrictMode>
         <SparkRoot />
-    </React.StrictMode>,
-    document.getElementById('root')
+    </React.StrictMode>
 );

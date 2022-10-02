@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 
 export default function FilePicker({ callback }) {
     const { getRootProps, getInputProps } = useDropzone({
-        accept: ['.sparkprofile', '.sparkheap'],
+        accept: { '': ['.sparkprofile', '.sparkheap'] },
         multiple: false,
         onDropAccepted: files => {
             callback(files[0]);
