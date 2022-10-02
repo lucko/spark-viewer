@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { AutoSizer, Column, Table } from 'react-virtualized';
-import Controls from './controls';
-import { WidgetsAndMetadata } from '../viewer/meta';
 import { useMetadataToggle } from '../viewer/controls';
+import { WidgetsAndMetadata } from '../viewer/meta';
+import Controls from './controls';
 
 import { formatBytes } from '../misc/util';
 
-import '../style/heap.scss';
 import 'react-virtualized/styles.css';
+import '../style/heap.scss';
 
 export default function Heap({ data, exportCallback }) {
     const metadataToggle = useMetadataToggle();

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Pbf from 'pbf';
 import {
     BukkitMappings,
@@ -40,7 +38,9 @@ function detectMappings(mappingsInfo, profileData) {
         meta.platform.name &&
         meta.platform.minecraftVersion
     ) {
-        const rc = meta.platform.minecraftVersion.match(/(\d+\.\d+) Release Candidate \d+/);
+        const rc = meta.platform.minecraftVersion.match(
+            /(\d+\.\d+) Release Candidate \d+/
+        );
         if (rc) {
             meta.platform.minecraftVersion = rc[1];
         }
@@ -57,9 +57,7 @@ function detectMappings(mappingsInfo, profileData) {
 // fetches mappings data of a given type, for a given version, then applies the parseFunc
 // to convert the arraybuffer to a JS object
 async function fetchMappings(version, type, schema) {
-    const resp = await fetch(
-        MAPPING_DATA_URL + version + '/' + type + '.wasm'
-    );
+    const resp = await fetch(MAPPING_DATA_URL + version + '/' + type + '.wasm');
     const buf = await resp.arrayBuffer();
     return schema.read(new Pbf(new Uint8Array(buf)));
 }

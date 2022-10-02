@@ -1,12 +1,18 @@
-import { faArrowCircleDown } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import TextBox from '../components/TextBox';
 
-const WAITING = Symbol();
-const OK = Symbol();
-const ERROR = Symbol();
+import bukkitLogo from '../assets/logos/bukkit.png';
+import bungeeCordLogo from '../assets/logos/bungeecord.png';
+import fabricLogo from '../assets/logos/fabric.png';
+import forgeLogo from '../assets/logos/forge.png';
+import nukkitLogo from '../assets/logos/nukkit.png';
+import spongeLogo from '../assets/logos/sponge.png';
+import velocityLogo from '../assets/logos/velocity.png';
+
+const WAITING = 'waiting';
+const OK = 'ok';
+const ERROR = 'error';
 
 export default function Download() {
     const [status, setStatus] = useState(WAITING);
@@ -20,7 +26,7 @@ export default function Download() {
         (async () => {
             try {
                 const req = await fetch(
-                    `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,number,artifacts[fileName,relativePath],actions[lastBuiltRevision[SHA1]]`
+                    `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,artifacts[fileName,relativePath]`
                 );
                 if (!req.ok) {
                     setStatus(ERROR);
@@ -47,7 +53,7 @@ export default function Download() {
 
     return (
         <article className="downloads">
-            <h1>spark downloads</h1>
+            <h1>Downloads</h1>
             {content}
         </article>
     );
@@ -65,96 +71,73 @@ const DownloadList = ({ info }) => {
         };
     }
 
-    let commitHash = 'nil';
-    for (const action of info.actions) {
-        if (action._class === 'hudson.plugins.git.util.BuildData') {
-            commitHash = action?.lastBuiltRevision?.SHA1 || 'nil';
-        }
-    }
-
     return (
         <>
             <p>
-                The latest version is{' '}
-                <span className="version-number">v{version}</span> (build #
-                {info.number}), which was created at{' '}
-                {new Date(info.timestamp).toLocaleString()}.{' '}
+                The latest version of spark is{' '}
+                <span className="version-number">v{version}</span>, which was
+                created at {new Date(info.timestamp).toLocaleString()}.
             </p>
             <p>
-                It is based on commit{' '}
-                <a href={'https://github.com/lucko/spark/commit/' + commitHash}>
-                    {'lucko/spark@' + commitHash.substring(0, 7)}
-                </a>
-                .
+                Use the links below to download the jar for your
+                server/client/proxy!
             </p>
             <br />
 
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Bukkit"
-                artifact="bukkit"
-                installDir="plugins"
-                controls={{ '': 'spark' }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Fabric"
-                comment="MC 1.19"
-                artifact="fabric"
-                installDir="mods"
-                controls={{
-                    server: 'spark',
-                    client: 'sparkc',
-                }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Forge"
-                comment="MC 1.19"
-                artifact="forge"
-                installDir="mods"
-                controls={{
-                    server: 'spark',
-                    client: 'sparkc',
-                }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Sponge"
-                comment="API 6/7"
-                artifact="sponge7"
-                installDir="plugins"
-                controls={{ '': 'spark' }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Sponge"
-                comment="API 8"
-                artifact="sponge8"
-                installDir="plugins"
-                controls={{ '': 'spark' }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Nukkit"
-                artifact="nukkit"
-                installDir="plugins"
-                controls={{ '': 'spark' }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="BungeeCord"
-                artifact="bungeecord"
-                installDir="plugins"
-                controls={{ '': 'sparkb' }}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Velocity"
-                artifact="velocity"
-                installDir="plugins"
-                controls={{ '': 'sparkv' }}
-            />
+            <div className="download-buttons">
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Bukkit"
+                    artifact="bukkit"
+                    logo={bukkitLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Fabric"
+                    comment="MC 1.19"
+                    artifact="fabric"
+                    logo={fabricLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Forge"
+                    comment="MC 1.19"
+                    artifact="forge"
+                    logo={forgeLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Sponge"
+                    comment="API 6/7"
+                    artifact="sponge7"
+                    logo={spongeLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Sponge"
+                    comment="API 8"
+                    artifact="sponge8"
+                    logo={spongeLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Nukkit"
+                    artifact="nukkit"
+                    logo={nukkitLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="BungeeCord"
+                    artifact="bungeecord"
+                    logo={bungeeCordLogo}
+                />
+                <DownloadInfo
+                    artifacts={artifacts}
+                    name="Velocity"
+                    artifact="velocity"
+                    logo={velocityLogo}
+                />
+            </div>
 
             <br />
             <p>
@@ -175,26 +158,10 @@ const DownloadList = ({ info }) => {
     );
 };
 
-const DownloadInfo = ({
-    artifacts,
-    name,
-    comment,
-    artifact,
-    installDir,
-    controls,
-}) => {
+const DownloadInfo = ({ artifacts, name, comment, artifact, logo }) => {
     const { url } = artifacts[artifact];
 
-    return (
-        <a className="link" href={url}>
-            <div className="link-title">
-                <FontAwesomeIcon icon={faArrowCircleDown} />
-                <h3>
-                    {name}
-                    {comment && <span> ({comment})</span>}
-                </h3>
-            </div>
-            <ul className="link-description">
+    /* <ul className="link-description">
                 <li>
                     Install: <code>/{installDir}/</code>
                 </li>
@@ -204,7 +171,17 @@ const DownloadInfo = ({
                         {type && ' (' + type + ')'}
                     </li>
                 ))}
-            </ul>
+            </ul> */
+
+    return (
+        <a className="link" href={url}>
+            <img src={logo}></img>
+            <div className="link-title">
+                <div className="link-name">
+                    <h3>{name}</h3>
+                    {comment && <span> ({comment})</span>}
+                </div>
+            </div>
         </a>
     );
 };

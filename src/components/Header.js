@@ -1,4 +1,3 @@
-import React from 'react';
 import sparkLogo from '../assets/spark-logo.svg';
 
 export default function Header({ children, title = 'spark' }) {

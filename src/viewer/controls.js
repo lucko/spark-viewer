@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
-    faInfoCircle,
     faFileExport,
     faGauge,
+    faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 import FaButton from '../components/FaButton';

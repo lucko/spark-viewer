@@ -1,6 +1,6 @@
-import { DOWNLOAD, HOMEPAGE, PAGE_NOT_FOUND } from './status';
-import Header, { HomepageHeader } from './components/Header';
 import React, { Suspense } from 'react';
+import Header, { HomepageHeader } from './components/Header';
+import { DOWNLOAD, HOMEPAGE, PAGE_NOT_FOUND } from './status';
 
 import SparkPage from './components/SparkPage';
 import TextBox from './components/TextBox';

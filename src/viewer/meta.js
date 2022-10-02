@@ -1,14 +1,14 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 
-import Widgets from './widgets';
+import { formatDuration } from '../misc/util';
 import {
     detectOnlineMode,
     ExtraMetadata,
     ServerConfigurations,
 } from './serverConfigs';
-import { formatDuration } from '../misc/util';
+import Widgets from './widgets';
 
 import {
     CommandSenderMetadata,

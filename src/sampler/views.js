@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 import { BaseNode } from './display';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCogs } from '@fortawesome/free-solid-svg-icons';
-import TextBox from '../components/TextBox';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LabelModeContext, MetadataContext } from '.';
+import TextBox from '../components/TextBox';
 
 export const VIEW_ALL = Symbol();
 export const VIEW_FLAT = Symbol();
@@ -135,7 +135,9 @@ const SourceSection = ({ source, totalTime, threads }) => {
             <h2>
                 {source}{' '}
                 {sourceInfo && (
-                    <span className="version">({formatVersion(sourceInfo.version)})</span>
+                    <span className="version">
+                        ({formatVersion(sourceInfo.version)})
+                    </span>
                 )}
             </h2>
             {threads.map(thread => (

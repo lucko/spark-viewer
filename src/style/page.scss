@@ -142,13 +142,47 @@ article {
         font-size: larger;
     }
 
-    h3 > span {
+    .less-important {
         color: #888;
-        font-size: 75%;
     }
 
-    .link-description {
+    .download-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: space-evenly;
+    }
+
+    .link {
         width: 250px;
+
+        img {
+            height: 50px;
+            filter: saturate(20%);
+        }
+
+        &:hover {
+            img {
+                filter: none;
+            }
+        }
+
+        .link-name {
+            text-align: right;
+
+            h3 {
+                margin: 10px 0;
+            }
+
+            span {
+                color: #888;
+                font-size: 75%;
+            }
+        }
+
+        .link-description {
+            width: 250px;
+        }
     }
 }
 
@@ -175,6 +209,11 @@ article {
         background-color: rgba(155, 155, 155, 0.1);
     }
 
+    svg {
+        color: #f77669;
+        font-size: 40px;
+    }
+
     .link-title {
         display: flex;
         flex-direction: row;
@@ -182,11 +221,6 @@ article {
         column-gap: 15px;
 
         font-size: 150%;
-
-        svg {
-            color: #f77669;
-            font-size: 40px;
-        }
     }
 
     .link-description {

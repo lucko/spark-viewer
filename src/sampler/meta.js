@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { SamplerMetadata } from '../proto';
 import { Avatar } from '../viewer/meta';
 

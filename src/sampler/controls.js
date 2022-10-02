@@ -1,6 +1,4 @@
-import React from 'react';
-
-import { faTimes, faEye, faFire } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faFire, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import FaButton from '../components/FaButton';
 import { ExportButton, ShowInfoButton } from '../viewer/controls';

@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { AutoSizer } from 'react-virtualized';
 import { FlameGraph } from '@lucko/react-flame-graph';
+import { useMemo } from 'react';
+import { AutoSizer } from 'react-virtualized';
 import { resolveMappings } from './mappings';
 
 export default function Flame({ flameData, mappings }) {

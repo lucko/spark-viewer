@@ -1,4 +1,3 @@
-import React from 'react';
 import MappingsMenu from '../sampler/mappings';
 import Header from './Header';
 

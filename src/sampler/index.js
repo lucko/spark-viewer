@@ -1,16 +1,16 @@
-import React, { useEffect, useState, createContext } from 'react';
+import { createContext, useEffect, useState } from 'react';
 
-import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
+import VersionWarning from '../components/VersionWarning';
+import { useMetadataToggle } from '../viewer/controls';
+import { WidgetsAndMetadata } from '../viewer/meta';
 import Controls from './controls';
 import Flame from './flamegraph';
-import { WidgetsAndMetadata } from '../viewer/meta';
-import { useMetadataToggle } from '../viewer/controls';
-import VersionWarning from '../components/VersionWarning';
 import { useHighlight } from './highlight';
-import { useSearchQuery } from './search';
 import { createWorker } from './preprocessing';
+import { useSearchQuery } from './search';
+import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 
-import { Menu, Item, theme } from 'react-contexify';
+import { Item, Menu, theme } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';

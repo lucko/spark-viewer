@@ -1,17 +1,17 @@
+import React, { Suspense, useState } from 'react';
 import {
     DOWNLOAD,
     HOMEPAGE,
+    isViewerStatus,
     LOADING_DATA,
     LOADING_FILE,
     PAGE_NOT_FOUND,
-    isViewerStatus,
 } from './status';
-import React, { Suspense, useState } from 'react';
 
-import SparkPage from './components/SparkPage';
-import SparkRouter from './SparkRouter';
-import TextBox from './components/TextBox';
 import history from 'history/browser';
+import SparkPage from './components/SparkPage';
+import TextBox from './components/TextBox';
+import SparkRouter from './SparkRouter';
 
 const SparkViewer = React.lazy(() => import('./SparkViewer'));
 

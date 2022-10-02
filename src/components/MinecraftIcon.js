@@ -1,5 +1,3 @@
-import React from 'react';
-
 import '../style/minecraft.css';
 
 export default function MinecraftIcon({ name }) {

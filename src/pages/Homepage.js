@@ -1,7 +1,5 @@
-import React from 'react';
 import FilePicker from '../components/FilePicker';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faArrowCircleDown,
     faBook,
@@ -9,6 +7,7 @@ import {
     faMemory,
     faMicrochip,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export default function Homepage({ onFileSelected }) {
     return (

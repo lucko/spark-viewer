@@ -1,13 +1,5 @@
 import './style/viewer.scss';
 
-import {
-    FAILED_DATA,
-    LOADED_HEAP_DATA,
-    LOADED_PROFILE_DATA,
-    LOADING_DATA,
-    LOADING_FILE,
-} from './status';
-import { HeapData, SamplerData } from './proto';
 import React, {
     Suspense,
     useCallback,
@@ -15,14 +7,22 @@ import React, {
     useMemo,
     useState,
 } from 'react';
+import { HeapData, SamplerData } from './proto';
 import { getMappingsInfo, requestMappings } from './sampler/mappings';
 import { labelData, labelDataWithSource } from './sampler/preprocessing';
+import {
+    FAILED_DATA,
+    LOADED_HEAP_DATA,
+    LOADED_PROFILE_DATA,
+    LOADING_DATA,
+    LOADING_FILE,
+} from './status';
 
-import HeaderWithMappings from './components/HeaderWithMappings';
+import ls from 'local-storage';
 import Pbf from 'pbf';
+import HeaderWithMappings from './components/HeaderWithMappings';
 import SparkPage from './components/SparkPage';
 import TextBox from './components/TextBox';
-import ls from 'local-storage';
 
 const Heap = React.lazy(() => import('./heap'));
 const Sampler = React.lazy(() => import('./sampler'));

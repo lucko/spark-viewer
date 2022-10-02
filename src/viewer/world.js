@@ -1,10 +1,10 @@
 import React, { Suspense, useMemo, useState } from 'react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faBackwardStep,
     faForwardStep,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const MinecraftIcon = React.lazy(() => import('../components/MinecraftIcon'));
 

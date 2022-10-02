@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ExportButton, ShowInfoButton } from '../viewer/controls';
 import { HeapTitle } from './meta';
 

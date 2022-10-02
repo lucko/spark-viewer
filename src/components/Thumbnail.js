@@ -1,12 +1,12 @@
-import { useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useEffect, useRef } from 'react';
 
 import sparkLogo from '../assets/spark-logo.svg';
-import Widgets from '../viewer/widgets';
-import { Avatar } from '../viewer/meta';
-import { formatTime } from '../sampler/meta';
 import { formatDuration } from '../misc/util';
 import { PlatformMetadata as PlatformData } from '../proto';
+import { formatTime } from '../sampler/meta';
+import { Avatar } from '../viewer/meta';
+import Widgets from '../viewer/widgets';
 
 import {
     faClock,

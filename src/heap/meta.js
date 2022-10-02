@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Avatar } from '../viewer/meta';
 
 export function HeapTitle({ metadata }) {

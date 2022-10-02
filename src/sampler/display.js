@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 
 import classnames from 'classnames';
 
-import { humanFriendlyPercentage, formatTime } from '../misc/util';
+import { formatTime, humanFriendlyPercentage } from '../misc/util';
 import { resolveMappings } from './mappings';
 import { BottomUpContext } from './views';
 
@@ -11,8 +11,8 @@ import { useContextMenu } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
 import {
     HighlightedContext,
-    MappingsContext,
     LabelModeContext,
+    MappingsContext,
     MetadataContext,
     SearchQueryContext,
 } from '.';
