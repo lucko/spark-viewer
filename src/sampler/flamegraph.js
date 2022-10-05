@@ -3,10 +3,12 @@ import { useMemo } from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { resolveMappings } from './mappings';
 
-export default function Flame({ flameData, mappings }) {
+export default function Flame({ flameData, mappings, timeSelector }) {
+    const getTimeFunction = timeSelector.getTime;
+
     const [data, depth] = useMemo(
-        () => toFlameNode(flameData, mappings),
-        [flameData, mappings]
+        () => toFlameNode(flameData, mappings, getTimeFunction),
+        [flameData, mappings, getTimeFunction]
     );
     const calcHeight = Math.min(depth * 20, 5000);
 
@@ -33,7 +35,7 @@ function simplifyPackageName(packageName, prefix, regex) {
     return packageName;
 }
 
-function toFlameNode(node, mappings) {
+function toFlameNode(node, mappings, getTimeFunction) {
     let { thread, native, className, methodName, packageName } =
         resolveMappings(node, mappings);
 
@@ -69,13 +71,17 @@ function toFlameNode(node, mappings) {
             node.className + '.' + node.methodName + '() - ' + node.time + 'ms';
     }
 
-    obj.value = node.time;
+    obj.value = getTimeFunction(node);
     obj.children = [];
 
     let depth = 1;
 
     for (const child of node.children) {
-        const [childData, childDepth] = toFlameNode(child, mappings);
+        const [childData, childDepth] = toFlameNode(
+            child,
+            mappings,
+            getTimeFunction
+        );
         depth = Math.max(depth, childDepth + 1);
         obj.children.push(childData);
     }

@@ -62,7 +62,7 @@ const AboutSection = () => {
             </p>
             <AboutFeature title="Profiler" icon={faMicrochip}>
                 spark can help to diagnose performance problems and bottlenecks
-                with it{"'"}s built-in profiler.
+                with its built-in profiler.
             </AboutFeature>
             <AboutFeature title="Memory Inspection" icon={faMemory}>
                 spark can produce full heap dumps, present a summary of what’s

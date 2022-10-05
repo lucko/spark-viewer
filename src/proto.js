@@ -489,6 +489,33 @@ PlatformStatistics._FieldEntry2._readField = function (tag, obj, pbf) {
         obj.value = PlatformStatistics.Gc.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
+// WindowStatistics ========================================
+
+var WindowStatistics = (exports.WindowStatistics = {});
+
+WindowStatistics.read = function (pbf, end) {
+    return pbf.readFields(
+        WindowStatistics._readField,
+        {
+            ticks: 0,
+            cpuProcess: 0,
+            cpuSystem: 0,
+            tps: 0,
+            msptMedian: 0,
+            msptMax: 0,
+        },
+        end
+    );
+};
+WindowStatistics._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.ticks = pbf.readVarint(true);
+    else if (tag === 2) obj.cpuProcess = pbf.readDouble();
+    else if (tag === 3) obj.cpuSystem = pbf.readDouble();
+    else if (tag === 4) obj.tps = pbf.readDouble();
+    else if (tag === 5) obj.msptMedian = pbf.readDouble();
+    else if (tag === 6) obj.msptMax = pbf.readDouble();
+};
+
 // RollingAverageValues ========================================
 
 var RollingAverageValues = (exports.RollingAverageValues = {});
@@ -738,6 +765,8 @@ SamplerData.read = function (pbf, end) {
             classSources: {},
             methodSources: {},
             lineSources: {},
+            timeWindows: [],
+            timeWindowStatistics: {},
         },
         end
     );
@@ -759,6 +788,10 @@ SamplerData._readField = function (tag, obj, pbf) {
     } else if (tag === 5) {
         entry = SamplerData._FieldEntry5.read(pbf, pbf.readVarint() + pbf.pos);
         obj.lineSources[entry.key] = entry.value;
+    } else if (tag === 6) pbf.readPackedVarint(obj.timeWindows, true);
+    else if (tag === 7) {
+        entry = SamplerData._FieldEntry7.read(pbf, pbf.readVarint() + pbf.pos);
+        obj.timeWindowStatistics[entry.key] = entry.value;
     }
 };
 
@@ -808,6 +841,23 @@ SamplerData._FieldEntry5.read = function (pbf, end) {
 SamplerData._FieldEntry5._readField = function (tag, obj, pbf) {
     if (tag === 1) obj.key = pbf.readString();
     else if (tag === 2) obj.value = pbf.readString();
+};
+
+// SamplerData._FieldEntry7 ========================================
+
+SamplerData._FieldEntry7 = {};
+
+SamplerData._FieldEntry7.read = function (pbf, end) {
+    return pbf.readFields(
+        SamplerData._FieldEntry7._readField,
+        { key: 0, value: null },
+        end
+    );
+};
+SamplerData._FieldEntry7._readField = function (tag, obj, pbf) {
+    if (tag === 1) obj.key = pbf.readVarint(true);
+    else if (tag === 2)
+        obj.value = WindowStatistics.read(pbf, pbf.readVarint() + pbf.pos);
 };
 
 // SamplerMetadata ========================================
@@ -1043,7 +1093,7 @@ var ThreadNode = (exports.ThreadNode = {});
 ThreadNode.read = function (pbf, end) {
     return pbf.readFields(
         ThreadNode._readField,
-        { name: '', time: 0, children: [] },
+        { name: '', time: 0, children: [], times: [] },
         end
     );
 };
@@ -1052,6 +1102,7 @@ ThreadNode._readField = function (tag, obj, pbf) {
     else if (tag === 2) obj.time = pbf.readDouble();
     else if (tag === 3)
         obj.children.push(StackTraceNode.read(pbf, pbf.readVarint() + pbf.pos));
+    else if (tag === 4) pbf.readPackedDouble(obj.times);
 };
 
 // StackTraceNode ========================================
@@ -1069,6 +1120,7 @@ StackTraceNode.read = function (pbf, end) {
             parentLineNumber: 0,
             lineNumber: 0,
             methodDesc: '',
+            times: [],
         },
         end
     );
@@ -1082,6 +1134,7 @@ StackTraceNode._readField = function (tag, obj, pbf) {
     else if (tag === 5) obj.parentLineNumber = pbf.readVarint(true);
     else if (tag === 6) obj.lineNumber = pbf.readVarint(true);
     else if (tag === 7) obj.methodDesc = pbf.readString();
+    else if (tag === 8) pbf.readPackedDouble(obj.times);
 };
 
 // BukkitMappings ========================================

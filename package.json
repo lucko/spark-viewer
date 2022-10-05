@@ -23,7 +23,8 @@
     "react-dropzone": "^14.2.2",
     "react-scripts": "^5.0.1",
     "react-virtualized": "^9.22.3",
-    "sass": "^1.45.1"
+    "sass": "^1.45.1",
+    "victory": "^36.6.8"
   },
   "devDependencies": {
     "prettier": "^2.7.1",

@@ -69,7 +69,7 @@ export function useMetadataToggle() {
     return { showWidgets, showInfo, toggleWidgets, toggleInfo };
 }
 
-function useToggle(name, defaultValue) {
+export function useToggle(name, defaultValue) {
     const [value, setValue] = useState(() => {
         const pref = localStorage.getItem(name);
         return pref !== null ? pref === 'true' : defaultValue;

@@ -145,6 +145,7 @@ html {
         }
     }
 
+    .graph > .header,
     .allview > .header,
     .flatview > .header,
     .sourceview > .header {
@@ -193,6 +194,13 @@ html {
 
         .LabeledRect_rect__11W7H {
             stroke: #181d1f !important;
+        }
+    }
+
+    .graph {
+        .VictoryContainer {
+            max-width: 1600px;
+            margin: 0 auto;
         }
     }
 
