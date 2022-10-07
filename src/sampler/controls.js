@@ -1,4 +1,9 @@
-import { faEye, faFire, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+    faChartLine,
+    faEye,
+    faFire,
+    faTimes,
+} from '@fortawesome/free-solid-svg-icons';
 
 import FaButton from '../components/FaButton';
 import { ExportButton, ShowInfoButton } from '../viewer/controls';
@@ -13,6 +18,9 @@ export default function Controls({
     exportCallback,
     view,
     setView,
+    graphSupported,
+    showGraph,
+    setShowGraph,
     flameData,
     setFlameData,
     searchQuery,
@@ -25,6 +33,11 @@ export default function Controls({
             <ShowInfoButton
                 metadata={metadata}
                 metadataToggle={metadataToggle}
+            />
+            <GraphButton
+                graphSupported={graphSupported}
+                showGraph={showGraph}
+                setShowGraph={setShowGraph}
             />
             {!flameData ? (
                 <>
@@ -43,6 +56,25 @@ export default function Controls({
         </div>
     );
 }
+
+const GraphButton = ({ graphSupported, showGraph, setShowGraph }) => {
+    if (!graphSupported) {
+        return null;
+    }
+
+    function onClick() {
+        setShowGraph(state => !state);
+    }
+
+    return (
+        <FaButton
+            icon={faChartLine}
+            onClick={onClick}
+            title="View the graph"
+            extraClassName={showGraph ? 'toggled' : null}
+        />
+    );
+};
 
 const ToggleViewButton = ({ data, view, setView }) => {
     const sourcesViewSupported =

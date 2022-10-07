@@ -1,13 +1,14 @@
-import { createContext, useEffect, useState } from 'react';
+import React, { createContext, Suspense, useEffect, useState } from 'react';
 
 import VersionWarning from '../components/VersionWarning';
-import { useMetadataToggle } from '../viewer/controls';
+import { useMetadataToggle, useToggle } from '../viewer/controls';
 import { WidgetsAndMetadata } from '../viewer/meta';
 import Controls from './controls';
 import Flame from './flamegraph';
 import { useHighlight } from './highlight';
 import { createWorker } from './preprocessing';
 import { useSearchQuery } from './search';
+import { useTimeSelector } from './time';
 import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 
 import { Item, Menu, theme } from 'react-contexify';
@@ -15,19 +16,30 @@ import { Item, Menu, theme } from 'react-contexify';
 import 'react-contexify/dist/ReactContexify.css';
 import '../style/sampler.scss';
 
+const Graph = React.lazy(() => import('./graph'));
+
 export const MappingsContext = createContext();
 export const HighlightedContext = createContext();
 export const SearchQueryContext = createContext();
 export const MetadataContext = createContext();
 export const LabelModeContext = createContext();
+export const TimeSelectorContext = createContext();
 
 export default function Sampler({ data, mappings, exportCallback }) {
     const searchQuery = useSearchQuery();
     const highlighted = useHighlight();
     const [labelMode, setLabelMode] = useState(false);
+    const timeSelector = useTimeSelector(
+        data.timeWindows,
+        data.timeWindowStatistics
+    );
 
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
+    const [showGraph, setShowGraph] = useToggle(
+        'prefShowGraph',
+        true
+    );
 
     const [flatViewData, setFlatViewData] = useState({
         flatSelfTime: null,
@@ -81,6 +93,9 @@ export default function Sampler({ data, mappings, exportCallback }) {
                 exportCallback={exportCallback}
                 view={view}
                 setView={setView}
+                graphSupported={timeSelector.supported}
+                showGraph={showGraph}
+                setShowGraph={setShowGraph}
                 flameData={flameData}
                 setFlameData={setFlameData}
                 searchQuery={searchQuery}
@@ -93,7 +108,23 @@ export default function Sampler({ data, mappings, exportCallback }) {
                 metadataToggle={metadataToggle}
             />
 
-            {!!flameData && <Flame flameData={flameData} mappings={mappings} />}
+            {timeSelector.supported && (
+                <Suspense>
+                    <Graph
+                        show={showGraph}
+                        timeSelector={timeSelector}
+                        windowStatistics={data.timeWindowStatistics}
+                    />
+                </Suspense>
+            )}
+
+            {!!flameData && (
+                <Flame
+                    flameData={flameData}
+                    mappings={mappings}
+                    timeSelector={timeSelector}
+                />
+            )}
 
             <div style={{ display: flameData ? 'none' : null }}>
                 <SamplerContext
@@ -102,6 +133,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
                     searchQuery={searchQuery}
                     labelMode={labelMode}
                     metadata={data.metadata}
+                    timeSelector={timeSelector}
                 >
                     {view === VIEW_ALL ? (
                         <AllView
@@ -139,6 +171,7 @@ const SamplerContext = ({
     searchQuery,
     labelMode,
     metadata,
+    timeSelector,
     children,
 }) => {
     // :]
@@ -148,7 +181,9 @@ const SamplerContext = ({
                 <SearchQueryContext.Provider value={searchQuery}>
                     <LabelModeContext.Provider value={labelMode}>
                         <MetadataContext.Provider value={metadata}>
-                            {children}
+                            <TimeSelectorContext.Provider value={timeSelector}>
+                                {children}
+                            </TimeSelectorContext.Provider>
                         </MetadataContext.Provider>
                     </LabelModeContext.Provider>
                 </SearchQueryContext.Provider>

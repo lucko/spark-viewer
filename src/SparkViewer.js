@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { HeapData, SamplerData } from './proto';
 import { getMappingsInfo, requestMappings } from './sampler/mappings';
-import { labelData, labelDataWithSource } from './sampler/preprocessing';
+import { calculateTotalTimes, labelData, labelDataWithSource } from './sampler/preprocessing';
 import {
     FAILED_DATA,
     LOADED_HEAP_DATA,
@@ -98,6 +98,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             if (!thumbnailOnly) {
                 labelData(data.threads, 0);
                 labelDataWithSource(data);
+                calculateTotalTimes(data.threads);
             }
             setLoaded(data);
             setStatus(LOADED_PROFILE_DATA);

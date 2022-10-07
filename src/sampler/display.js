@@ -15,6 +15,7 @@ import {
     MappingsContext,
     MetadataContext,
     SearchQueryContext,
+    TimeSelectorContext,
 } from '.';
 
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
@@ -22,6 +23,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime, isSourceRoot }) => {
     const mappings = useContext(MappingsContext);
     const highlighted = useContext(HighlightedContext);
     const searchQuery = useContext(SearchQueryContext);
+    const timeSelector = useContext(TimeSelectorContext);
 
     const bottomUp = useContext(BottomUpContext) && parents.length !== 0;
 
@@ -64,7 +66,9 @@ const BaseNode = React.memo(({ parents, node, forcedTime, isSourceRoot }) => {
         'bookmarked': highlighted.has(node.id),
     });
 
-    const threadTime = parents.length === 0 ? node.time : parents[0].time;
+    const nodeTime = timeSelector.getTime(node);
+    const threadTime =
+        parents.length === 0 ? nodeTime : timeSelector.getTime(parents[0]);
 
     function handleClick(e) {
         if (e.altKey) {
@@ -79,10 +83,15 @@ const BaseNode = React.memo(({ parents, node, forcedTime, isSourceRoot }) => {
         show(event, { props: { node } });
     }
 
-    const time = bottomUp ? forcedTime || node.time : node.time;
+    const time = bottomUp ? forcedTime || nodeTime : nodeTime;
     const selfTime = bottomUp
         ? 0
-        : time - node.children.reduce((acc, n) => acc + n.time, 0);
+        : time -
+          node.children.reduce((acc, n) => acc + timeSelector.getTime(n), 0);
+
+    if (time === 0 && nodeTime === 0) {
+        return null;
+    }
 
     let significance;
     let importance;
@@ -90,9 +99,10 @@ const BaseNode = React.memo(({ parents, node, forcedTime, isSourceRoot }) => {
         significance = 1;
         importance = 0;
     } else {
-        const parentTime = directParent.sourceTime || directParent.time;
-        significance = forcedTime ? 0.5 : node.time / parentTime;
-        importance = parentTime !== node.time ? significance : 0;
+        const parentTime =
+            directParent.sourceTime || timeSelector.getTime(directParent);
+        significance = forcedTime ? 0.5 : nodeTime / parentTime;
+        importance = parentTime !== nodeTime ? significance : 0;
     }
 
     return (
@@ -119,8 +129,13 @@ const BaseNode = React.memo(({ parents, node, forcedTime, isSourceRoot }) => {
             </div>
             {expanded && (
                 <ul className="children">
-                    {(bottomUp ? node.parents : node.children).map(
-                        (node, i) => (
+                    {(bottomUp ? node.parents : node.children)
+                        .sort(
+                            (a, b) =>
+                                timeSelector.getTime(b) -
+                                timeSelector.getTime(a)
+                        )
+                        .map((node, i) => (
                             <BaseNode
                                 node={node}
                                 forcedTime={
@@ -132,8 +147,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime, isSourceRoot }) => {
                                 parents={parentsForChildren}
                                 key={i}
                             />
-                        )
-                    )}
+                        ))}
                 </ul>
             )}
         </li>
@@ -166,16 +180,15 @@ const NodeInfo = ({
     const opacity = significance < 0.01 ? 0.5 + (significance * 100) / 2 : null;
 
     const labelMode = useContext(LabelModeContext);
+    const timeSelector = useContext(TimeSelectorContext);
 
     let timePerTick;
     if (labelMode) {
-        if (metadata.dataAggregator.numberOfIncludedTicks) {
-            // only-ticks-over aggregator
-            timePerTick = time / metadata.dataAggregator.numberOfIncludedTicks;
-        } else {
-            // normal
-            timePerTick = time / metadata.numberOfTicks;
-        }
+        let numberOfTicks = timeSelector.supported
+            ? timeSelector.getTicksInRange()
+            : metadata.dataAggregator.numberOfIncludedTicks ||
+              metadata.numberOfTicks;
+        timePerTick = time / numberOfTicks;
     }
 
     return (

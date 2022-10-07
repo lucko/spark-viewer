@@ -35,6 +35,19 @@ export function labelData(nodes, i) {
     return i;
 }
 
+export function calculateTotalTimes(nodes) {
+    for (const n of nodes) {
+        if (!n.times.length) {
+            return;
+        }
+        n.time = n.times.reduce((a, b) => a + b, 0);
+
+        if (n.children) {
+            calculateTotalTimes(n.children);
+        }
+    }
+}
+
 // Uses the 'data.<type>Sources' maps to annotate node objects with their source.
 // This saves the need for the source information to be duplicated across lots of
 // nodes with the same class.

@@ -50,10 +50,21 @@ function mergeNodes(a, b) {
         parentLineNumber: 0,
         source: a.source,
         time: a.time + b.time,
+        times: mergeTimes(a.times, b.times),
         id: [].concat(a.id, b.id),
         children,
         parents,
     };
+}
+
+function mergeTimes(a, b) {
+    if (!a) return undefined;
+
+    const combined = Array.from(a)
+    for (let i = 0; i < combined.length; i++) {
+        combined[i] = combined[i] + b[i];
+    }
+    return combined;
 }
 
 // Creates a copy of a node
@@ -66,6 +77,7 @@ function shallowCopy(n) {
         parentLineNumber: n.parentLineNumber,
         source: n.source,
         time: n.time,
+        times: n.times,
         id: n.id,
         children: n.children,
         parents: n.parents,
