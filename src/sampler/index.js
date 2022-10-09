@@ -1,4 +1,5 @@
 import React, { createContext, Suspense, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
 import VersionWarning from '../components/VersionWarning';
 import { useMetadataToggle, useToggle } from '../viewer/controls';
@@ -15,7 +16,7 @@ import { Item, Menu, theme } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.css';
 
-const Graph = React.lazy(() => import('./graph'));
+const Graph = dynamic(() => import('./graph'));
 
 export const MappingsContext = createContext();
 export const HighlightedContext = createContext();
