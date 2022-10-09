@@ -7,16 +7,12 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false;
 
 import Head from 'next/head';
-import Header, { HomepageHeader } from '../components/Header';
-import Footer from '../components/Footer';
-import { useRouter } from 'next/router';
 import SparkLayout from '../components/SparkLayout';
 
 function MyApp({ Component, pageProps }) {
     // Use the layout defined at the page level, if available
     const getLayout =
         Component.getLayout || (page => <SparkLayout>{page}</SparkLayout>);
-    const router = useRouter();
 
     return (
         <>

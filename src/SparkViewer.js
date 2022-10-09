@@ -30,9 +30,9 @@ import { useRouter } from 'next/router';
 
 const Heap = dynamic(() => import('./heap'), { suspense: true });
 const Sampler = dynamic(() => import('./sampler'), { suspense: true });
-//const Thumbnail = dynamic(() => import('./components/Thumbnail'), {
-//    suspense: true,
-//});
+const Thumbnail = dynamic(() => import('./components/Thumbnail'), {
+    suspense: true,
+});
 
 export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     // the data payload currently loaded
@@ -43,9 +43,8 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
 
     // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
     const thumbnailOnly = useMemo(() => {
-        //const params = new URLSearchParams(window.location.search);
         return router.query['x-render-thumbnail'] !== undefined;
-    }, []);
+    }, [router]);
 
     // the mappings info object currently loaded
     const [mappingsInfo, setMappingsInfo] = useState(null);
