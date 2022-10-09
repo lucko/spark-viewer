@@ -2,10 +2,10 @@ import React, { Suspense } from 'react';
 import Header, { HomepageHeader } from './components/Header';
 import { DOWNLOAD, HOMEPAGE, PAGE_NOT_FOUND } from './status';
 
-import SparkPage from './components/SparkPage';
+import SparkLayout from './components/SparkLayout';
 import TextBox from './components/TextBox';
 
-const Homepage = React.lazy(() => import('./pages/Homepage'));
+const Homepage = React.lazy(() => import('./pages'));
 const Download = React.lazy(() => import('./pages/Download'));
 
 export default function SparkRouter({ status, onFileSelected }) {
@@ -36,5 +36,5 @@ export default function SparkRouter({ status, onFileSelected }) {
             break;
     }
 
-    return <SparkPage header={header}>{contents}</SparkPage>;
+    return <SparkLayout header={header}>{contents}</SparkLayout>;
 }

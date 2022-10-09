@@ -9,6 +9,7 @@ import forgeLogo from '../assets/logos/forge.png';
 import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
+import Image from 'next/image';
 
 const WAITING = 'waiting';
 const OK = 'ok';
@@ -175,7 +176,13 @@ const DownloadInfo = ({ artifacts, name, comment, artifact, logo }) => {
 
     return (
         <a className="link" href={url}>
-            <img src={logo}></img>
+            <Image
+                src={logo}
+                objectFit="contain"
+                width={50}
+                height={50}
+                alt={name + ' logo'}
+            />
             <div className="link-title">
                 <div className="link-name">
                     <h3>{name}</h3>

@@ -1,5 +1,3 @@
-import './style/viewer.scss';
-
 import React, {
     Suspense,
     useCallback,
@@ -9,7 +7,11 @@ import React, {
 } from 'react';
 import { HeapData, SamplerData } from './proto';
 import { getMappingsInfo, requestMappings } from './sampler/mappings';
-import { calculateTotalTimes, labelData, labelDataWithSource } from './sampler/preprocessing';
+import {
+    calculateTotalTimes,
+    labelData,
+    labelDataWithSource,
+} from './sampler/preprocessing';
 import {
     FAILED_DATA,
     LOADED_HEAP_DATA,
@@ -21,29 +23,36 @@ import {
 import ls from 'local-storage';
 import Pbf from 'pbf';
 import HeaderWithMappings from './components/HeaderWithMappings';
-import SparkPage from './components/SparkPage';
+import SparkLayout from './components/SparkLayout';
 import TextBox from './components/TextBox';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 
-const Heap = React.lazy(() => import('./heap'));
-const Sampler = React.lazy(() => import('./sampler'));
-const Thumbnail = React.lazy(() => import('./components/Thumbnail'));
+const Heap = dynamic(() => import('./heap'), { suspense: true });
+const Sampler = dynamic(() => import('./sampler'), { suspense: true });
+//const Thumbnail = dynamic(() => import('./components/Thumbnail'), {
+//    suspense: true,
+//});
 
 export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
     // the export callback
     const [exportCallback, setExportCallback] = useState(null);
+    const router = useRouter();
 
     // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
     const thumbnailOnly = useMemo(() => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('x-render-thumbnail') !== null;
+        //const params = new URLSearchParams(window.location.search);
+        return router.query['x-render-thumbnail'] !== undefined;
     }, []);
 
     // the mappings info object currently loaded
     const [mappingsInfo, setMappingsInfo] = useState(null);
     // the current mappings function
-    const [mappings, setMappings] = useState({ func: _ => {} });
+    const [mappings, setMappings] = useState({
+        func: _ => {},
+    });
     // the current mappings type
     const [mappingsType, setMappingsType] = useState(
         ls.get('spark-mappings-pref') === 'none' ? 'none' : 'auto'
@@ -208,7 +217,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     }
 
     return (
-        <SparkPage
+        <SparkLayout
             header={
                 <HeaderWithMappings
                     mappingsInfo={mappingsInfo}
@@ -218,7 +227,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             }
         >
             {contents}
-        </SparkPage>
+        </SparkLayout>
     );
 }
 

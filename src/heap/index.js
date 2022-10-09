@@ -8,7 +8,6 @@ import Controls from './controls';
 import { formatBytes } from '../misc/util';
 
 import 'react-virtualized/styles.css';
-import '../style/heap.scss';
 
 export default function Heap({ data, exportCallback }) {
     const metadataToggle = useMetadataToggle();

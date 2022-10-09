@@ -14,7 +14,6 @@ import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 import { Item, Menu, theme } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.css';
-import '../style/sampler.scss';
 
 const Graph = React.lazy(() => import('./graph'));
 
@@ -36,10 +35,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
 
     const [flameData, setFlameData] = useState(null);
     const [view, setView] = useState(VIEW_ALL);
-    const [showGraph, setShowGraph] = useToggle(
-        'prefShowGraph',
-        true
-    );
+    const [showGraph, setShowGraph] = useToggle('prefShowGraph', true);
 
     const [flatViewData, setFlatViewData] = useState({
         flatSelfTime: null,

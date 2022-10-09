@@ -9,11 +9,9 @@ import {
 } from './status';
 
 import history from 'history/browser';
-import SparkPage from './components/SparkPage';
+import SparkLayout from './components/SparkLayout';
 import TextBox from './components/TextBox';
 import SparkRouter from './SparkRouter';
-
-const SparkViewer = React.lazy(() => import('./SparkViewer'));
 
 export default function SparkRoot() {
     // the data code from the URL path
@@ -43,9 +41,9 @@ export default function SparkRoot() {
         return (
             <Suspense
                 fallback={
-                    <SparkPage>
+                    <SparkLayout>
                         <TextBox>Loading...</TextBox>
-                    </SparkPage>
+                    </SparkLayout>
                 }
             >
                 <SparkViewer

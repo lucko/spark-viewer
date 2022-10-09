@@ -14,7 +14,7 @@ import {
     faServer,
 } from '@fortawesome/free-solid-svg-icons';
 
-import '../style/thumbnail.scss';
+import '../style/thumbnail.module.scss';
 
 export default function Thumbnail({ data, code }) {
     const ref = useRef();
@@ -30,7 +30,7 @@ export default function Thumbnail({ data, code }) {
         const bodyElement = rootElement.parentElement;
         bodyElement.style.width = '1200px';
         bodyElement.style.height = '600px';
-    });
+    }, []);
 
     let { platform, platformStatistics } = metadata;
 

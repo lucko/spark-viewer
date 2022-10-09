@@ -8,8 +8,10 @@ import {
     faMicrochip,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SparkLayout from '../components/SparkLayout';
+import { HomepageHeader } from '../components/Header';
 
-export default function Homepage({ onFileSelected }) {
+export default function Index({ onFileSelected }) {
     return (
         <article className="homepage">
             <Navigation />
@@ -132,3 +134,7 @@ const ViewerSection = ({ onFileSelected }) => {
         </section>
     );
 };
+
+Index.getLayout = page => (
+    <SparkLayout header={<HomepageHeader />}>{page}</SparkLayout>
+);

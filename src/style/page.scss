@@ -30,7 +30,7 @@ header {
         }
     }
 
-    img {
+    svg {
         filter: invert(0%);
         padding-right: 5px;
     }
@@ -69,7 +69,7 @@ article {
         max-width: 900px;
         padding: 50px 0;
 
-        > img {
+        > svg {
             width: 25%;
         }
 

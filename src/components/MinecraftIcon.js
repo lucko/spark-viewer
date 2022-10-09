@@ -1,4 +1,4 @@
-import '../style/minecraft.css';
+import '../style/minecraft.module.css';
 
 export default function MinecraftIcon({ name }) {
     const lookup = {
