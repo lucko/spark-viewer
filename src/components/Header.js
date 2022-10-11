@@ -1,12 +1,15 @@
+import Link from 'next/link';
 import SparkLogo from '../assets/spark-logo.svg';
 
 export default function Header({ children, title = 'spark' }) {
     return (
         <header>
-            <a href="/" className="logo">
-                <SparkLogo width="2.5em" height="2.5em" />
-                <h1>{title}</h1>
-            </a>
+            <Link href="/">
+                <a className="logo">
+                    <SparkLogo width="2.5em" height="2.5em" />
+                    <h1>{title}</h1>
+                </a>
+            </Link>
             {children}
         </header>
     );

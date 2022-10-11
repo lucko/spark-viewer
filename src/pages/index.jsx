@@ -1,5 +1,7 @@
 import FilePicker from '../components/FilePicker';
 
+import NextLink from 'next/link';
+
 import {
     faArrowCircleDown,
     faBook,
@@ -8,8 +10,8 @@ import {
     faMicrochip,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import SparkLayout from '../components/SparkLayout';
 import { HomepageHeader } from '../components/Header';
+import SparkLayout from '../components/SparkLayout';
 
 export default function Index({ onFileSelected }) {
     return (
@@ -44,13 +46,15 @@ const Navigation = () => {
 
 const Link = ({ title, icon, url, children }) => {
     return (
-        <a className="link" href={url}>
-            <div className="link-title">
-                <FontAwesomeIcon icon={icon} fixedWidth />
-                <h3>{title}</h3>
-            </div>
-            <div className="link-description">{children}</div>
-        </a>
+        <NextLink href={url}>
+            <a className="link">
+                <div className="link-title">
+                    <FontAwesomeIcon icon={icon} fixedWidth />
+                    <h3>{title}</h3>
+                </div>
+                <div className="link-description">{children}</div>
+            </a>
+        </NextLink>
     );
 };
 
