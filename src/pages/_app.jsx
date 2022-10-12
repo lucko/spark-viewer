@@ -7,12 +7,17 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoAddCss = false;
 
 import Head from 'next/head';
+import { createContext, useState } from 'react';
 import SparkLayout from '../components/SparkLayout';
+
+export const SelectedFileContext = createContext();
 
 function MyApp({ Component, pageProps }) {
     // Use the layout defined at the page level, if available
     const getLayout =
         Component.getLayout || (page => <SparkLayout>{page}</SparkLayout>);
+
+    const [selectedFile, setSelectedFile] = useState();
 
     return (
         <>
@@ -23,7 +28,11 @@ function MyApp({ Component, pageProps }) {
                 />
                 <title>spark</title>
             </Head>
-            <div id="root">{getLayout(<Component {...pageProps} />)}</div>
+            <SelectedFileContext.Provider
+                value={{ selectedFile, setSelectedFile }}
+            >
+                {getLayout(<Component {...pageProps} />)}
+            </SelectedFileContext.Provider>
         </>
     );
 }

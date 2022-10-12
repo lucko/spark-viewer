@@ -1,4 +1,4 @@
-import '../style/minecraft.module.css';
+import styles from '../style/minecraft.module.css';
 
 export default function MinecraftIcon({ name }) {
     const lookup = {
@@ -124,7 +124,9 @@ export default function MinecraftIcon({ name }) {
 
     const icon = lookup[name];
     if (icon) {
-        return <i className={`icon-minecraft-sm icon-minecraft-${icon}`}></i>;
+        const baseStyle = styles['icon-minecraft-sm'];
+        const iconStyle = styles[`icon-minecraft-${icon}`];
+        return <i className={`${baseStyle} ${iconStyle}`}></i>;
     } else {
         return null;
     }

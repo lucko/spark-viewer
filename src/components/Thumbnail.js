@@ -28,6 +28,9 @@ export default function Thumbnail({ data, code }) {
         const bodyElement = rootElement.parentElement;
         bodyElement.style.width = '1200px';
         bodyElement.style.height = '600px';
+
+        const htmlElement = bodyElement.parentElement;
+        htmlElement.style.backgroundColor = '#fff';
     }, []);
 
     let { platform, platformStatistics } = metadata;

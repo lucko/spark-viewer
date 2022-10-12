@@ -10,10 +10,21 @@ import {
     faMicrochip,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
 import { HomepageHeader } from '../components/Header';
 import SparkLayout from '../components/SparkLayout';
+import { SelectedFileContext } from './_app';
 
 export default function Index({ onFileSelected }) {
+    const { setSelectedFile } = useContext(SelectedFileContext);
+    const router = useRouter();
+
+    function onFileSelected(file) {
+        setSelectedFile(file);
+        router.push('/_');
+    }
+
     return (
         <article className="homepage">
             <Navigation />
