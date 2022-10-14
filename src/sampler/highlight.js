@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 // some functions for sets which accept either 'value' or '[value1, value2]' parameters
 const setMultiOp = func => (set, value) => {

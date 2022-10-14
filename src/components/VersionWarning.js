@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import TextBox from './TextBox';
 
+import styles from '../style/sampler.module.scss';
+
 export default function VersionWarning() {
     const [show, setShow] = useState(true);
 
@@ -20,7 +22,7 @@ export default function VersionWarning() {
         </span>
     );
     return (
-        <TextBox extraClassName="version-warning">
+        <TextBox extraClassName={styles['version-warning']}>
             {warning}
             <b> This profile was created using an old version of spark! </b>
             {warning}

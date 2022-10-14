@@ -14,6 +14,8 @@ import {
     faServer,
 } from '@fortawesome/free-solid-svg-icons';
 
+import styles from '../style/thumbnail.module.scss';
+
 export default function Thumbnail({ data, code }) {
     const ref = useRef();
     const metadata = data.metadata;
@@ -56,14 +58,14 @@ export default function Thumbnail({ data, code }) {
     const numberOfTicks = metadata.numberOfTicks;
 
     return (
-        <div ref={ref} className="thumbnail">
+        <div ref={ref} className={styles.thumbnail}>
             <div>
                 <h1>spark {data.threads ? 'profile' : 'heap summary'}</h1>
                 <h2>/{code}</h2>
             </div>
 
             {platformStatistics && (
-                <Widgets metadata={metadata} expanded={false}></Widgets>
+                <Widgets metadata={metadata} expanded={true}></Widgets>
             )}
 
             <div className="stats">

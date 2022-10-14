@@ -1,4 +1,7 @@
+import classNames from 'classnames';
 import { useDropzone } from 'react-dropzone';
+
+import styles from '../style/homepage.module.scss';
 
 export default function FilePicker({ callback }) {
     const { getRootProps, getInputProps } = useDropzone({
@@ -10,7 +13,11 @@ export default function FilePicker({ callback }) {
     });
 
     return (
-        <div {...getRootProps({ className: 'text-box file-picker' })}>
+        <div
+            {...getRootProps({
+                className: classNames('textbox', styles['file-picker']),
+            })}
+        >
             <input {...getInputProps()} />
             <p>Drag &amp; drop a profile/heap file here or click to select</p>
             <em>

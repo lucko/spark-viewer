@@ -16,11 +16,12 @@ import {
 } from '../proto';
 import { WorldStatistics } from './world';
 
+import styles from '../style/metadata.module.scss';
+
 export function WidgetsAndMetadata({ metadata, metadataToggle }) {
     return (
         <div
-            className={classNames({
-                metadata: true,
+            className={classNames(styles.metadata, {
                 expanded: metadataToggle.showInfo,
             })}
             style={{
@@ -112,7 +113,7 @@ export function MetadataDetail({ metadata }) {
     };
 
     return (
-        <div className="text-box metadata-detail">
+        <div className="textbox metadata-detail">
             <ul className="metadata-detail-controls">
                 {Object.entries(views).map(([name, func]) => {
                     return (

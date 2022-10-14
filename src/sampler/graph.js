@@ -6,8 +6,6 @@ import {
     VictoryLine,
     VictoryScatter,
     VictoryTheme,
-    VictoryTooltip,
-    VictoryVoronoiContainer,
 } from 'victory';
 
 export default function Graph({ show, timeSelector, windowStatistics }) {
@@ -159,7 +157,6 @@ const MetricChart = ({ theme, scale, data, maxima, selectionCallback }) => {
             ))}
             {data.map((wrapper, i) => (
                 <VictoryScatter
-                    labelComponent={<VictoryTooltip />}
                     key={i}
                     name={`${wrapper.statisticName}-scatter`}
                     data={wrapper.data}

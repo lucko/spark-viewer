@@ -1,5 +1,5 @@
-import React, { createContext, Suspense, useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { createContext, Suspense, useEffect, useState } from 'react';
 
 import VersionWarning from '../components/VersionWarning';
 import { useMetadataToggle, useToggle } from '../viewer/controls';
@@ -15,6 +15,7 @@ import { AllView, FlatView, SourcesView, VIEW_ALL, VIEW_FLAT } from './views';
 import { Item, Menu, theme } from 'react-contexify';
 
 import 'react-contexify/dist/ReactContexify.css';
+import styles from '../style/sampler.module.scss';
 
 const Graph = dynamic(() => import('./graph'));
 
@@ -83,7 +84,7 @@ export default function Sampler({ data, mappings, exportCallback }) {
         data.metadata.platform.sparkVersion >= 2;
 
     return (
-        <div className="sampler">
+        <div className={styles.sampler}>
             <Controls
                 data={data}
                 metadataToggle={metadataToggle}

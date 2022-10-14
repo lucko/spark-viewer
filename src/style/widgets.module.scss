@@ -1,0 +1,100 @@
+.widgets {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    &[data-hide='true'] :nth-child(n + 6) {
+        display: none;
+    }
+
+    @media screen and (max-width: 1450px) {
+        &[data-hide='true'] :nth-child(n + 5) {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 1160px) {
+        &[data-hide='true'] :nth-child(n + 4) {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 880px) {
+        &[data-hide='true'] :nth-child(n + 3) {
+            display: none;
+        }
+    }
+
+    :global {
+        .widget {
+            color: #b5b5b5;
+            background: #252b2d;
+            padding: 2px 5px;
+            border-radius: 6px;
+            width: 260px;
+            max-width: 340px;
+            flex-grow: 1;
+
+            h1 {
+                margin: 0;
+                padding-top: 5px;
+                padding-bottom: 8px;
+                font-size: 13pt;
+                font-weight: normal;
+                color: #fff;
+                text-align: center;
+
+                span {
+                    vertical-align: middle;
+                    padding-left: 6px;
+                    font-size: 11pt;
+                    color: #b5b5b5;
+                }
+            }
+
+            .widget-values {
+                display: flex;
+            }
+
+            .widget-value {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                text-align: center;
+
+                div:nth-child(1) {
+                    font-size: 16pt;
+                }
+
+                div:nth-child(2) {
+                    color: #b5b5b5;
+                }
+            }
+
+            .widget-single-value {
+                display: flex;
+                justify-content: center;
+
+                span:nth-child(2) {
+                    color: #b5b5b5;
+                    padding: 0 5px;
+                }
+
+                span:nth-child(1) {
+                    text-align: right;
+                }
+
+                span:nth-child(3) {
+                    text-align: left;
+                }
+
+                span:nth-child(2n-1) {
+                    flex-grow: 100;
+                    flex-basis: 0;
+                }
+            }
+        }
+    }
+}

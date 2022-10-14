@@ -60,7 +60,7 @@ function mergeNodes(a, b) {
 function mergeTimes(a, b) {
     if (!a) return undefined;
 
-    const combined = Array.from(a)
+    const combined = Array.from(a);
     for (let i = 0; i < combined.length; i++) {
         combined[i] = combined[i] + b[i];
     }

@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { SamplerMetadata } from '../proto';
 import { Avatar } from '../viewer/meta';
 
@@ -6,9 +7,6 @@ export function ProfileTitle({ metadata }) {
 
     const comment = metadata.comment ? '"' + metadata.comment + '"' : '';
     const [startTimeStr, startDateStr] = formatTime(startTime);
-
-    document.title =
-        'Profile' + comment + ' at ' + startTimeStr + ' ' + startDateStr;
 
     let ticksOver = '';
     if (
@@ -20,7 +18,12 @@ export function ProfileTitle({ metadata }) {
     }
 
     return (
-        <div className="text-box title">
+        <div className="textbox title">
+            <Head>
+                <title>
+                    Profile @ {startTimeStr} {startDateStr} | spark
+                </title>
+            </Head>
             <span>
                 Profile {comment} created by <Avatar user={user} />
                 {user.name} at {startTimeStr} on {startDateStr}, interval{' '}

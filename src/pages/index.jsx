@@ -16,6 +16,8 @@ import { HomepageHeader } from '../components/Header';
 import SparkLayout from '../components/SparkLayout';
 import { SelectedFileContext } from './_app';
 
+import styles from '../style/homepage.module.scss';
+
 export default function Index({ onFileSelected }) {
     const { setSelectedFile } = useContext(SelectedFileContext);
     const router = useRouter();
@@ -26,7 +28,7 @@ export default function Index({ onFileSelected }) {
     }
 
     return (
-        <article className="homepage">
+        <article className={styles.homepage}>
             <Navigation />
             <AboutSection />
             <ViewerSection onFileSelected={onFileSelected} />

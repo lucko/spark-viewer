@@ -1,0 +1,51 @@
+.homepage {
+    section {
+        background-color: #252b2d;
+        border-radius: 15px;
+        margin: 25px 0;
+        padding: 0.1px 15px;
+    }
+
+    :global {
+        .link {
+            height: 75px;
+
+            .link-description {
+                width: 280px;
+                font-weight: normal;
+            }
+        }
+
+        .feature {
+            display: flex;
+            gap: 20px;
+            padding-left: 20px;
+            margin: 30px 0;
+
+            > svg {
+                font-size: 70px;
+                margin: auto 0;
+                color: #7e7e7e;
+            }
+
+            > div {
+                max-width: 70%;
+
+                h3 {
+                    margin: 0;
+                    color: #ffc93a;
+                }
+            }
+        }
+    }
+}
+
+.file-picker {
+    text-align: center;
+    cursor: pointer;
+    border: 2px dashed;
+
+    em {
+        font-size: 60%;
+    }
+}

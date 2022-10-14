@@ -11,6 +11,8 @@ import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 
+import styles from '../style/downloads.module.scss';
+
 const WAITING = 'waiting';
 const OK = 'ok';
 const ERROR = 'error';
@@ -51,7 +53,7 @@ export default function Download() {
     }
 
     return (
-        <article className="downloads">
+        <article className={styles.downloads}>
             <h1>Downloads</h1>
             {content}
         </article>
