@@ -1,6 +1,8 @@
 import { ExportButton, ShowInfoButton } from '../viewer/controls';
 import { HeapTitle } from './meta';
 
+import styles from '../style/controls.module.scss';
+
 export default function Controls({
     data,
     metadataToggle,
@@ -11,7 +13,7 @@ export default function Controls({
     const { metadata } = data;
 
     return (
-        <div className="controls">
+        <div className={styles.controls}>
             <HeapTitle metadata={metadata} />
             <ShowInfoButton
                 metadata={metadata}
