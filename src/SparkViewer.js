@@ -136,8 +136,13 @@ export default function SparkViewer() {
                 let buf;
 
                 if (code !== '_') {
+                    let bytebinUrl = 'https://bytebin.lucko.me/';
+                    if (thumbnailOnly && router.query['x-bytebin-url']) {
+                        bytebinUrl = router.query['x-bytebin-url'];
+                    }
+
                     // load from bytebin
-                    const req = await fetch(`https://bytebin.lucko.me/${code}`);
+                    const req = await fetch(bytebinUrl + code);
                     if (!req.ok) {
                         setStatus(FAILED_DATA);
                         return;
