@@ -10,7 +10,7 @@ export default function Footer() {
             <br />
             Copyright &copy; 2018-{year}{' '}
             <a href="https://github.com/lucko">lucko</a> &amp; other spark{' '}
-            <a href="https://spark.lucko.me/docs/misc/Credits">contributors</a>.
+            <a href="docs/misc/Credits">contributors</a>.
         </footer>
     );
 }

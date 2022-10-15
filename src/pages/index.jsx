@@ -47,7 +47,7 @@ const Navigation = () => {
             <Link
                 title="Documentation"
                 icon={faBook}
-                url="https://spark.lucko.me/docs"
+                url="docs"
             >
                 Read the documentation and
                 <br />
