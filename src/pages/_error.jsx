@@ -4,8 +4,8 @@ function Error({ statusCode }) {
     return (
         <TextBox>
             {statusCode
-                ? `Error ${statusCode}`
-                : 'Uh oh. An unexpected error occurred with spark-viewer.'}
+                ? `Server error ${statusCode}`
+                : 'Uh oh. An unexpected error occurred with spark-viewer client.'}
         </TextBox>
     );
 }
