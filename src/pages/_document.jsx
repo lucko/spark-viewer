@@ -1,4 +1,4 @@
-import { Html, Head, Main, NextScript } from 'next/document';
+import { Head, Html, Main, NextScript } from 'next/document';
 
 export default function Document() {
     return (
@@ -10,30 +10,6 @@ export default function Document() {
                     name="description"
                     content="spark is a performance profiler for Minecraft clients, servers, and proxies."
                 />
-
-                <meta name="twitter:card" content="summary" />
-                <meta name="twitter:title" content="spark" />
-                <meta
-                    name="twitter:description"
-                    content="spark is a performance profiler for Minecraft clients, servers, and proxies."
-                />
-                <meta
-                    name="twitter:image"
-                    content="https://spark.lucko.me/assets/logo-inverted-512.png"
-                />
-
-                <meta property="og:title" content="spark" />
-                <meta
-                    property="og:description"
-                    content="spark is a performance profiler for Minecraft clients, servers, and proxies."
-                />
-                <meta property="og:type" content="product" />
-                <meta
-                    property="og:image"
-                    content="https://spark.lucko.me/assets/logo-inverted-512.png"
-                />
-                <meta property="og:url" content="https://spark.lucko.me/" />
-
                 <link
                     href="/assets/logo-inverted-512.png"
                     rel="shortcut icon"
@@ -44,7 +20,6 @@ export default function Document() {
                     rel="apple-touch-icon"
                     href="/assets/logo-inverted-160.png"
                 />
-
                 <script
                     async
                     defer
