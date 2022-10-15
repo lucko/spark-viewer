@@ -1,6 +1,5 @@
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-
-import history from 'history/browser';
 
 // some functions for sets which accept either 'value' or '[value1, value2]' parameters
 const setMultiOp = func => (set, value) => {
@@ -25,10 +24,10 @@ const setDelete = setMultiOp((set, v) => {
 });
 
 export function useHighlight() {
+    const router = useRouter();
     const [highlighted, setHighlighted] = useState(() => {
         const set = new Set();
-        const params = new URLSearchParams(window.location.search);
-        const ids = params.get('hl');
+        const ids = router.query['hl'];
         if (ids) {
             ids.split(',').forEach(id => set.add(parseInt(id)));
         }
@@ -36,11 +35,12 @@ export function useHighlight() {
     });
 
     useEffect(() => {
-        history.replace({
-            search: highlighted.size
-                ? '?hl=' + Array.from(highlighted).join(',')
-                : '',
-        });
+        // FIXME
+        //history.replace({
+        //    search: highlighted.size
+        //        ? '?hl=' + Array.from(highlighted).join(',')
+        //        : '',
+        //});
     }, [highlighted]);
 
     // Toggles the highlighted state of an id

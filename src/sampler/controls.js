@@ -9,8 +9,9 @@ import FaButton from '../components/FaButton';
 import { ExportButton, ShowInfoButton } from '../viewer/controls';
 import { ProfileTitle } from './meta';
 import SearchBar from './search';
-
 import { VIEW_ALL, VIEW_FLAT, VIEW_SOURCES } from './views';
+
+import styles from '../style/controls.module.scss';
 
 export default function Controls({
     data,
@@ -28,7 +29,7 @@ export default function Controls({
     const { metadata } = data;
 
     return (
-        <div className="controls">
+        <div className={styles.controls}>
             <ProfileTitle metadata={metadata} />
             <ShowInfoButton
                 metadata={metadata}

@@ -1,5 +1,7 @@
 import FilePicker from '../components/FilePicker';
 
+import NextLink from 'next/link';
+
 import {
     faArrowCircleDown,
     faBook,
@@ -8,10 +10,25 @@ import {
     faMicrochip,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
+import { HomepageHeader } from '../components/Header';
+import SparkLayout from '../components/SparkLayout';
+import { SelectedFileContext } from './_app';
 
-export default function Homepage({ onFileSelected }) {
+import styles from '../style/homepage.module.scss';
+
+export default function Index({ onFileSelected }) {
+    const { setSelectedFile } = useContext(SelectedFileContext);
+    const router = useRouter();
+
+    function onFileSelected(file) {
+        setSelectedFile(file);
+        router.push('/_');
+    }
+
     return (
-        <article className="homepage">
+        <article className={styles.homepage}>
             <Navigation />
             <AboutSection />
             <ViewerSection onFileSelected={onFileSelected} />
@@ -30,7 +47,7 @@ const Navigation = () => {
             <Link
                 title="Documentation"
                 icon={faBook}
-                url="https://spark.lucko.me/docs"
+                url="docs"
             >
                 Read the documentation and
                 <br />
@@ -42,13 +59,15 @@ const Navigation = () => {
 
 const Link = ({ title, icon, url, children }) => {
     return (
-        <a className="link" href={url}>
-            <div className="link-title">
-                <FontAwesomeIcon icon={icon} fixedWidth />
-                <h3>{title}</h3>
-            </div>
-            <div className="link-description">{children}</div>
-        </a>
+        <NextLink href={url}>
+            <a className="link">
+                <div className="link-title">
+                    <FontAwesomeIcon icon={icon} fixedWidth />
+                    <h3>{title}</h3>
+                </div>
+                <div className="link-description">{children}</div>
+            </a>
+        </NextLink>
     );
 };
 
@@ -132,3 +151,7 @@ const ViewerSection = ({ onFileSelected }) => {
         </section>
     );
 };
+
+Index.getLayout = page => (
+    <SparkLayout header={<HomepageHeader />}>{page}</SparkLayout>
+);

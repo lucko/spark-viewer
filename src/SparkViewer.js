@@ -1,34 +1,52 @@
-import './style/viewer.scss';
-
-import React, {
+import {
     Suspense,
     useCallback,
+    useContext,
     useEffect,
     useMemo,
     useState,
 } from 'react';
 import { HeapData, SamplerData } from './proto';
 import { getMappingsInfo, requestMappings } from './sampler/mappings';
-import { calculateTotalTimes, labelData, labelDataWithSource } from './sampler/preprocessing';
+import {
+    calculateTotalTimes,
+    labelData,
+    labelDataWithSource,
+} from './sampler/preprocessing';
 import {
     FAILED_DATA,
     LOADED_HEAP_DATA,
     LOADED_PROFILE_DATA,
     LOADING_DATA,
-    LOADING_FILE,
 } from './status';
 
 import ls from 'local-storage';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import Pbf from 'pbf';
 import HeaderWithMappings from './components/HeaderWithMappings';
-import SparkPage from './components/SparkPage';
+import SparkLayout from './components/SparkLayout';
 import TextBox from './components/TextBox';
+import { SelectedFileContext } from './pages/_app';
 
-const Heap = React.lazy(() => import('./heap'));
-const Sampler = React.lazy(() => import('./sampler'));
-const Thumbnail = React.lazy(() => import('./components/Thumbnail'));
+const Heap = dynamic(() => import('./heap'), { suspense: true });
+const Sampler = dynamic(() => import('./sampler'), { suspense: true });
+const Thumbnail = dynamic(() => import('./components/Thumbnail'), {
+    suspense: true,
+});
 
-export default function SparkViewer({ status, setStatus, code, selectedFile }) {
+export default function SparkViewer() {
+    const router = useRouter();
+
+    const code = useMemo(() => {
+        return router.query['code'];
+    }, [router]);
+
+    const { selectedFile } = useContext(SelectedFileContext);
+
+    // the current status of the viewer
+    const [status, setStatus] = useState(LOADING_DATA);
+
     // the data payload currently loaded
     const [loaded, setLoaded] = useState(null);
     // the export callback
@@ -36,14 +54,15 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
 
     // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
     const thumbnailOnly = useMemo(() => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('x-render-thumbnail') !== null;
-    }, []);
+        return router.query['x-render-thumbnail'] !== undefined;
+    }, [router]);
 
     // the mappings info object currently loaded
     const [mappingsInfo, setMappingsInfo] = useState(null);
     // the current mappings function
-    const [mappings, setMappings] = useState({ func: _ => {} });
+    const [mappings, setMappings] = useState({
+        func: _ => {},
+    });
     // the current mappings type
     const [mappingsType, setMappingsType] = useState(
         ls.get('spark-mappings-pref') === 'none' ? 'none' : 'auto'
@@ -82,7 +101,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     // On page load, if status is set to LOADING_DATA, make
     // a request to bytebin to load the payload
     useEffect(() => {
-        if (!(status === LOADING_DATA || status === LOADING_FILE)) {
+        if (!code || status !== LOADING_DATA) {
             return;
         }
 
@@ -116,7 +135,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
                 let type;
                 let buf;
 
-                if (status === LOADING_DATA) {
+                if (code !== '_') {
                     // load from bytebin
                     const req = await fetch(`https://bytebin.lucko.me/${code}`);
                     if (!req.ok) {
@@ -171,10 +190,11 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     let contents;
     switch (status) {
         case LOADING_DATA:
-            contents = <TextBox>Downloading...</TextBox>;
-            break;
-        case LOADING_FILE:
-            contents = <TextBox>Loading file...</TextBox>;
+            contents = (
+                <TextBox>
+                    {code === '_' ? 'Loading file...' : 'Downloading...'}
+                </TextBox>
+            );
             break;
         case FAILED_DATA:
             contents = (
@@ -208,7 +228,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
     }
 
     return (
-        <SparkPage
+        <SparkLayout
             header={
                 <HeaderWithMappings
                     mappingsInfo={mappingsInfo}
@@ -218,7 +238,7 @@ export default function SparkViewer({ status, setStatus, code, selectedFile }) {
             }
         >
             {contents}
-        </SparkPage>
+        </SparkLayout>
     );
 }
 

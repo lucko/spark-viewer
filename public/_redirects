@@ -1,4 +1,0 @@
-/docs/* https://spark-docs.netlify.app/:splat 200
-/thumb/:id https://spark-thumbnail-service.lucko.me/:id 200
-/:id raw=:any https://spark-json-service.lucko.me/:id 200
-/*    /index.html   200

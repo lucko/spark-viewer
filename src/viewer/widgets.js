@@ -1,8 +1,9 @@
+import classNames from 'classnames';
 import React, { useContext } from 'react';
 
-import classNames from 'classnames';
-
 import { formatBytes } from '../misc/util';
+
+import styles from '../style/widgets.module.scss';
 
 const defaultFormatter = {
     color: _ => '#fff',
@@ -22,10 +23,8 @@ export default function Widgets({ metadata, expanded }) {
 
     return (
         <div
-            className={classNames({
-                widgets: true,
-                hide: !expanded,
-            })}
+            className={classNames(styles.widgets, 'widgets')}
+            data-hide={!expanded}
         >
             {platform.tps && <TpsWidget tps={platform.tps} />}
             {platform.mspt && <MsptWidget mspt={platform.mspt} />}

@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef } from 'react';
 
-import sparkLogo from '../assets/spark-logo.svg';
+import SparkLogo from '../assets/spark-logo.svg';
 import { formatDuration } from '../misc/util';
 import { PlatformMetadata as PlatformData } from '../proto';
 import { formatTime } from '../sampler/meta';
@@ -14,7 +14,7 @@ import {
     faServer,
 } from '@fortawesome/free-solid-svg-icons';
 
-import '../style/thumbnail.scss';
+import styles from '../style/thumbnail.module.scss';
 
 export default function Thumbnail({ data, code }) {
     const ref = useRef();
@@ -30,7 +30,10 @@ export default function Thumbnail({ data, code }) {
         const bodyElement = rootElement.parentElement;
         bodyElement.style.width = '1200px';
         bodyElement.style.height = '600px';
-    });
+
+        const htmlElement = bodyElement.parentElement;
+        htmlElement.style.backgroundColor = '#fff';
+    }, []);
 
     let { platform, platformStatistics } = metadata;
 
@@ -55,14 +58,14 @@ export default function Thumbnail({ data, code }) {
     const numberOfTicks = metadata.numberOfTicks;
 
     return (
-        <div ref={ref} className="thumbnail">
+        <div ref={ref} className={styles.thumbnail}>
             <div>
                 <h1>spark {data.threads ? 'profile' : 'heap summary'}</h1>
                 <h2>/{code}</h2>
             </div>
 
             {platformStatistics && (
-                <Widgets metadata={metadata} expanded={false}></Widgets>
+                <Widgets metadata={metadata} expanded={true}></Widgets>
             )}
 
             <div className="stats">
@@ -103,7 +106,7 @@ export default function Thumbnail({ data, code }) {
                         </>
                     )}
                 </p>
-                <img src={sparkLogo} alt="" width="65px" height="65px" />
+                <SparkLogo alt="" width="65px" height="65px" />
             </div>
         </div>
     );

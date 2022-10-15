@@ -30,6 +30,7 @@ function SearchBar({ searchQuery, setSearchQuery }) {
     function onQueryChanged(e) {
         setSearchQuery(e.target.value.toLowerCase());
     }
+
     return (
         <input
             className="searchbar"

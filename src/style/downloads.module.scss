@@ -1,0 +1,52 @@
+.downloads {
+    :global {
+        .version-number {
+            color: #f77669;
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        .less-important {
+            color: #888;
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: space-evenly;
+        }
+
+        .link {
+            width: 250px;
+
+            img {
+                height: 50px;
+                filter: saturate(20%);
+            }
+
+            &:hover {
+                img {
+                    filter: none;
+                }
+            }
+
+            .link-name {
+                text-align: right;
+
+                h3 {
+                    margin: 10px 0;
+                }
+
+                span {
+                    color: #888;
+                    font-size: 75%;
+                }
+            }
+
+            .link-description {
+                width: 250px;
+            }
+        }
+    }
+}

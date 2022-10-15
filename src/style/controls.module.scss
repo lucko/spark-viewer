@@ -1,0 +1,78 @@
+.controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    flex-basis: 1;
+
+    > div,
+    > input {
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 40px;
+    }
+
+    :global {
+        .textbox {
+            padding: 0;
+            margin: 0;
+        }
+
+        .button {
+            max-width: 40px;
+            width: 40px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            > svg {
+                padding: 0 5px;
+            }
+
+            &.toggled {
+                color: #fff;
+                box-shadow: inset 0 -3px 0 #3c3f41;
+            }
+        }
+
+        .sources-view-button {
+            justify-content: space-around;
+            max-width: 150px;
+            width: unset;
+            padding: 0 3px;
+        }
+
+        .title {
+            text-align: center;
+            flex-grow: 2;
+            vertical-align: middle;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+
+            min-height: 40px;
+            height: fit-content;
+
+            > span {
+                padding: 5px;
+            }
+
+            img {
+                vertical-align: top;
+                padding-right: 3px;
+            }
+        }
+
+        .searchbar {
+            flex-grow: 2;
+            padding: 0 0 0 28px;
+            background-image: url(data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjYjViNWI1IiBkPSJNNTA1IDQ0Mi43TDQwNS4zIDM0M2MtNC41LTQuNS0xMC42LTctMTctN0gzNzJjMjcuNi0zNS4zIDQ0LTc5LjcgNDQtMTI4QzQxNiA5My4xIDMyMi45IDAgMjA4IDBTMCA5My4xIDAgMjA4czkzLjEgMjA4IDIwOCAyMDhjNDguMyAwIDkyLjctMTYuNCAxMjgtNDR2MTYuM2MwIDYuNCAyLjUgMTIuNSA3IDE3bDk5LjcgOTkuN2M5LjQgOS40IDI0LjYgOS40IDMzLjkgMGwyOC4zLTI4LjNjOS40LTkuNCA5LjQtMjQuNi4xLTM0ek0yMDggMzM2Yy03MC43IDAtMTI4LTU3LjItMTI4LTEyOCAwLTcwLjcgNTcuMi0xMjggMTI4LTEyOCA3MC43IDAgMTI4IDU3LjIgMTI4IDEyOCAwIDcwLjctNTcuMiAxMjgtMTI4IDEyOHoiPjwvcGF0aD48L3N2Zz4=);
+            background-repeat: no-repeat;
+            background-position: 8px;
+            background-size: 15px;
+        }
+    }
+}

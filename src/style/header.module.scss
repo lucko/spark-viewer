@@ -1,0 +1,75 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #181d1f;
+    color: #ccc;
+    padding: 5px 20px;
+    margin: 0;
+    font-weight: normal;
+    box-shadow: 0 0 4px #130b00;
+    z-index: 20;
+    line-height: 100%;
+
+    > a {
+        display: flex;
+        align-items: center;
+        background-color: #252b2d;
+        border-radius: 5px;
+        padding: 3px 5px 3px 3px;
+        margin: 3px 0;
+        border: 0;
+
+        > h1 {
+            padding: 0 3px;
+            font-size: 14pt;
+            margin: 0;
+            font-weight: normal;
+            color: #fff;
+        }
+    }
+
+    svg {
+        filter: invert(0%);
+        padding-right: 5px;
+    }
+}
+
+.homepage-header {
+    background: #181d1f;
+    display: flex;
+    justify-content: center;
+
+    > div {
+        display: flex;
+        justify-content: space-around;
+        flex-grow: 1;
+        max-width: 900px;
+        padding: 50px 0;
+
+        > svg {
+            width: 25%;
+        }
+
+        > div {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+
+            > h1 {
+                font-size: min(15vw, 150px);
+                line-height: 1em;
+                margin: 0;
+                margin-bottom: 15px;
+            }
+
+            > div {
+                font-size: min(2vw, 20px);
+                line-height: 1.1;
+            }
+        }
+    }
+}

@@ -1,12 +1,13 @@
+import Head from 'next/head';
 import { Avatar } from '../viewer/meta';
 
 export function HeapTitle({ metadata }) {
     const { user } = metadata;
-
-    document.title = 'spark | heap summary';
-
     return (
-        <div className="text-box title">
+        <div className="textbox title">
+            <Head>
+                <title>Heap Summary | spark</title>
+            </Head>
             <span>
                 Heap Summary created by <Avatar user={user} />
                 {user.name}

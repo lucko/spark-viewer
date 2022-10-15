@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import TextBox from '../components/TextBox';
 
+import Image from 'next/image';
 import bukkitLogo from '../assets/logos/bukkit.png';
 import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
@@ -9,6 +10,8 @@ import forgeLogo from '../assets/logos/forge.png';
 import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
+
+import styles from '../style/downloads.module.scss';
 
 const WAITING = 'waiting';
 const OK = 'ok';
@@ -43,16 +46,14 @@ export default function Download() {
     }, [status]);
 
     let content;
-    if (status === WAITING) {
-        content = <p>Please wait...</p>;
-    } else if (status === OK) {
+    if (status === WAITING || status === OK) {
         content = <DownloadList info={info} />;
     } else {
         content = <TextBox>Error: unable to get version information.</TextBox>;
     }
 
     return (
-        <article className="downloads">
+        <article className={styles.downloads}>
             <h1>Downloads</h1>
             {content}
         </article>
@@ -62,7 +63,7 @@ export default function Download() {
 const DownloadList = ({ info }) => {
     const artifacts = {};
     let version = 'unknown';
-    for (const { fileName, relativePath } of info.artifacts) {
+    for (const { fileName, relativePath } of info?.artifacts || []) {
         const [v, platform] = fileName.slice(0, -4).split('-').slice(1);
         version = v;
         artifacts[platform] = {
@@ -73,11 +74,13 @@ const DownloadList = ({ info }) => {
 
     return (
         <>
-            <p>
-                The latest version of spark is{' '}
-                <span className="version-number">v{version}</span>, which was
-                created at {new Date(info.timestamp).toLocaleString()}.
-            </p>
+            {info?.artifacts && (
+                <p>
+                    The latest version of spark is{' '}
+                    <span className="version-number">v{version}</span>, which
+                    was created at {new Date(info.timestamp).toLocaleString()}.
+                </p>
+            )}
             <p>
                 Use the links below to download the jar for your
                 server/client/proxy!
@@ -159,23 +162,19 @@ const DownloadList = ({ info }) => {
 };
 
 const DownloadInfo = ({ artifacts, name, comment, artifact, logo }) => {
-    const { url } = artifacts[artifact];
-
-    /* <ul className="link-description">
-                <li>
-                    Install: <code>/{installDir}/</code>
-                </li>
-                {Object.entries(controls).map(([type, cmd], i) => (
-                    <li key={i}>
-                        Command: <code>/{cmd}</code>
-                        {type && ' (' + type + ')'}
-                    </li>
-                ))}
-            </ul> */
+    const { url } = Object.keys(artifacts).length
+        ? artifacts[artifact]
+        : { url: '#' };
 
     return (
         <a className="link" href={url}>
-            <img src={logo}></img>
+            <Image
+                src={logo}
+                objectFit="contain"
+                width={50}
+                height={50}
+                alt={name + ' logo'}
+            />
             <div className="link-title">
                 <div className="link-name">
                     <h3>{name}</h3>

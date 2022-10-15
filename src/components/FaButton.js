@@ -8,7 +8,7 @@ export default function FaButton({
     extraClassName,
     children,
 }) {
-    const className = classNames('button', 'text-box', extraClassName);
+    const className = classNames('button', 'textbox', extraClassName);
     return (
         <div className={className} onClick={onClick} title={title}>
             <FontAwesomeIcon icon={icon} />

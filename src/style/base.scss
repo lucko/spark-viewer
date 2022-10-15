@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+@import 'node_modules/@fortawesome/fontawesome-svg-core/styles';
 
 html {
     background-color: #1e2527;
@@ -29,7 +30,7 @@ main {
     flex-grow: 1;
 }
 
-#root {
+#__next {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -80,7 +81,19 @@ hr {
     border: 2px solid #252b2d;
 }
 
-.text-box {
+article {
+    max-width: 900px;
+    margin: 20px auto;
+    font-size: 120%;
+
+    h1::before,
+    h2::before {
+        content: '# ';
+        color: #ffc93a;
+    }
+}
+
+.textbox {
     font-size: 130%;
     letter-spacing: -1px;
     color: #b5b5b5;
@@ -88,4 +101,50 @@ hr {
     padding: 8px;
     margin: 12px 0;
     border-radius: 6px;
+}
+
+.link {
+    background-color: #252b2d;
+    border-radius: 15px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+
+    height: 95px;
+    margin: 10px 0;
+    padding: 0 15px;
+
+    &:link,
+    &:visited {
+        border-bottom: none;
+        color: #ccc;
+    }
+
+    &:hover {
+        background-color: rgba(155, 155, 155, 0.1);
+    }
+
+    svg {
+        color: #f77669;
+        font-size: 40px;
+    }
+
+    .link-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        column-gap: 15px;
+
+        font-size: 150%;
+    }
+
+    .link-description {
+        color: #7e7e7e;
+
+        code {
+            color: #ccc;
+        }
+    }
 }

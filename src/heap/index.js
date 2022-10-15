@@ -8,14 +8,14 @@ import Controls from './controls';
 import { formatBytes } from '../misc/util';
 
 import 'react-virtualized/styles.css';
-import '../style/heap.scss';
+import styles from '../style/heap.module.scss';
 
 export default function Heap({ data, exportCallback }) {
     const metadataToggle = useMetadataToggle();
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
-        <div className="heap">
+        <div className={styles.heap}>
             <Controls
                 data={data}
                 metadataToggle={metadataToggle}
