@@ -35,12 +35,20 @@ export function useHighlight() {
     });
 
     useEffect(() => {
-        // FIXME
-        //history.replace({
-        //    search: highlighted.size
-        //        ? '?hl=' + Array.from(highlighted).join(',')
-        //        : '',
-        //});
+        const ids = Array.from(highlighted).join(',');
+        if (ids === router.query.hl) {
+            return;
+        }
+
+        // get the current path without the query parameters
+        let path = router.asPath;
+        const questionMark = path.indexOf('?');
+        if (questionMark >= 0) {
+            path = path.substring(0, questionMark);
+        }
+
+        const hlParam = highlighted.size ? `?hl=${ids}` : '';
+        router.push(path + hlParam, undefined, { shallow: true });
     }, [highlighted]);
 
     // Toggles the highlighted state of an id
