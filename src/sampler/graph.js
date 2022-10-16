@@ -1,3 +1,5 @@
+import classNames from 'classnames';
+import { useState } from 'react';
 import {
     VictoryAxis,
     VictoryBrushContainer,
@@ -20,20 +22,24 @@ export default function Graph({ show, timeSelector, windowStatistics }) {
 
     // decide which statistics to show
     const sampleStatistics = windowStatistics[times[0]];
-    let statisticKeys = Object.keys(sampleStatistics).filter(
+    const availableStatisticKeys = Object.keys(sampleStatistics).filter(
         key =>
             !!sampleStatistics[key] && // only show statistics we have values for
+            key !== 'ticks' &&
             key !== 'msptMax' // don't show msptMax, we show msptMedian instead
     );
-    if (statisticKeys.includes('msptMedian')) {
-        statisticKeys = statisticKeys.filter(el =>
-            ['msptMedian', 'tps'].includes(el)
-        );
-    } else if (statisticKeys.includes('tps')) {
-        statisticKeys = statisticKeys.filter(el =>
-            ['cpuProcess', 'tps'].includes(el)
-        );
-    }
+
+    const [statisticKeys, setStatisticKeys] = useState(() => {
+        let keys = availableStatisticKeys;
+        if (keys.includes('msptMedian')) {
+            keys = keys.filter(el => ['msptMedian', 'tps'].includes(el));
+        } else if (keys.includes('tps')) {
+            keys = keys.filter(el => ['cpuProcess', 'tps'].includes(el));
+        }
+        return keys;
+    });
+
+    console.log(statisticKeys);
 
     const maxTime = Math.max(...times);
     const data = statisticKeys.map((statisticName, i) => {
@@ -54,11 +60,12 @@ export default function Graph({ show, timeSelector, windowStatistics }) {
         if (['cpuProcess', 'cpuSystem'].includes(wrapper.statisticName)) {
             return 1; // 100%
         }
+
+        const max = Math.max(...wrapper.data.map(d => d.y));
         if (wrapper.statisticName === 'tps') {
-            return 20;
+            return Math.max(max, 20);
         }
         if (wrapper.statisticName === 'msptMedian') {
-            const max = Math.max(...wrapper.data.map(d => d.y));
             return Math.ceil(max / 5) * 5; // round up to nearest 5
         }
         throw new Error('unknown statistic: ' + wrapper.statisticName);
@@ -89,29 +96,78 @@ export default function Graph({ show, timeSelector, windowStatistics }) {
                     });
                 }}
             />
+
+            <Legend
+                availableStatisticKeys={availableStatisticKeys}
+                statisticKeys={statisticKeys}
+                setStatisticKeys={setStatisticKeys}
+            />
         </div>
     );
 }
 
+function getAxisLabel(statisticName) {
+    return {
+        tps: 'TPS',
+        msptMedian: 'MSPT',
+        cpuProcess: 'CPU (process)',
+        cpuSystem: 'CPU (system)',
+    }[statisticName];
+}
+
+function getColor(statisticName) {
+    return {
+        tps: '#71E27D',
+        msptMedian: '#E271D5',
+        cpuProcess: '#719DE2',
+        cpuSystem: '#F7AD48',
+    }[statisticName];
+}
+
+const Legend = ({
+    availableStatisticKeys,
+    statisticKeys,
+    setStatisticKeys,
+}) => {
+    function click(key) {
+        if (statisticKeys.includes(key)) {
+            setStatisticKeys(prev => prev.filter(i => i !== key));
+        } else {
+            if (statisticKeys.length <= 1) {
+                setStatisticKeys(prev => {
+                    return [...prev, key];
+                });
+            } else {
+                setStatisticKeys(prev => {
+                    return [...prev.slice(1), key];
+                });
+            }
+        }
+    }
+
+    return (
+        <div className="legend">
+            {availableStatisticKeys.map(key => {
+                return (
+                    <div
+                        className={classNames('textbox', 'button', {
+                            toggled: statisticKeys.includes(key),
+                        })}
+                        onClick={() => {
+                            click(key);
+                        }}
+                        key={key}
+                        style={{ color: getColor(key) }}
+                    >
+                        {getAxisLabel(key)}
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
 const MetricChart = ({ theme, scale, data, maxima, selectionCallback }) => {
-    function getAxisLabel(statisticName) {
-        return {
-            tps: 'TPS',
-            msptMedian: 'MSPT',
-            cpuProcess: 'CPU (process)',
-            cpuSystem: 'CPU (system)',
-        }[statisticName];
-    }
-
-    function getColor(statisticName) {
-        return {
-            tps: '#71E27D',
-            msptMedian: '#E271D5',
-            cpuProcess: '#719DE2',
-            cpuSystem: '#71E27D',
-        }[statisticName];
-    }
-
     function formatAxisTicks(value, i, wrapper) {
         const scaled = value * maxima[i];
         if (['cpuProcess', 'cpuSystem'].includes(wrapper.statisticName)) {
@@ -124,9 +180,9 @@ const MetricChart = ({ theme, scale, data, maxima, selectionCallback }) => {
         <VictoryChart
             theme={theme}
             width={800}
-            height={200}
+            height={170}
             padding={{ top: 10, left: 60, right: 60, bottom: 30 }}
-            domain={{ x: [-scale, 0], y: [0, 1.01] }}
+            domain={{ x: [-scale, 0], y: [0, 1] }}
             containerComponent={
                 <VictoryBrushContainer
                     responsive={true}

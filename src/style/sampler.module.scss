@@ -201,8 +201,29 @@
 
         .graph {
             .VictoryContainer {
-                max-width: 1600px;
+                max-width: 1500px;
                 margin: 0 auto;
+            }
+
+            .legend {
+                max-width: 1500px;
+                margin: 0 auto;
+
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+
+                .button {
+                    width: 150px;
+                    cursor: pointer;
+                    user-select: none;
+                    text-align: center;
+        
+                    &.toggled {
+                        font-weight: bold;
+                        box-shadow: inset 0 -4px 0 #3c3f41;
+                    }
+                }
             }
         }
 
