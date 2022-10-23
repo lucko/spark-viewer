@@ -4,7 +4,7 @@
 
 [spark](https://github.com/lucko/spark) is a performance profiling plugin/mod for Minecraft clients, servers, and proxies.
 
-This repository contains the website & viewer for spark, written using [React](https://reactjs.org).
+This repository contains the website & viewer for spark, written using [Next.js](https://nextjs.org/)/[React](https://reactjs.org)/[Typescript](https://www.typescriptlang.org/).
 
 The website contains:
 

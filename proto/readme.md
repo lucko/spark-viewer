@@ -1,10 +1,9 @@
-The `.proto` file is compiled to Javascript using:
+The `.proto` file is compiled to Typescript using:
 
 ```bash
-sudo npm install -g pbf
-pbf spark.proto --no-write >> protos.js
+yarn proto
 ```
 
-Resultant JavaScript file is `protos.js`.
+and the resultant TS file is output in `src/proto/spark_pb.ts`.
 
-Note that field names in the `.proto` file have been changed to `camelCase` (this is [considered bad style](https://developers.google.com/protocol-buffers/docs/style#message-and-field-names)) to create variable names in JavaScript which are also camel case.
+Note that field names in the `.proto` file have been changed to `camelCase` (this is [considered bad style](https://developers.google.com/protocol-buffers/docs/style#message-and-field-names)) to create variable names which are also camel case.

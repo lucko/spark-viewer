@@ -1,5 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+src/viewer/proto/spark_pb.ts
+
 # dependencies
 /node_modules
 /.pnp
@@ -25,3 +27,6 @@ yarn-error.log*
 .idea
 
 .next
+next-env.d.ts
+
+tsconfig.tsbuildinfo

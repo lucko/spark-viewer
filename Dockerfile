@@ -10,6 +10,7 @@ RUN yarn --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
+RUN apk add --no-cache protoc
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
