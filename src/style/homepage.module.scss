@@ -8,11 +8,22 @@
 
     :global {
         .link {
-            height: 75px;
-
             .link-description {
-                width: 280px;
+                width: 17.5rem;
                 font-weight: normal;
+            }
+
+            @media (max-width: 640px) {
+                flex-direction: column;
+                align-items: start;
+                height: auto;
+                padding-bottom: 0.75rem;
+                gap: 0.5rem;
+
+                .link-description {
+                    width: auto;
+                    margin-bottom: 0.5rem;
+                }
             }
         }
 
