@@ -30,9 +30,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
         extraPlatformMetadata = metadata.extraPlatformMetadata;
     }
 
-    const platformType = Object.keys(PlatformMetadata_Type)[
-        platform!.type
-    ].toLowerCase();
+    const platformType = PlatformMetadata_Type[platform!.type].toLowerCase();
 
     const { parsedConfigurations, onlineMode } = useMemo(() => {
         let parsedConfigurations: Record<string, any> | undefined;

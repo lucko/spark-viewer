@@ -54,9 +54,7 @@ export default function Thumbnail({ data, code }: ThumbnailProps) {
         };
     }
 
-    const platformType = Object.keys(PlatformMetadata_Type)[
-        platform.type
-    ].toLowerCase();
+    const platformType = PlatformMetadata_Type[platform.type].toLowerCase();
 
     const { startTime, startDate, runningTime, numberOfTicks } =
         unwrapSamplerMetadata(metadata);
@@ -68,7 +66,7 @@ export default function Thumbnail({ data, code }: ThumbnailProps) {
                 <h2>/{code}</h2>
             </div>
 
-            {platformStatistics && (
+            {!!platformStatistics && (
                 <Widgets metadata={metadata} expanded={true}></Widgets>
             )}
 
@@ -78,7 +76,7 @@ export default function Thumbnail({ data, code }: ThumbnailProps) {
                     <span>{platform.name}</span> {platformType} &quot;
                     <span>{platform.version}</span>&quot;
                 </p>
-                {platformStatistics?.playerCount && (
+                {!!platformStatistics?.playerCount && (
                     <p>
                         <FontAwesomeIcon fixedWidth={true} icon={faGamepad} />{' '}
                         <span>{platformStatistics.playerCount}</span> players
