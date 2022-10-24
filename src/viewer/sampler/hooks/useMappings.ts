@@ -8,9 +8,10 @@ import {
 import NoOpMappingFunction from '../logic/mappings/functions/noop';
 import loadMappings from '../logic/mappings/loader';
 import { MappingsResolver } from '../logic/mappings/resolver';
+import {SparkContentType} from "../../common/logic/contentType";
 
 export interface MappingsHook {
-    load: () => void;
+    load: (type: SparkContentType) => void;
     requestMappings: (type: string) => void;
     mappingsMetadata?: MappingsMetadata;
     mappingsResolver: MappingsResolver;
@@ -28,8 +29,10 @@ export default function useMappings(data?: SamplerData): MappingsHook {
     );
 
     // Called when mappings should be initialised
-    const load = useCallback(() => {
-        fetchMappingsMetadata().then(setMappingsMetadata);
+    const load = useCallback((type: SparkContentType) => {
+        if (type === 'application/x-spark-sampler') {
+            fetchMappingsMetadata().then(setMappingsMetadata);
+        }
     }, [setMappingsMetadata]);
 
     // Function called whenever the user picks mappings, either

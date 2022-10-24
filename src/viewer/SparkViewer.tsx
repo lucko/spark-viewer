@@ -78,6 +78,10 @@ export default function SparkViewer() {
                     setExportCallback(() => result.exportCallback);
                 }
 
+                if (!thumbnailOnly) {
+                    mappings.load(result.type);
+                }
+
                 const [data, status] = parse(
                     result.type,
                     result.buf,
