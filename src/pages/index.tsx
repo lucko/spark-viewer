@@ -41,14 +41,10 @@ const Navigation = () => {
     return (
         <nav>
             <Link title="Downloads" icon={faArrowCircleDown} url="download">
-                Download the latest version
-                <br />
-                of spark.
+                Download the latest version of spark.
             </Link>
             <Link title="Documentation" icon={faBook} url="docs">
-                Read the documentation and
-                <br />
-                usage guides.
+                Read the documentation and usage guides.
             </Link>
         </nav>
     );
