@@ -1,5 +1,6 @@
 import { get as lsGet, remove as lsRemove, set as lsSet } from 'local-storage';
 import { useCallback, useEffect, useState } from 'react';
+import { SparkContentType } from '../../common/logic/contentType';
 import { SamplerData } from '../../proto/spark_pb';
 import {
     fetchMappingsMetadata,
@@ -8,7 +9,6 @@ import {
 import NoOpMappingFunction from '../logic/mappings/functions/noop';
 import loadMappings from '../logic/mappings/loader';
 import { MappingsResolver } from '../logic/mappings/resolver';
-import {SparkContentType} from "../../common/logic/contentType";
 
 export interface MappingsHook {
     load: (type: SparkContentType) => void;
@@ -29,11 +29,14 @@ export default function useMappings(data?: SamplerData): MappingsHook {
     );
 
     // Called when mappings should be initialised
-    const load = useCallback((type: SparkContentType) => {
-        if (type === 'application/x-spark-sampler') {
-            fetchMappingsMetadata().then(setMappingsMetadata);
-        }
-    }, [setMappingsMetadata]);
+    const load = useCallback(
+        (type: SparkContentType) => {
+            if (type === 'application/x-spark-sampler') {
+                fetchMappingsMetadata().then(setMappingsMetadata);
+            }
+        },
+        [setMappingsMetadata]
+    );
 
     // Function called whenever the user picks mappings, either
     // from the input dropdown, or 'auto' when mappings info is loaded.

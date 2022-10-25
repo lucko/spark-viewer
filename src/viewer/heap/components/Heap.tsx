@@ -7,6 +7,8 @@ import { HeapData } from '../../proto/spark_pb';
 import Controls from './controls/Controls';
 import HeapTable from './HeapTable';
 
+import 'react-virtualized/styles.css';
+
 export interface HeapProps {
     data: HeapData;
     exportCallback: ExportCallback;
