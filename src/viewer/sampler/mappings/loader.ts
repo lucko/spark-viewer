@@ -4,7 +4,7 @@ import {
     MojangMappings,
     SamplerData,
     YarnMappings,
-} from '../../../proto/spark_pb';
+} from '../../proto/spark_pb';
 import detectMappings from './detect';
 import { fetchMappings, MappingsMetadata } from './fetch';
 import BukkitMappingFunction from './functions/bukkit';

@@ -4,7 +4,7 @@ import {
     McpMappings,
     MojangMappings,
     StackTraceNode,
-} from '../../../../proto/spark_pb';
+} from '../../../proto/spark_pb';
 import { MappingFunction, RawMappingsResult } from '../types';
 
 export default class BukkitMappingFunction implements MappingFunction {

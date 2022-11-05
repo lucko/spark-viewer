@@ -4,6 +4,10 @@ export type SparkContentType =
 
 export type SparkFileExtension = 'sparkprofile' | 'sparkheap';
 
+export function getContentTypes(): SparkContentType[] {
+    return ['application/x-spark-sampler', 'application/x-spark-heap'];
+}
+
 export function parseContentType(str: string | null): SparkContentType {
     if (
         str === 'application/x-spark-sampler' ||

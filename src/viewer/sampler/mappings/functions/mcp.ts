@@ -1,4 +1,4 @@
-import { McpMappings, StackTraceNode } from '../../../../proto/spark_pb';
+import { McpMappings, StackTraceNode } from '../../../proto/spark_pb';
 import { MappingFunction, RawMappingsResult } from '../types';
 
 export default class McpMappingFunction implements MappingFunction {

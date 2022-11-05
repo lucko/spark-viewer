@@ -1,4 +1,4 @@
-import { StackTraceNode } from '../../../../proto/spark_pb';
+import { StackTraceNode } from '../../../proto/spark_pb';
 import { MappingFunction, RawMappingsResult } from '../types';
 
 export default class NoOpMappingFunction implements MappingFunction {

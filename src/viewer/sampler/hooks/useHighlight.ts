@@ -36,7 +36,7 @@ export default function useHighlight(): Highlight {
 
         const hlParam = highlighted.size ? `?hl=${ids}` : '';
         router.push(path + hlParam, undefined, { shallow: true });
-    }, [highlighted]);
+    }, [highlighted, router]);
 
     // Toggles the highlighted state of an id
     const toggle: Highlight['toggle'] = useCallback(

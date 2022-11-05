@@ -1,11 +1,3 @@
-// The methods in this class are used to pre-process the raw data
-// sent in the proto. The proto data contains only what is necessary, and
-// anything that could be computed based on the raw data is excluded.
-//
-// The preprocessing functions in this file are called async using a webworker
-// on initial load. This means the preprocessing can happen in the background
-// (it can take up to a few seconds) while the rest of the page remains responsive.
-
 import { expose } from 'comlink';
 import type {
     ExtendedStackTraceNode,
@@ -13,12 +5,20 @@ import type {
     StackTraceNodeWithParents,
     StackTraceNodeWithSource,
     ThreadNodeWithSourceTime,
-} from '../../../proto/nodes';
+} from '../../proto/nodes';
 import type {
     SamplerData,
     StackTraceNode,
     ThreadNode,
-} from '../../../proto/spark_pb';
+} from '../../proto/spark_pb';
+
+// The methods in this class are used to pre-process the raw data
+// sent in the proto. The proto data contains only what is necessary, and
+// anything that could be computed based on the raw data is excluded.
+//
+// The preprocessing functions in this file are called async using a webworker
+// on initial load. This means the preprocessing can happen in the background
+// (it can take up to a few seconds) while the rest of the page remains responsive.
 
 // Expose methods via comlink
 const exports = { generateFlatView, generateSourceViews };
@@ -134,7 +134,7 @@ function generateFlatView(data: SamplerData): FlatViewDataContainer {
     const { threads } = data;
 
     interface NodeAccumulator {
-        nodes: StackTraceNode[];
+        nodes: ExtendedStackTraceNode[];
         selfTime: number;
         totalTime: number;
     }
@@ -191,7 +191,7 @@ function generateFlatView(data: SamplerData): FlatViewDataContainer {
             }
 
             // Append the node to its accumulator
-            nodeAcc.nodes.push(node);
+            nodeAcc.nodes.push(node as ExtendedStackTraceNode);
             nodeAcc.selfTime += selfTime;
             nodeAcc.totalTime += node.time;
         }
@@ -205,7 +205,7 @@ function generateFlatView(data: SamplerData): FlatViewDataContainer {
     // generate an array of the top x nodes according to either
     // the selfTime or totalTime (controlled by the selfMode parameter)
     function generate(thread: ThreadNode, selfMode: boolean, size: number) {
-        const flattened = new Map();
+        const flattened = new Map<string, NodeAccumulator>();
         let seen: BasicSet<string>;
         if (selfMode) {
             seen = {

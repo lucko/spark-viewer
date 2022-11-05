@@ -3,7 +3,7 @@ import {
     calculateTotalTimes,
     labelData,
     labelDataWithSource,
-} from '../../sampler/logic/preprocessing/preprocessing';
+} from '../../sampler/preprocessing/preprocessing';
 import { SparkContentType } from './contentType';
 import { LOADED_HEAP_DATA, LOADED_PROFILE_DATA, Status } from './status';
 

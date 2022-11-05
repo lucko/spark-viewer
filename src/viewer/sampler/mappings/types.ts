@@ -1,4 +1,4 @@
-import { StackTraceNode } from '../../../proto/spark_pb';
+import { StackTraceNode } from '../../proto/spark_pb';
 
 export interface RawMappingsResult {
     className?: string;

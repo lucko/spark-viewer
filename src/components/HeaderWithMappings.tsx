@@ -1,5 +1,5 @@
 import MappingsMenu from '../viewer/sampler/components/controls/MappingsMenu';
-import { MappingsMetadata } from '../viewer/sampler/logic/mappings/fetch';
+import { MappingsMetadata } from '../viewer/sampler/mappings/fetch';
 import Header from './Header';
 
 export interface HeaderWithMappingsProps {

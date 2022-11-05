@@ -155,8 +155,8 @@ const ViewerSection = ({
             <FilePicker callback={onFileSelected} />
             <p>
                 The website/viewer is written in JavaScript using the React
-                framework, and open-source'd on GitHub. Pull requests are much
-                appreciated!
+                framework, and open-source&apos;d on GitHub. Pull requests are
+                much appreciated!
             </p>
         </section>
     );

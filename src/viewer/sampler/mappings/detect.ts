@@ -1,6 +1,6 @@
 // Attempts to determine which mappings to apply automatically,
 // based on the mappings info resource and the current profile data.
-import { SamplerData } from '../../../proto/spark_pb';
+import { SamplerData } from '../../proto/spark_pb';
 import { MappingsMetadata } from './fetch';
 
 export default function detectMappings(

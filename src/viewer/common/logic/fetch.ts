@@ -1,6 +1,7 @@
 import { NextRouter } from 'next/router';
 import {
     getContentType,
+    getContentTypes,
     parseContentType,
     parseFileExtension,
     SparkContentType,
@@ -23,7 +24,11 @@ export async function fetchFromBytebin(
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }
 
-    const req = await fetch(bytebinUrl + code);
+    const req = await fetch(bytebinUrl + code, {
+        headers: {
+            Accept: `${getContentTypes().join(',')}`,
+        },
+    });
     if (!req.ok) {
         throw new Error('bytebin request failed');
     }

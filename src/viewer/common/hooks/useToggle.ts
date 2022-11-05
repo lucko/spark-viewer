@@ -12,7 +12,7 @@ export type Toggle = [boolean, Dispatch<SetStateAction<boolean>>, () => void];
 export default function useToggle(name: string, defaultValue: boolean): Toggle {
     const [value, setValue] = useState<boolean>(() => {
         const pref = lsGet(name);
-        return pref !== null ? pref as boolean : defaultValue;
+        return pref !== null ? (pref as boolean) : defaultValue;
     });
 
     useEffect(() => {

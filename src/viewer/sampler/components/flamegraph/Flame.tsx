@@ -3,7 +3,7 @@ import { AutoSizer } from 'react-virtualized';
 import { isThreadNode } from '../../../proto/guards';
 import { StackTraceNode, ThreadNode } from '../../../proto/spark_pb';
 import { TimeSelector } from '../../hooks/useTimeSelector';
-import { MappingsResolver } from '../../logic/mappings/resolver';
+import { MappingsResolver } from '../../mappings/resolver';
 
 // @ts-ignore
 import { FlameGraph } from '@lucko/react-flame-graph';

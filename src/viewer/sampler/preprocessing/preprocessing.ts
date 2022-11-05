@@ -8,12 +8,8 @@
 // be nice and snappy because the data it needs has been pre-computed.
 
 import { releaseProxy, Remote, wrap } from 'comlink';
-import {
-    Node,
-    NodeWithId,
-    StackTraceNodeWithSource,
-} from '../../../proto/nodes';
-import { SamplerData, StackTraceNode } from '../../../proto/spark_pb';
+import { Node, NodeWithId, StackTraceNodeWithSource } from '../../proto/nodes';
+import { SamplerData, StackTraceNode } from '../../proto/spark_pb';
 import type { PreprocessingWorker } from './preprocessingWorker';
 
 // Creates a wrapped web-worker for more complex preprocessing

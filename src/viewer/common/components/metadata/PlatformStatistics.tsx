@@ -69,7 +69,7 @@ export default function PlatformStatistics({
                         <>
                             {' '}
                             <span>{numberOfIncludedTicks}</span> ticks exceeded
-                            the 'only ticks over' threshold.
+                            the &#39;only ticks over&#39; threshold.
                         </>
                     )}
                 </p>

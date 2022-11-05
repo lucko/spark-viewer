@@ -1,4 +1,4 @@
-import { StackTraceNode, YarnMappings } from '../../../../proto/spark_pb';
+import { StackTraceNode, YarnMappings } from '../../../proto/spark_pb';
 import { MappingFunction, RawMappingsResult } from '../types';
 
 export default class YarnMappingFunction implements MappingFunction {

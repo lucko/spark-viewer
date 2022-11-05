@@ -1,6 +1,6 @@
 import Head from 'next/head';
-import Avatar from '../../common/components/Avatar';
-import { HeapMetadata } from '../../proto/spark_pb';
+import Avatar from '../common/components/Avatar';
+import { HeapMetadata } from '../proto/spark_pb';
 
 export interface HeapTitleProps {
     metadata: HeapMetadata;

@@ -1,6 +1,6 @@
 import { isThreadNode } from '../../../proto/guards';
 import { ExtendedNode } from '../../../proto/nodes';
-import { MappingsResolver } from '../../logic/mappings/resolver';
+import { MappingsResolver } from '../../mappings/resolver';
 
 export interface NameProps {
     node: ExtendedNode;

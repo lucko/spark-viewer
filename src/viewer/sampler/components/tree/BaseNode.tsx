@@ -111,7 +111,11 @@ const BaseNode = React.memo(
         } else {
             const parentTime =
                 directParent.sourceTime || timeSelector.getTime(directParent);
-            significance = forcedTime ? 0.5 : nodeTime / parentTime;
+            significance = forcedTime
+                ? 0.5
+                : nodeTime < parentTime
+                ? nodeTime / parentTime
+                : parentTime / nodeTime;
             importance = parentTime !== nodeTime ? significance : 0;
         }
 
@@ -167,5 +171,6 @@ const BaseNode = React.memo(
         );
     }
 );
+BaseNode.displayName = 'BaseNode';
 
 export default BaseNode;

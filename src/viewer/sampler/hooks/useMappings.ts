@@ -2,13 +2,10 @@ import { get as lsGet, remove as lsRemove, set as lsSet } from 'local-storage';
 import { useCallback, useEffect, useState } from 'react';
 import { SparkContentType } from '../../common/logic/contentType';
 import { SamplerData } from '../../proto/spark_pb';
-import {
-    fetchMappingsMetadata,
-    MappingsMetadata,
-} from '../logic/mappings/fetch';
-import NoOpMappingFunction from '../logic/mappings/functions/noop';
-import loadMappings from '../logic/mappings/loader';
-import { MappingsResolver } from '../logic/mappings/resolver';
+import { fetchMappingsMetadata, MappingsMetadata } from '../mappings/fetch';
+import NoOpMappingFunction from '../mappings/functions/noop';
+import loadMappings from '../mappings/loader';
+import { MappingsResolver } from '../mappings/resolver';
 
 export interface MappingsHook {
     load: (type: SparkContentType) => void;

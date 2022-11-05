@@ -24,8 +24,8 @@ export default function MergeModeButton({
                 method.
             </p>
             <p>
-                Method calls that have the same signature, but that haven't been
-                invoked by the same calling method will show separately.
+                Method calls that have the same signature, but that haven&apos;t
+                been invoked by the same calling method will show separately.
             </p>
         </Button>
     );

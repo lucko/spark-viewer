@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
-import styles from '../../../../style/controls.module.scss';
-import ExportButton from '../../../common/components/controls/ExportButton';
-import ShowInfoButton from '../../../common/components/controls/ShowInfoButton';
-import { MetadataToggle } from '../../../common/hooks/useMetadataToggle';
-import { ExportCallback } from '../../../common/logic/export';
-import { HeapData } from '../../../proto/spark_pb';
+import styles from '../../../style/controls.module.scss';
+import ExportButton from '../../common/components/controls/ExportButton';
+import ShowInfoButton from '../../common/components/controls/ShowInfoButton';
+import { MetadataToggle } from '../../common/hooks/useMetadataToggle';
+import { ExportCallback } from '../../common/logic/export';
+import { HeapData } from '../../proto/spark_pb';
 import HeapTitle from '../HeapTitle';
 import SearchBar from './SearchBar';
 

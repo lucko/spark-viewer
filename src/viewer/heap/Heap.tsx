@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import styles from '../../../style/heap.module.scss';
-import WidgetsAndMetadata from '../../common/components/WidgetsAndMetadata';
-import useMetadataToggle from '../../common/hooks/useMetadataToggle';
-import { ExportCallback } from '../../common/logic/export';
-import { HeapData } from '../../proto/spark_pb';
+import styles from '../../style/heap.module.scss';
+import WidgetsAndMetadata from '../common/components/WidgetsAndMetadata';
+import useMetadataToggle from '../common/hooks/useMetadataToggle';
+import { ExportCallback } from '../common/logic/export';
+import { HeapData } from '../proto/spark_pb';
 import Controls from './controls/Controls';
 import HeapTable from './HeapTable';
 

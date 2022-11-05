@@ -23,7 +23,7 @@ export default function BottomUpButton({
                 that called it.
             </p>
             <p>
-                The call tree is "normal" - expanding a node reveals the
+                The call tree is &#39;normal&#39; - expanding a node reveals the
                 sub-methods that it calls.
             </p>
         </Button>

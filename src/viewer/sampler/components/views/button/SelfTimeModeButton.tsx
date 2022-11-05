@@ -19,12 +19,12 @@ export default function SelfTimeModeButton({
             labelFalse="Total Time"
         >
             <p>
-                Methods are sorted according to their "self time" (the time
-                spent executing code within the method)
+                Methods are sorted according to their &#39;self time&#39; (the
+                time spent executing code within the method)
             </p>
             <p>
-                Methods are sorted according to their "total time" (the time
-                spent executing code within the method and the time spent
+                Methods are sorted according to their &#39;total time&#39; (the
+                time spent executing code within the method and the time spent
                 executing sub-calls)
             </p>
         </Button>

@@ -1,4 +1,4 @@
-import { MappingsMetadata } from '../../logic/mappings/fetch';
+import { MappingsMetadata } from '../../mappings/fetch';
 
 export interface MappingsMenuProps {
     mappingsMetadata: MappingsMetadata;

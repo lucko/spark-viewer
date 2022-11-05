@@ -23,7 +23,7 @@ import { isSamplerData } from './proto/guards';
 import { HeapData, SamplerData } from './proto/spark_pb';
 import useMappings from './sampler/hooks/useMappings';
 
-const Heap = dynamic(() => import('./heap/components/Heap'), {
+const Heap = dynamic(() => import('./heap/Heap'), {
     suspense: true,
 });
 const Sampler = dynamic(() => import('./sampler/components/Sampler'), {
@@ -94,7 +94,15 @@ export default function SparkViewer() {
                 setStatus(FAILED_DATA);
             }
         })();
-    }, [status, setStatus, code, selectedFile, thumbnailOnly]);
+    }, [
+        status,
+        setStatus,
+        code,
+        selectedFile,
+        thumbnailOnly,
+        mappings,
+        router,
+    ]);
 
     if (
         thumbnailOnly &&

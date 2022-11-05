@@ -4,7 +4,7 @@ import {
     ExtendedThreadNode,
     ThreadNodeWithSourceTime,
 } from '../../../proto/nodes';
-import { SourcesViewData } from '../../logic/preprocessing/preprocessingWorker';
+import { SourcesViewData } from '../../preprocessing/preprocessingWorker';
 import { LabelModeContext, MetadataContext } from '../SamplerContext';
 import BaseNode from '../tree/BaseNode';
 import LabelModeButton from './button/LabelModeButton';
@@ -119,8 +119,8 @@ const OtherSourcesSection = ({ data }: { data: SourcesViewData[] }) => {
         <div className="other-sources">
             <h2>Other</h2>
             <p>
-                The following other {sourceNoun} are installed, but didn't show
-                up in this profile. Yay!
+                The following other {sourceNoun} are installed, but didn&apos;t
+                show up in this profile. Yay!
             </p>
             <ul>
                 {otherSources.map(({ name, version }) => (

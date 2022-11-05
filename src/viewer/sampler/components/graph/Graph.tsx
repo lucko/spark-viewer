@@ -16,10 +16,6 @@ export default function Graph({
     timeSelector,
     windowStatistics,
 }: GraphProps) {
-    if (!show) {
-        return null;
-    }
-
     // get an array of all window times
     const times = Array.from(timeSelector.times).sort();
 
@@ -43,6 +39,10 @@ export default function Graph({
         }
         return keys;
     });
+
+    if (!show) {
+        return null;
+    }
 
     const maxTime = Math.max(...times);
     const data: ChartDataWrapper[] = statisticKeys.map((statisticName, i) => {

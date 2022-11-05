@@ -11,12 +11,12 @@ import { SamplerData, StackTraceNode, ThreadNode } from '../../proto/spark_pb';
 import useHighlight from '../hooks/useHighlight';
 import useSearchQuery from '../hooks/useSearchQuery';
 import useTimeSelector from '../hooks/useTimeSelector';
-import { MappingsResolver } from '../logic/mappings/resolver';
-import { createWorker } from '../logic/preprocessing/preprocessing';
+import { MappingsResolver } from '../mappings/resolver';
+import { createWorker } from '../preprocessing/preprocessing';
 import {
     FlatViewDataContainer,
     SourcesViewDataContainer,
-} from '../logic/preprocessing/preprocessingWorker';
+} from '../preprocessing/preprocessingWorker';
 import Controls from './controls/Controls';
 import Flame from './flamegraph/Flame';
 import SamplerContext from './SamplerContext';

@@ -3,7 +3,7 @@ import { SamplerMetadata } from '../../proto/spark_pb';
 import { Highlight } from '../hooks/useHighlight';
 import { SearchQuery } from '../hooks/useSearchQuery';
 import { TimeSelector } from '../hooks/useTimeSelector';
-import { MappingsResolver } from '../logic/mappings/resolver';
+import { MappingsResolver } from '../mappings/resolver';
 
 export const MappingsContext = createContext<MappingsResolver | undefined>(
     undefined
