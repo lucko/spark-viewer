@@ -2,7 +2,7 @@ import { HeapData, SamplerData } from '../../proto/spark_pb';
 import {
     calculateTotalTimes,
     labelData,
-    labelDataWithSource,
+    labelDataWithSource, unflattenData,
 } from '../../sampler/preprocessing/preprocessing';
 import { SparkContentType } from './contentType';
 import { LOADED_HEAP_DATA, LOADED_PROFILE_DATA, Status } from './status';
@@ -25,6 +25,7 @@ function parseSampler(
 ): [SamplerData, Status] {
     const data = SamplerData.fromBinary(new Uint8Array(buf));
     if (runPreprocessing) {
+        unflattenData(data.threads);
         labelData(data.threads, 0);
         labelDataWithSource(data);
         calculateTotalTimes(data.threads);

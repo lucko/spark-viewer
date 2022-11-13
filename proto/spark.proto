@@ -274,6 +274,7 @@ message ThreadNode {
   double time = 2;
   repeated StackTraceNode children = 3;
   repeated double times = 4;
+  repeated int32 childrenRefs = 5;
 }
 
 message StackTraceNode {
@@ -285,6 +286,7 @@ message StackTraceNode {
   int32 lineNumber = 6; // optional
   string methodDesc = 7; // optional
   repeated double times = 8;
+  repeated int32 childrenRefs = 9;
 }
 
 

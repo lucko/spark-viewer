@@ -9,7 +9,7 @@
 
 import { releaseProxy, Remote, wrap } from 'comlink';
 import { Node, NodeWithId, StackTraceNodeWithSource } from '../../proto/nodes';
-import { SamplerData, StackTraceNode } from '../../proto/spark_pb';
+import {SamplerData, StackTraceNode, ThreadNode} from '../../proto/spark_pb';
 import type { PreprocessingWorker } from './preprocessingWorker';
 
 // Creates a wrapped web-worker for more complex preprocessing
@@ -24,6 +24,26 @@ export function createWorker(func: UseWorkerFunction) {
         wrap<PreprocessingWorker>(worker);
     func(proxy);
     proxy[releaseProxy]();
+}
+
+export function unflattenData(threadNodes: ThreadNode[]) {
+    for (const threadNode of threadNodes) {
+        if (threadNode.childrenRefs.length) {
+            unflatten([threadNode], threadNode.children);
+        }
+    }
+}
+
+function unflatten(nodes: Node[], flatArray: StackTraceNode[]) {
+    for (const node of nodes) {
+        const arr: StackTraceNode[] = []
+        for (let ref of node.childrenRefs) {
+            arr.push(flatArray[ref])
+        }
+        node.children = arr;
+
+        unflatten(node.children, flatArray);
+    }
 }
 
 // Deterministically assigns a unique integer id to each node in the data.

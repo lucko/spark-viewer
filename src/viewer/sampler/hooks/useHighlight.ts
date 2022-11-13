@@ -23,7 +23,7 @@ export default function useHighlight(): Highlight {
 
     useEffect(() => {
         const ids = Array.from(highlighted).join(',');
-        if (ids === router.query.hl) {
+        if ((!ids && !router.query.hl) || ids === router.query.hl) {
             return;
         }
 
