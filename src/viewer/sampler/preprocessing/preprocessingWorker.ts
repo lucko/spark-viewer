@@ -82,6 +82,7 @@ function mergeNodes(
         times: mergeTimes(a.times, b.times),
         id: ids,
         children,
+        childrenRefs: [],
         parents,
     };
 }
@@ -109,6 +110,7 @@ function shallowCopy(n: ExtendedStackTraceNode): ExtendedStackTraceNode {
         times: n.times,
         id: (n as StackTraceNodeWithId).id,
         children: n.children,
+        childrenRefs: [],
         parents: (n as StackTraceNodeWithParents).parents,
     };
 }

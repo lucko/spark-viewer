@@ -2,7 +2,8 @@ import { HeapData, SamplerData } from '../../proto/spark_pb';
 import {
     calculateTotalTimes,
     labelData,
-    labelDataWithSource, unflattenData,
+    labelDataWithSource,
+    unflattenData,
 } from '../../sampler/preprocessing/preprocessing';
 import { SparkContentType } from './contentType';
 import { LOADED_HEAP_DATA, LOADED_PROFILE_DATA, Status } from './status';
