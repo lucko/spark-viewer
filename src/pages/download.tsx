@@ -105,8 +105,8 @@ const DownloadList = ({ info }: { info: JenkinsInfo }) => {
                 <Link href={'changelog'}>
                     <a>changelog</a>
                 </Link>{' '}
-                to see what's new in the latest release, and use the links below
-                to download the jar for your server/client/proxy!
+                to see what&apos;s new in the latest release, and use the links
+                below to download the jar for your server/client/proxy!
             </p>
             <br />
 

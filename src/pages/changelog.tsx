@@ -100,7 +100,6 @@ const ChangelogItem = ({ entry }: { entry: ChangelogEntry }) => {
             <span>
                 <a
                     href={`https://github.com/lucko/spark/commit/${entry.commit}`}
-                    target="_blank"
                 >
                     <code>{entry.version}</code>
                 </a>
