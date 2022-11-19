@@ -8,6 +8,7 @@ config.autoAddCss = false;
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import {
     createContext,
     Dispatch,
@@ -42,6 +43,13 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         Component.getLayout || (page => <SparkLayout>{page}</SparkLayout>);
 
     const [selectedFile, setSelectedFile] = useState<File>();
+
+    const router = useRouter();
+    const title =
+        {
+            '/download': 'spark | downloads',
+            '/changelog': 'spark | changelog',
+        }[router.pathname] || 'spark';
 
     return (
         <>
@@ -78,7 +86,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     key="og-image"
                 />
                 <meta property="og:url" content="https://spark.lucko.me/" />
-                <title>spark</title>
+                <title>{title}</title>
             </Head>
             <SelectedFileContext.Provider
                 value={{ selectedFile, setSelectedFile }}

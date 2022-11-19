@@ -19,6 +19,7 @@
     "@protobuf-ts/plugin": "^2.8.1",
     "classnames": "^2.3.2",
     "comlink": "^4.3.1",
+    "dayjs": "^1.11.6",
     "history": "^5.3.0",
     "local-storage": "^2.0.0",
     "next": "^12.3.1",

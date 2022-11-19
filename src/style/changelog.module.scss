@@ -1,0 +1,32 @@
+.changelog {
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        padding-bottom: 0.25rem;
+        margin-bottom: 0.25rem;
+        display: flex;
+        justify-content: space-between;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
+        }
+
+        > span {
+            display: flex;
+            white-space: nowrap;
+
+            > span {
+                margin: 0 1rem;
+                white-space: normal;
+            }
+        }
+
+        a:hover,
+        a:active {
+            border-bottom: none;
+        }
+    }
+}

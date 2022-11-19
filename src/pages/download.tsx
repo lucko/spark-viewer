@@ -11,6 +11,7 @@ import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 
+import Link from 'next/link';
 import styles from '../style/downloads.module.scss';
 
 const WAITING = 'waiting';
@@ -100,8 +101,12 @@ const DownloadList = ({ info }: { info: JenkinsInfo }) => {
                 </p>
             )}
             <p>
-                Use the links below to download the jar for your
-                server/client/proxy!
+                You can check the{' '}
+                <Link href={'changelog'}>
+                    <a>changelog</a>
+                </Link>{' '}
+                to see what's new in the latest release, and use the links below
+                to download the jar for your server/client/proxy!
             </p>
             <br />
 
