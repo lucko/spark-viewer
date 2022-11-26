@@ -25,7 +25,8 @@ export default function Graph({
         Object.keys(sampleStatistics) as WindowStatisticsKey[]
     ).filter(
         key =>
-            !!sampleStatistics[key] && // only show statistics we have values for
+            !!sampleStatistics[key] &&
+            sampleStatistics[key] != -1 && // only show statistics we have values for
             key !== 'ticks' &&
             key !== 'msptMax' // don't show msptMax, we show msptMedian instead
     );
