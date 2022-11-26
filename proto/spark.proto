@@ -135,6 +135,12 @@ message WindowStatistics {
   double tps = 4;
   double msptMedian = 5;
   double msptMax = 6;
+
+  // world
+  int32 players = 7;
+  int32 entities = 8;
+  int32 tileEntities = 9;
+  int32 chunks = 10;
 }
 
 message RollingAverageValues {

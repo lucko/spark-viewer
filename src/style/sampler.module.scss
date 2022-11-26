@@ -212,9 +212,11 @@
                 display: flex;
                 gap: 10px;
                 justify-content: center;
+                flex-wrap: wrap;
 
                 .button {
                     width: 150px;
+                    margin: 0;
                     cursor: pointer;
                     user-select: none;
                     text-align: center;

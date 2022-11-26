@@ -36,6 +36,8 @@ export default function Graph({
             keys = keys.filter(el => ['msptMedian', 'tps'].includes(el));
         } else if (keys.includes('tps')) {
             keys = keys.filter(el => ['cpuProcess', 'tps'].includes(el));
+        } else {
+            keys = keys.filter(el => ['cpuProcess', 'cpuSystem'].includes(el));
         }
         return keys;
     });
@@ -69,9 +71,11 @@ export default function Graph({
             return Math.max(max, 20);
         }
         if (wrapper.statisticName === 'msptMedian') {
-            return Math.ceil(max / 5) * 5; // round up to nearest 5
+            return Math.ceil(max / 10) * 10; // round up to nearest 5
         }
-        throw new Error('unknown statistic: ' + wrapper.statisticName);
+
+        const divisor = max > 1000 ? 1000 : max > 100 ? 100 : 10;
+        return Math.ceil(max / divisor) * divisor; // round up to nearest 10
     });
 
     const scale = times.length - 1;
