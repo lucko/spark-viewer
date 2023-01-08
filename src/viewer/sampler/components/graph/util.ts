@@ -26,6 +26,6 @@ export interface ChartData {
 }
 
 export interface ChartDataWrapper {
-    statisticName: keyof WindowStatistics;
+    statisticName: WindowStatisticsKey;
     data: ChartData[];
 }
