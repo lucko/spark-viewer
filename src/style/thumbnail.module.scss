@@ -37,6 +37,8 @@
 
     :global {
         .widgets {
+            flex-wrap: nowrap;
+
             :nth-child(n + 5) {
                 display: none;
             }

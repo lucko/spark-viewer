@@ -1,8 +1,10 @@
 import { ReactNode, useContext } from 'react';
 import {
+    formatBytesShort,
     formatTime,
     humanFriendlyPercentage,
 } from '../../../common/util/format';
+import { SamplerMetadata_SamplerMode } from '../../../proto/spark_pb';
 import {
     LabelModeContext,
     MetadataContext,
@@ -49,13 +51,32 @@ export default function NodeInfo({
     const labelMode = useContext(LabelModeContext)!;
     const timeSelector = useContext(TimeSelectorContext)!;
 
-    let timePerTick: number;
+    let timePerInterval: number;
     if (labelMode) {
-        let numberOfTicks = timeSelector.supported
-            ? timeSelector.getTicksInRange()
-            : metadata.dataAggregator?.numberOfIncludedTicks ||
-              metadata.numberOfTicks;
-        timePerTick = time / numberOfTicks;
+        // labelMode is on
+        // execution  ==> time per tick
+        // allocation ==> bytes per second
+        if (metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION) {
+            const numberOfMilliseconds = timeSelector.supported
+                ? timeSelector.getMillisInRange()
+                : metadata.endTime - metadata.startTime;
+            const numberOfSeconds = numberOfMilliseconds / 1000;
+            timePerInterval = time / numberOfSeconds;
+        } else {
+            const numberOfTicks = timeSelector.supported
+                ? timeSelector.getTicksInRange()
+                : metadata.dataAggregator?.numberOfIncludedTicks ||
+                  metadata.numberOfTicks;
+            timePerInterval = time / numberOfTicks;
+        }
+    }
+
+    function formatValue(value: number) {
+        if (metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION) {
+            return formatBytesShort(value);
+        } else {
+            return formatTime(value) + 'ms';
+        }
     }
 
     return (
@@ -64,15 +85,15 @@ export default function NodeInfo({
                 {children}
                 <span className="percent" style={{ filter, opacity }}>
                     {labelMode
-                        ? `${formatTime(timePerTick!)}ms`
+                        ? `${formatValue(timePerInterval!)}`
                         : humanFriendlyPercentage(time / threadTime)}
                 </span>
                 <span className="time">
-                    {formatTime(time)}ms
+                    {formatValue(time)}
                     {Math.floor(selfTime) > 0 && !isSourceRoot && (
                         <>
                             {' '}
-                            (self: {formatTime(selfTime)}ms -{' '}
+                            (self: {formatValue(selfTime)} -{' '}
                             {humanFriendlyPercentage(selfTime / threadTime)})
                         </>
                     )}

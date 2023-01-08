@@ -6,7 +6,7 @@ export default function FlatViewHeader({ children }: HeaderProps) {
             <h2>Flat View</h2>
             <p>
                 This view shows a flattened representation of the profile, where
-                the slowest 250 method calls are listed at the top level.
+                the top 250 method calls are listed.
             </p>
             {children}
         </div>

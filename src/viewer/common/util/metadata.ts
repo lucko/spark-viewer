@@ -1,5 +1,9 @@
 import { isSamplerMetadata } from '../../proto/guards';
-import { HeapMetadata, SamplerMetadata } from '../../proto/spark_pb';
+import {
+    HeapMetadata,
+    SamplerMetadata,
+    SamplerMetadata_SamplerMode,
+} from '../../proto/spark_pb';
 import { formatDate } from './format';
 
 export interface UnwrappedSamplerMetadata {
@@ -8,6 +12,7 @@ export interface UnwrappedSamplerMetadata {
     runningTime?: number;
     numberOfTicks?: number;
     numberOfIncludedTicks?: number;
+    samplerMode?: SamplerMetadata_SamplerMode;
 }
 
 export function unwrapSamplerMetadata(
@@ -22,12 +27,14 @@ export function unwrapSamplerMetadata(
         const numberOfTicks = metadata.numberOfTicks;
         const numberOfIncludedTicks =
             metadata.dataAggregator?.numberOfIncludedTicks;
+        const samplerMode = metadata.samplerMode;
         return {
             startTime,
             startDate,
             runningTime,
             numberOfTicks,
             numberOfIncludedTicks,
+            samplerMode,
         };
     } else {
         return {};

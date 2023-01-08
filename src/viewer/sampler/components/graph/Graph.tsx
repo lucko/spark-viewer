@@ -3,7 +3,7 @@ import { WindowStatistics } from '../../../proto/spark_pb';
 import { TimeSelector } from '../../hooks/useTimeSelector';
 import GraphChart from './GraphChart';
 import GraphLegend from './GraphLegend';
-import { ChartDataWrapper, WindowStatisticsKey } from './util';
+import { ChartDataWrapper, IGNORED_KEYS, WindowStatisticsKey } from './util';
 
 export interface GraphProps {
     show: boolean;
@@ -27,8 +27,7 @@ export default function Graph({
         key =>
             !!sampleStatistics[key] &&
             sampleStatistics[key] != -1 && // only show statistics we have values for
-            key !== 'ticks' &&
-            key !== 'msptMax' // don't show msptMax, we show msptMedian instead
+            !IGNORED_KEYS.includes(key)
     );
 
     const [statisticKeys, setStatisticKeys] = useState(() => {

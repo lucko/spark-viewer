@@ -1,6 +1,21 @@
 import { WindowStatistics } from '../../../proto/spark_pb';
 
-export type WindowStatisticsKey = keyof WindowStatistics;
+type KeyNotOfType<T, V> = keyof {
+    [K in keyof T as K extends V ? never : K]: any;
+};
+
+export const IGNORED_KEYS = [
+    'ticks',
+    'startTime',
+    'endTime',
+    'duration',
+    'msptMax',
+];
+
+export type WindowStatisticsKey = KeyNotOfType<
+    WindowStatistics,
+    'ticks' | 'startTime' | 'endTime' | 'duration' | 'msptMax'
+>;
 
 export interface ChartData {
     i: number;

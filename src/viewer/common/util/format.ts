@@ -22,6 +22,21 @@ export function formatBytes(bytes: number) {
     );
 }
 
+export function formatBytesShort(bytes: number) {
+    if (bytes < 0) {
+        return 'invalid';
+    }
+    if (bytes === 0) {
+        return '0B';
+    }
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const sizeIndex = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (
+        parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(1)) +
+        sizes[sizeIndex]
+    );
+}
+
 export function formatDuration(duration: number) {
     const seconds = Math.abs(Math.ceil(duration / 1000));
     const h = (seconds - (seconds % 3600)) / 3600;

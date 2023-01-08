@@ -1,28 +1,39 @@
 import { useMemo } from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { isThreadNode } from '../../../proto/guards';
-import { StackTraceNode, ThreadNode } from '../../../proto/spark_pb';
+import {
+    SamplerMetadata,
+    SamplerMetadata_SamplerMode,
+    StackTraceNode,
+    ThreadNode,
+} from '../../../proto/spark_pb';
 import { TimeSelector } from '../../hooks/useTimeSelector';
 import { MappingsResolver } from '../../mappings/resolver';
 
 // @ts-ignore
 import { FlameGraph } from '@lucko/react-flame-graph';
+import { formatBytesShort } from '../../../common/util/format';
 
 export interface FlameProps {
     flameData: StackTraceNode | ThreadNode;
     mappings: MappingsResolver;
+    metadata: SamplerMetadata;
     timeSelector: TimeSelector;
 }
 
 export default function Flame({
     flameData,
     mappings,
+    metadata,
     timeSelector,
 }: FlameProps) {
     const getTimeFunction = timeSelector.getTime;
 
+    const isAlloc =
+        metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION;
+
     const [data, depth] = useMemo(
-        () => toFlameNode(flameData, mappings, getTimeFunction),
+        () => toFlameNode(flameData, mappings, getTimeFunction, isAlloc),
         [flameData, mappings, getTimeFunction]
     );
     const calcHeight = Math.min(depth * 20, 5000);
@@ -48,7 +59,8 @@ interface FlameNode {
 function toFlameNode(
     node: StackTraceNode | ThreadNode,
     mappings: MappingsResolver,
-    getTimeFunction: TimeSelector['getTime']
+    getTimeFunction: TimeSelector['getTime'],
+    isAlloc: boolean
 ): [FlameNode, number] {
     let name;
     let tooltip;
@@ -62,35 +74,22 @@ function toFlameNode(
             name = node.methodName + ' (native)';
         } else {
             let { className, methodName, packageName } = resolved;
-            packageName = simplifyPackageName(
-                packageName,
-                'nms.',
-                /^net\.minecraft\.server(?:\.v[0-9R_]+)?\.(.*)$/
-            );
-            packageName = simplifyPackageName(
-                packageName,
-                'nm.',
-                /^net\.minecraft(?:\.v[0-9R_]+)?\.(.*)$/
-            );
-            packageName = simplifyPackageName(
-                packageName,
-                'obc.',
-                /^org\.bukkit\.craftbukkit(?:\.v[0-9R_]+)?\.(.*)$/
-            );
 
-            name =
-                (packageName ? packageName : '') +
-                className +
-                '.' +
-                methodName +
-                '()';
-            tooltip =
-                node.className +
-                '.' +
-                node.methodName +
-                '() - ' +
-                node.time +
-                'ms';
+            const nms = /^net\.minecraft\.server(?:\.v[0-9R_]+)?\.(.*)$/;
+            packageName = simplifyPackageName(packageName, 'nms.', nms);
+
+            const nm = /^net\.minecraft(?:\.v[0-9R_]+)?\.(.*)$/;
+            packageName = simplifyPackageName(packageName, 'nm.', nm);
+
+            const obc = /^org\.bukkit\.craftbukkit(?:\.v[0-9R_]+)?\.(.*)$/;
+            packageName = simplifyPackageName(packageName, 'obc.', obc);
+
+            name = `${packageName || ''}${className}.${methodName}()`;
+            const formattedValue = isAlloc
+                ? formatBytesShort(node.time)
+                : `${node.time}ms`;
+
+            tooltip = `${node.className}.${node.methodName}() - ${formattedValue}`;
         }
     }
 
@@ -99,11 +98,16 @@ function toFlameNode(
 
     let depth = 1;
 
-    for (const child of node.children) {
+    const sortedChildren = node.children.sort(
+        (a, b) => getTimeFunction(b) - getTimeFunction(a)
+    );
+
+    for (const child of sortedChildren) {
         const [childData, childDepth] = toFlameNode(
             child,
             mappings,
-            getTimeFunction
+            getTimeFunction,
+            isAlloc
         );
         depth = Math.max(depth, childDepth + 1);
         children.push(childData);

@@ -1,5 +1,6 @@
 import {
     faClock,
+    faDatabase,
     faGamepad,
     faServer,
 } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +13,7 @@ import {
     HeapData,
     PlatformMetadata_Type,
     SamplerData,
+    SamplerMetadata_SamplerMode,
 } from '../../proto/spark_pb';
 import { formatDuration } from '../util/format';
 import { unwrapSamplerMetadata } from '../util/metadata';
@@ -56,7 +58,7 @@ export default function Thumbnail({ data, code }: ThumbnailProps) {
 
     const platformType = PlatformMetadata_Type[platform.type].toLowerCase();
 
-    const { startTime, startDate, runningTime, numberOfTicks } =
+    const { startTime, startDate, runningTime, numberOfTicks, samplerMode } =
         unwrapSamplerMetadata(metadata);
 
     return (
@@ -71,6 +73,12 @@ export default function Thumbnail({ data, code }: ThumbnailProps) {
             )}
 
             <div className="stats">
+                {samplerMode === SamplerMetadata_SamplerMode.ALLOCATION && (
+                    <p>
+                        <FontAwesomeIcon fixedWidth={true} icon={faDatabase} />{' '}
+                        <span>Allocation</span> (memory) profile
+                    </p>
+                )}
                 <p>
                     <FontAwesomeIcon fixedWidth={true} icon={faServer} />{' '}
                     <span>{platform.name}</span> {platformType} &quot;

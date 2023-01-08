@@ -141,6 +141,11 @@ message WindowStatistics {
   int32 entities = 8;
   int32 tileEntities = 9;
   int32 chunks = 10;
+
+  // approximate wall-clock start/end times
+  int64 startTime = 11;
+  int64 endTime = 12;
+  int32 duration = 13;
 }
 
 message RollingAverageValues {
@@ -238,6 +243,7 @@ message SamplerMetadata {
   int32 numberOfTicks = 12;
   map<string, SourceMetadata> sources = 13;
   map<string, string> extraPlatformMetadata = 14;
+  SamplerMode samplerMode = 15;
 
   message ThreadDumper {
     Type type = 1;
@@ -272,6 +278,11 @@ message SamplerMetadata {
   message SourceMetadata {
     string name = 1;
     string version = 2;
+  }
+
+  enum SamplerMode {
+    EXECUTION = 0;
+    ALLOCATION = 1;
   }
 }
 

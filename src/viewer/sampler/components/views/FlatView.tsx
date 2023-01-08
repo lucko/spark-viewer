@@ -52,17 +52,15 @@ export default function FlatView({
                 <TextBox>Loading...</TextBox>
             ) : (
                 <div className="stack">
-                    <LabelModeContext.Provider value={labelMode}>
-                        <BottomUpContext.Provider value={bottomUp}>
-                            {data.map(thread => (
-                                <BaseNode
-                                    parents={[]}
-                                    node={thread}
-                                    key={thread.name}
-                                />
-                            ))}
-                        </BottomUpContext.Provider>
-                    </LabelModeContext.Provider>
+                    <BottomUpContext.Provider value={bottomUp}>
+                        {data.map(thread => (
+                            <BaseNode
+                                parents={[]}
+                                node={thread}
+                                key={thread.name}
+                            />
+                        ))}
+                    </BottomUpContext.Provider>
                 </div>
             )}
         </div>

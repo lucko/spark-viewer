@@ -37,23 +37,21 @@ export default function SourcesView({
                 <MergeModeButton merged={merged} setMerged={setMerged} />
             </SourcesViewHeader>
             <hr />
-            <LabelModeContext.Provider value={labelMode}>
-                {!data ? (
-                    <TextBox>Loading...</TextBox>
-                ) : (
-                    <>
-                        {data.map(({ source, totalTime, threads }) => (
-                            <SourceSection
-                                source={source}
-                                totalTime={totalTime}
-                                threads={threads}
-                                key={source}
-                            />
-                        ))}
-                        <OtherSourcesSection data={data} />
-                    </>
-                )}
-            </LabelModeContext.Provider>
+            {!data ? (
+                <TextBox>Loading...</TextBox>
+            ) : (
+                <>
+                    {data.map(({ source, totalTime, threads }) => (
+                        <SourceSection
+                            source={source}
+                            totalTime={totalTime}
+                            threads={threads}
+                            key={source}
+                        />
+                    ))}
+                    <OtherSourcesSection data={data} />
+                </>
+            )}
         </div>
     );
 }

@@ -24,15 +24,9 @@ export default function AllView({ threads, setLabelMode }: AllViewProps) {
             </AllViewHeader>
             <hr />
             <div className="stack">
-                <LabelModeContext.Provider value={labelMode}>
-                    {threads.map(thread => (
-                        <BaseNode
-                            parents={[]}
-                            node={thread}
-                            key={thread.name}
-                        />
-                    ))}
-                </LabelModeContext.Provider>
+                {threads.map(thread => (
+                    <BaseNode parents={[]} node={thread} key={thread.name} />
+                ))}
             </div>
         </div>
     );

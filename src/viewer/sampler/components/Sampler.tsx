@@ -129,6 +129,7 @@ export default function Sampler({
                 <Flame
                     flameData={flameData}
                     mappings={mappings}
+                    metadata={data.metadata!}
                     timeSelector={timeSelector}
                 />
             )}

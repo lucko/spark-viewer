@@ -1,9 +1,10 @@
 import Head from 'next/head';
 import Avatar from '../../common/components/Avatar';
-import { formatDate } from '../../common/util/format';
+import { formatBytesShort, formatDate } from '../../common/util/format';
 import {
     SamplerMetadata,
     SamplerMetadata_DataAggregator_Type,
+    SamplerMetadata_SamplerMode,
 } from '../../proto/spark_pb';
 
 export interface SamplerTitleProps {
@@ -25,17 +26,25 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
             ', ticks >= ' + dataAggregator.tickLengthThreshold / 1000 + 'ms';
     }
 
+    const alloc =
+        metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION;
+    const title = alloc ? 'Memory Profile' : 'Profile';
+    const formattedInterval = alloc
+        ? formatBytesShort(interval)
+        : `${interval / 1000}ms`;
+
     return (
         <div className="textbox title">
             <Head>
                 <title>
-                    Profile @ {startTimeStr} {startDateStr} | spark
+                    {title} @ {startTimeStr} {startDateStr} | spark
                 </title>
             </Head>
             <span>
-                Profile {comment} created by <Avatar user={user!} />
+                {title} {comment} created by <Avatar user={user!} />
                 {user?.name} at {startTimeStr} on {startDateStr}, interval{' '}
-                {interval / 1000}ms{ticksOver}
+                {formattedInterval}
+                {ticksOver}
             </span>
         </div>
     );

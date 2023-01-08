@@ -14,6 +14,7 @@ export interface TimeSelector {
     filterTimes: (times: number[]) => number[];
     getTime: (node: StackTraceNode | ThreadNode) => number;
     getTicksInRange: () => number;
+    getMillisInRange: () => number;
 }
 
 export type TimeFilterFunction = (time: number) => boolean;
@@ -92,6 +93,17 @@ export default function useTimeSelector(
         return ticks;
     }, [selected, timeWindowStatistics, timeWindows]);
 
+    const getMillisInRange: TimeSelector['getMillisInRange'] =
+        useCallback(() => {
+            let millis = 0;
+            for (let i = 0; i < timeWindows.length; i++) {
+                if (selected[i]) {
+                    millis += timeWindowStatistics[timeWindows[i]].duration;
+                }
+            }
+            return millis;
+        }, [selected, timeWindowStatistics, timeWindows]);
+
     return {
         supported,
         times: timeWindows,
@@ -101,5 +113,6 @@ export default function useTimeSelector(
         filterTimes,
         getTime,
         getTicksInRange,
+        getMillisInRange,
     };
 }
