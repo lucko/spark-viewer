@@ -34,7 +34,7 @@ export default function Flame({
 
     const [data, depth] = useMemo(
         () => toFlameNode(flameData, mappings, getTimeFunction, isAlloc),
-        [flameData, mappings, getTimeFunction]
+        [flameData, mappings, getTimeFunction, isAlloc]
     );
     const calcHeight = Math.min(depth * 20, 5000);
 

@@ -1,17 +1,19 @@
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { Dispatch, SetStateAction } from 'react';
 import FaButton from '../../../../components/FaButton';
-import { SamplerData } from '../../../proto/spark_pb';
+import { SamplerData, SamplerMetadata } from '../../../proto/spark_pb';
 import { View, VIEW_ALL, VIEW_FLAT, VIEW_SOURCES } from '../views/types';
 
 export interface ToggleViewButtonProps {
     data: SamplerData;
+    metadata: SamplerMetadata;
     view: View;
     setView: Dispatch<SetStateAction<View>>;
 }
 
 export default function ToggleViewButton({
     data,
+    metadata,
     view,
     setView,
 }: ToggleViewButtonProps) {
@@ -40,7 +42,7 @@ export default function ToggleViewButton({
                     label = 'flat';
                 } else {
                     label = ['Fabric', 'Forge'].includes(
-                        data?.metadata?.platform?.name || ''
+                        metadata?.platform?.name || ''
                     )
                         ? 'mods'
                         : 'plugins';

@@ -4,12 +4,13 @@ import ExportButton from '../../common/components/controls/ExportButton';
 import ShowInfoButton from '../../common/components/controls/ShowInfoButton';
 import { MetadataToggle } from '../../common/hooks/useMetadataToggle';
 import { ExportCallback } from '../../common/logic/export';
-import { HeapData } from '../../proto/spark_pb';
+import { HeapData, HeapMetadata } from '../../proto/spark_pb';
 import HeapTitle from '../HeapTitle';
 import SearchBar from './SearchBar';
 
 export interface ControlsProps {
     data: HeapData;
+    metadata: HeapMetadata;
     metadataToggle: MetadataToggle;
     searchQuery: string;
     setSearchQuery: Dispatch<SetStateAction<string>>;
@@ -18,13 +19,12 @@ export interface ControlsProps {
 
 export default function Controls({
     data,
+    metadata,
     metadataToggle,
     searchQuery,
     setSearchQuery,
     exportCallback,
 }: ControlsProps) {
-    const metadata = data.metadata!;
-
     return (
         <div className={styles.controls}>
             <HeapTitle metadata={metadata} />

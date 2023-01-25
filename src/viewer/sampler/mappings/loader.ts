@@ -2,7 +2,7 @@ import {
     BukkitMappings,
     McpMappings,
     MojangMappings,
-    SamplerData,
+    SamplerMetadata,
     YarnMappings,
 } from '../../proto/spark_pb';
 import detectMappings from './detect';
@@ -16,10 +16,10 @@ import { MappingFunction } from './types';
 export default async function loadMappings(
     type: string,
     mappingsInfo: MappingsMetadata,
-    profileData: SamplerData
+    metadata: SamplerMetadata
 ): Promise<MappingFunction> {
     if (type === 'auto') {
-        const detectedType = detectMappings(mappingsInfo, profileData);
+        const detectedType = detectMappings(mappingsInfo, metadata);
         if (!detectedType) {
             return NoOpMappingFunction.INSTANCE;
         } else {

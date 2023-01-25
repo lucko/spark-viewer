@@ -41,8 +41,8 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
                 </title>
             </Head>
             <span>
-                {title} {comment} created by <Avatar user={user!} />
-                {user?.name} at {startTimeStr} on {startDateStr}, interval{' '}
+                {comment} <Avatar user={user!} />
+                {user?.name} @ {startTimeStr} {startDateStr}, interval{' '}
                 {formattedInterval}
                 {ticksOver}
             </span>

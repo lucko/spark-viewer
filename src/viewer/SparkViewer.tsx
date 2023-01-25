@@ -19,8 +19,13 @@ import {
     LOADING_DATA,
     Status,
 } from './common/logic/status';
-import { isSamplerData } from './proto/guards';
-import { HeapData, SamplerData } from './proto/spark_pb';
+import { isSamplerMetadata } from './proto/guards';
+import {
+    HeapData,
+    HeapMetadata,
+    SamplerData,
+    SamplerMetadata,
+} from './proto/spark_pb';
 import useMappings from './sampler/hooks/useMappings';
 
 const Heap = dynamic(() => import('./heap/Heap'), {
@@ -43,7 +48,16 @@ export default function SparkViewer() {
     const { selectedFile } = useContext(SelectedFileContext);
     const [status, setStatus] = useState<Status>(LOADING_DATA);
     const [data, setData] = useState<SamplerData | HeapData>();
+    const [metadata, setMetadata] = useState<SamplerMetadata | HeapMetadata>();
     const [exportCallback, setExportCallback] = useState<ExportCallback>();
+
+    useEffect(() => {
+        setMetadata(data?.metadata);
+    }, [data]);
+
+    if (data && !metadata) {
+        setMetadata(data.metadata);
+    }
 
     // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
     const thumbnailOnly = useMemo(() => {
@@ -51,7 +65,7 @@ export default function SparkViewer() {
     }, [router]);
 
     const mappings = useMappings(
-        data && isSamplerData(data) ? data : undefined
+        metadata && isSamplerMetadata(metadata) ? metadata : undefined
     );
 
     // On page load, if status is set to LOADING_DATA, make
@@ -110,7 +124,7 @@ export default function SparkViewer() {
     ) {
         return (
             <Suspense fallback={null}>
-                <Thumbnail code={code} data={data!} />
+                <Thumbnail code={code} metadata={metadata!} />
             </Suspense>
         );
     }
@@ -137,6 +151,9 @@ export default function SparkViewer() {
                 <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Sampler
                         data={data as SamplerData}
+                        metadata={metadata as SamplerMetadata}
+                        setData={setData}
+                        setMetadata={setMetadata}
                         mappings={mappings.mappingsResolver}
                         exportCallback={exportCallback!}
                     />
@@ -148,6 +165,7 @@ export default function SparkViewer() {
                 <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Heap
                         data={data as HeapData}
+                        metadata={metadata as HeapMetadata}
                         exportCallback={exportCallback!}
                     />
                 </Suspense>

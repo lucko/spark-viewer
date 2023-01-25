@@ -1,7 +1,7 @@
 import { get as lsGet, remove as lsRemove, set as lsSet } from 'local-storage';
 import { useCallback, useEffect, useState } from 'react';
 import { SparkContentType } from '../../common/logic/contentType';
-import { SamplerData } from '../../proto/spark_pb';
+import { SamplerMetadata } from '../../proto/spark_pb';
 import { fetchMappingsMetadata, MappingsMetadata } from '../mappings/fetch';
 import NoOpMappingFunction from '../mappings/functions/noop';
 import loadMappings from '../mappings/loader';
@@ -15,7 +15,7 @@ export interface MappingsHook {
     mappingsType: string;
 }
 
-export default function useMappings(data?: SamplerData): MappingsHook {
+export default function useMappings(metadata?: SamplerMetadata): MappingsHook {
     const [mappingsMetadata, setMappingsMetadata] =
         useState<MappingsMetadata>();
     const [mappingsResolver, setMappingsResolver] = useState<MappingsResolver>(
@@ -39,9 +39,9 @@ export default function useMappings(data?: SamplerData): MappingsHook {
     // from the input dropdown, or 'auto' when mappings info is loaded.
     const requestMappings = useCallback(
         (type: string) => {
-            if (mappingsMetadata && data && mappingsType !== type) {
+            if (mappingsMetadata && metadata && mappingsType !== type) {
                 setMappingsType(type);
-                loadMappings(type, mappingsMetadata, data).then(func => {
+                loadMappings(type, mappingsMetadata, metadata).then(func => {
                     setMappingsResolver(new MappingsResolver(func));
                 });
 
@@ -52,18 +52,18 @@ export default function useMappings(data?: SamplerData): MappingsHook {
                 }
             }
         },
-        [mappingsType, mappingsMetadata, data]
+        [mappingsType, mappingsMetadata, metadata]
     );
 
     // Wait for mappingsInfo and the data ('loaded') to be populated,
     // then run a mappings request for 'auto'.
     useEffect(() => {
-        if (mappingsMetadata && data && mappingsType === 'auto') {
-            loadMappings('auto', mappingsMetadata, data).then(func => {
+        if (mappingsMetadata && metadata && mappingsType === 'auto') {
+            loadMappings('auto', mappingsMetadata, metadata).then(func => {
                 setMappingsResolver(new MappingsResolver(func));
             });
         }
-    }, [mappingsType, mappingsMetadata, data]);
+    }, [mappingsType, mappingsMetadata, metadata]);
 
     return {
         load,

@@ -1,34 +1,33 @@
 // Attempts to determine which mappings to apply automatically,
 // based on the mappings info resource and the current profile data.
-import { SamplerData } from '../../proto/spark_pb';
+import { SamplerMetadata } from '../../proto/spark_pb';
 import { MappingsMetadata } from './fetch';
 
 export default function detectMappings(
     mappingsInfo: MappingsMetadata,
-    profileData: SamplerData
+    metadata: SamplerMetadata
 ): string | null {
-    if (!mappingsInfo.auto || !profileData.metadata) {
+    if (!mappingsInfo.auto || !metadata) {
         return null;
     }
 
-    const meta = profileData.metadata;
     if (
-        meta &&
-        meta.platform &&
-        meta.platform.name &&
-        meta.platform.minecraftVersion
+        metadata &&
+        metadata.platform &&
+        metadata.platform.name &&
+        metadata.platform.minecraftVersion
     ) {
-        const rc = meta.platform.minecraftVersion.match(
+        const rc = metadata.platform.minecraftVersion.match(
             /(\d+\.\d+) Release Candidate \d+/
         );
         if (rc) {
-            meta.platform.minecraftVersion = rc[1];
+            metadata.platform.minecraftVersion = rc[1];
         }
 
         const id =
-            meta.platform.name.toLowerCase() +
+            metadata.platform.name.toLowerCase() +
             '/' +
-            meta.platform.minecraftVersion;
+            metadata.platform.minecraftVersion;
         return mappingsInfo.auto[id];
     }
     return null;
