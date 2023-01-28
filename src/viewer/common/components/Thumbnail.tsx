@@ -9,10 +9,11 @@ import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import SparkLogo from '../../../assets/spark-logo.svg';
 import styles from '../../../style/thumbnail.module.scss';
+import { isSamplerMetadata } from '../../proto/guards';
 import {
-    HeapData,
+    HeapMetadata,
     PlatformMetadata_Type,
-    SamplerData,
+    SamplerMetadata,
     SamplerMetadata_SamplerMode,
 } from '../../proto/spark_pb';
 import { formatDuration } from '../util/format';
@@ -21,13 +22,12 @@ import Avatar from './Avatar';
 import Widgets from './widgets/Widgets';
 
 export interface ThumbnailProps {
-    data: SamplerData | HeapData;
+    metadata: SamplerMetadata | HeapMetadata;
     code: string;
 }
 
-export default function Thumbnail({ data, code }: ThumbnailProps) {
+export default function Thumbnail({ metadata, code }: ThumbnailProps) {
     const ref = useRef<HTMLDivElement>(null);
-    const metadata = data.metadata!;
 
     // override the css of body/#root to fix a specific size
     useEffect(() => {
@@ -64,7 +64,10 @@ export default function Thumbnail({ data, code }: ThumbnailProps) {
     return (
         <div ref={ref} className={classNames('thumbnail', styles.thumbnail)}>
             <div>
-                <h1>spark {'threads' in data ? 'profile' : 'heap summary'}</h1>
+                <h1>
+                    spark{' '}
+                    {isSamplerMetadata(metadata) ? 'profile' : 'heap summary'}
+                </h1>
                 <h2>/{code}</h2>
             </div>
 

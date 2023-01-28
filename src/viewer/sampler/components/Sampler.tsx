@@ -7,7 +7,12 @@ import WidgetsAndMetadata from '../../common/components/WidgetsAndMetadata';
 import useMetadataToggle from '../../common/hooks/useMetadataToggle';
 import useToggle from '../../common/hooks/useToggle';
 import { ExtendedThreadNode } from '../../proto/nodes';
-import { SamplerData, StackTraceNode, ThreadNode } from '../../proto/spark_pb';
+import {
+    SamplerData,
+    SamplerMetadata,
+    StackTraceNode,
+    ThreadNode,
+} from '../../proto/spark_pb';
 import useHighlight from '../hooks/useHighlight';
 import useSearchQuery from '../hooks/useSearchQuery';
 import useTimeSelector from '../hooks/useTimeSelector';
@@ -26,18 +31,27 @@ import SourcesView from './views/SourcesView';
 import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 
 import 'react-contexify/dist/ReactContexify.css';
+import SocketInfo from '../../common/components/SocketInfo';
 import { ExportCallback } from '../../common/logic/export';
+import useSocketBindings from '../hooks/useSocketBindings';
+import useSocketClient from '../hooks/useSocketClient';
 
 const Graph = dynamic(() => import('./graph/Graph'));
 
 export interface SamplerProps {
     data: SamplerData;
+    fetchUpdatedData: (payloadId: string) => void;
+    metadata: SamplerMetadata;
+    setMetadata: (metadata: SamplerMetadata) => void;
     mappings: MappingsResolver;
     exportCallback: ExportCallback;
 }
 
 export default function Sampler({
     data,
+    fetchUpdatedData,
+    metadata,
+    setMetadata,
     mappings,
     exportCallback,
 }: SamplerProps) {
@@ -52,6 +66,10 @@ export default function Sampler({
     const [flameData, setFlameData] = useState<StackTraceNode | ThreadNode>();
     const [view, setView] = useState<View>(VIEW_ALL);
     const [showGraph, setShowGraph] = useToggle('prefShowGraph', true);
+    const [showSocketInfo, setShowSocketInfo] = useToggle(
+        'prefShowSocket',
+        false
+    );
 
     const [flatViewData, setFlatViewData] = useState<FlatViewDataContainer>({});
     const [sourcesViewData, setSourcesViewData] =
@@ -71,6 +89,15 @@ export default function Sampler({
         });
     }, [data]);
 
+    // WebSocket
+    const socketClient = useSocketClient(data.channelInfo, fetchUpdatedData);
+    const socket = useSocketBindings({
+        socket: socketClient,
+        fetchUpdatedData,
+        metadata,
+        setMetadata,
+    });
+
     const metadataToggle = useMetadataToggle();
 
     // Callback function for the "Toggle bookmark" context menu button
@@ -89,13 +116,13 @@ export default function Sampler({
     }
 
     const supported =
-        data.metadata?.platform?.sparkVersion &&
-        data.metadata.platform.sparkVersion >= 2;
+        metadata?.platform?.sparkVersion && metadata.platform.sparkVersion >= 2;
 
     return (
         <div className={styles.sampler}>
             <Controls
                 data={data}
+                metadata={metadata}
                 metadataToggle={metadataToggle}
                 exportCallback={exportCallback}
                 view={view}
@@ -103,15 +130,22 @@ export default function Sampler({
                 graphSupported={timeSelector.supported}
                 showGraph={showGraph}
                 setShowGraph={setShowGraph}
+                socket={socket}
+                showSocketInfo={showSocketInfo}
+                setShowSocketInfo={setShowSocketInfo}
                 flameData={flameData}
                 setFlameData={setFlameData}
                 searchQuery={searchQuery}
             />
 
+            {showSocketInfo && socket.socket.socket && (
+                <SocketInfo socket={socket} />
+            )}
+
             {!supported && <VersionWarning />}
 
             <WidgetsAndMetadata
-                metadata={data.metadata!}
+                metadata={metadata}
                 metadataToggle={metadataToggle}
             />
 
@@ -129,7 +163,7 @@ export default function Sampler({
                 <Flame
                     flameData={flameData}
                     mappings={mappings}
-                    metadata={data.metadata!}
+                    metadata={metadata}
                     timeSelector={timeSelector}
                 />
             )}
@@ -140,7 +174,7 @@ export default function Sampler({
                     highlighted={highlighted}
                     searchQuery={searchQuery}
                     labelMode={labelMode}
-                    metadata={data.metadata!}
+                    metadata={metadata}
                     timeSelector={timeSelector}
                 >
                     {view === VIEW_ALL ? (

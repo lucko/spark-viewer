@@ -74,5 +74,13 @@
             background-position: 8px;
             background-size: 15px;
         }
+
+        .last-update-spinner {
+            color: red !important;
+
+            > div > div {
+                top: 0px !important;
+            }
+        }
     }
 }

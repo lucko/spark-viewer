@@ -6,20 +6,24 @@ import { MetadataToggle } from '../../../common/hooks/useMetadataToggle';
 import { ExportCallback } from '../../../common/logic/export';
 import {
     SamplerData,
+    SamplerMetadata,
     StackTraceNode,
     ThreadNode,
 } from '../../../proto/spark_pb';
 import { SearchQuery } from '../../hooks/useSearchQuery';
+import { SocketBinding } from '../../hooks/useSocketBindings';
 import SamplerTitle from '../SamplerTitle';
 import { View } from '../views/types';
 import ExitFlameButton from './ExitFlameButton';
 import FlameButton from './FlameButton';
 import GraphButton from './GraphButton';
+import LastUpdateSpinner from './LastUpdateSpinner';
 import SearchBar from './SearchBar';
 import ToggleViewButton from './ToggleViewButton';
 
 export interface ControlsProps {
     data: SamplerData;
+    metadata: SamplerMetadata;
     metadataToggle: MetadataToggle;
     exportCallback: ExportCallback;
     view: View;
@@ -27,6 +31,9 @@ export interface ControlsProps {
     graphSupported: boolean;
     showGraph: boolean;
     setShowGraph: Dispatch<SetStateAction<boolean>>;
+    socket: SocketBinding;
+    showSocketInfo: boolean;
+    setShowSocketInfo: Dispatch<SetStateAction<boolean>>;
     flameData?: StackTraceNode | ThreadNode;
     setFlameData: Dispatch<
         SetStateAction<StackTraceNode | ThreadNode | undefined>
@@ -36,6 +43,7 @@ export interface ControlsProps {
 
 export default function Controls({
     data,
+    metadata,
     metadataToggle,
     exportCallback,
     view,
@@ -43,12 +51,13 @@ export default function Controls({
     graphSupported,
     showGraph,
     setShowGraph,
+    socket,
+    showSocketInfo,
+    setShowSocketInfo,
     flameData,
     setFlameData,
     searchQuery,
 }: ControlsProps) {
-    const metadata = data.metadata!;
-
     return (
         <div className={styles.controls}>
             <SamplerTitle metadata={metadata} />
@@ -65,6 +74,7 @@ export default function Controls({
                 <>
                     <ToggleViewButton
                         data={data}
+                        metadata={metadata}
                         view={view}
                         setView={setView}
                     />
@@ -75,6 +85,11 @@ export default function Controls({
             ) : (
                 <ExitFlameButton setFlameData={setFlameData} />
             )}
+            <LastUpdateSpinner
+                socket={socket}
+                showSocketInfo={showSocketInfo}
+                setShowSocketInfo={setShowSocketInfo}
+            />
         </div>
     );
 }
