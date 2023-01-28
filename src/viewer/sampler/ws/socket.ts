@@ -5,21 +5,23 @@ import {
 import Bowser from 'bowser';
 import {
     ClientConnect,
-    LiveChannelInfo,
     PacketWrapper,
     RawPacket,
+    ServerConnectResponse_Settings,
     ServerConnectResponse_State,
+    SocketChannelInfo,
 } from '../../proto/spark_pb';
 import { generateKeys, importPublicKey, Keys, loadKeys } from './keys';
+import { EventBus, Listener, ListenerResult } from './listener';
 import { randomString } from './util';
 
-const bytesocksHost = 'usersockets.luckperms.net'; // TODO
-
-export interface SocketCallbacks {
+export interface SocketListener {
     onConnect(
-        socket: SocketInterface,
+        socket: SocketClient,
+        settings: ServerConnectResponse_Settings,
         trusted: boolean,
-        clientId: string
+        clientId: string,
+        initialPayloadId: string | undefined
     ): void;
 
     onPing(latency: number): void;
@@ -27,15 +29,16 @@ export interface SocketCallbacks {
     onClose(): void;
 }
 
-export type Listener = (packet: PacketWrapper['packet']) => ListenerResult;
+export type Packet = PacketWrapper['packet'];
+export type PacketListener = Listener<Packet>;
 
-export enum ListenerResult {
-    KEEP_LISTENING,
-    STOP_LISTENING,
-}
+export type PingCallback = (latency: number) => void;
 
-export class SocketInterface {
-    static async connect(channel: LiveChannelInfo, callbacks: SocketCallbacks) {
+export class SocketClient {
+    static VERSION = 1;
+    static HOST = 'spark-usersockets.lucko.me';
+
+    static async connect(channel: SocketChannelInfo, listener: SocketListener) {
         const keys = (await loadKeys()) || (await generateKeys());
         const remotePublicKey = await importPublicKey(channel.publicKey, [
             'verify',
@@ -43,82 +46,75 @@ export class SocketInterface {
 
         console.log('[WS] Loaded viewer keys and decoded remote public key');
 
-        const socket = new WebSocket(
-            `wss://${bytesocksHost}/${channel.channelId}`
-        );
-        const socketInterface = new SocketInterface(
-            socket,
-            keys,
-            remotePublicKey
-        );
+        const url = `wss://${SocketClient.HOST}/${channel.channelId}`;
+        const socket = new WebSocket(url);
+        const client = new SocketClient(socket, keys, remotePublicKey);
 
         socket.onmessage = event => {
-            socketInterface.onReceive(event.data);
+            client.onReceive(event.data);
         };
 
         socket.onopen = () => {
             console.log('[WS] Socket open, initialising connection...');
-            new InitialisationTask(socketInterface, callbacks).run();
+            new InitialisationTask(client, listener).run();
         };
 
         socket.onclose = e => {
-            callbacks.onClose();
+            listener.onClose();
         };
     }
 
     readonly socket: WebSocket;
-
     private readonly keys: Keys;
+    private readonly listeners: EventBus<Packet>;
     private readonly remotePublicKey: CryptoKey;
-    private readonly listeners: Listener[];
+    private readonly localPublicKey: Promise<Uint8Array>;
 
     private keepaliveTask?: KeepaliveTask;
 
     constructor(socket: WebSocket, keys: Keys, remotePublicKey: CryptoKey) {
         this.socket = socket;
         this.keys = keys;
+        this.listeners = new EventBus();
         this.remotePublicKey = remotePublicKey;
-        this.listeners = [];
+        this.localPublicKey = crypto.subtle
+            .exportKey('spki', this.keys.publicKey)
+            .then(buf => new Uint8Array(buf));
+    }
+
+    public registerListener(listener: PacketListener) {
+        return this.listeners.register(listener);
+    }
+
+    public unregisterListener(listener: PacketListener) {
+        this.listeners.unregister(listener);
+    }
+
+    public startKeepalive(pingCallback: PingCallback) {
+        this.keepaliveTask = new KeepaliveTask(this, pingCallback);
     }
 
     public async send(packet: PacketWrapper['packet']) {
         const message = PacketWrapper.toBinary({ packet });
 
         // sign the message with the viewer private key
-        const publicKey = await crypto.subtle.exportKey(
-            'spki',
-            this.keys.publicKey
-        );
-        const signature = await crypto.subtle.sign(
-            'RSASSA-PKCS1-v1_5',
-            this.keys.privateKey,
-            message
+        const signature = new Uint8Array(
+            await crypto.subtle.sign(
+                'RSASSA-PKCS1-v1_5',
+                this.keys.privateKey,
+                message
+            )
         );
 
+        const publicKey = await this.localPublicKey;
         const buf = RawPacket.toBinary({
-            version: 1,
-            signature: new Uint8Array(signature),
-            message: message,
-            publicKey: new Uint8Array(publicKey),
+            version: SocketClient.VERSION,
+            signature,
+            message,
+            publicKey,
         });
 
         this.socket.send(base64Encode(buf));
-    }
-
-    public registerListener(listener: Listener) {
-        this.listeners.push(listener);
-        return () => this.unregisterListener(listener);
-    }
-
-    public unregisterListener(listener: Listener) {
-        const idx = this.listeners.indexOf(listener);
-        if (idx >= 0) {
-            this.listeners.splice(idx, 1);
-        }
-    }
-
-    public startKeepalive(pingCallback: (latency: number) => void) {
-        this.keepaliveTask = new KeepaliveTask(this, pingCallback);
     }
 
     async onReceive(data: string) {
@@ -126,7 +122,7 @@ export class SocketInterface {
             new Uint8Array(base64Decode(data))
         );
 
-        if (version !== 1) {
+        if (version !== SocketClient.VERSION) {
             throw new Error(`Unexpected version: ${version}`);
         }
 
@@ -142,26 +138,18 @@ export class SocketInterface {
         }
 
         const packet = PacketWrapper.fromBinary(message);
-
-        const toRemove: number[] = [];
-        this.listeners.forEach((listener, i) => {
-            const resp = listener(packet.packet);
-            if (resp === ListenerResult.STOP_LISTENING) {
-                toRemove.unshift(i);
-            }
-        });
-        toRemove.forEach(i => this.listeners.splice(i, 1));
+        this.listeners.dispatch(packet.packet);
     }
 }
 
 class InitialisationTask {
-    private readonly socket: SocketInterface;
-    private readonly callbacks: SocketCallbacks;
+    private readonly socket: SocketClient;
+    private readonly listener: SocketListener;
     private readonly clientId: string;
 
-    constructor(socket: SocketInterface, callbacks: SocketCallbacks) {
+    constructor(socket: SocketClient, listener: SocketListener) {
         this.socket = socket;
-        this.callbacks = callbacks;
+        this.listener = listener;
         this.clientId = `${randomString(4)}-${randomString(4)}`;
     }
 
@@ -185,7 +173,7 @@ class InitialisationTask {
         });
     }
 
-    onMessage: Listener = packet => {
+    onMessage: PacketListener = packet => {
         if (packet.oneofKind !== 'serverConnectResponse') {
             return ListenerResult.KEEP_LISTENING;
         }
@@ -205,8 +193,14 @@ class InitialisationTask {
                     trusted ? 'trusted' : 'untrusted'
                 })`
             );
-            this.socket.startKeepalive(this.callbacks.onPing);
-            this.callbacks.onConnect(this.socket, trusted, this.clientId);
+            this.socket.startKeepalive(this.listener.onPing);
+            this.listener.onConnect(
+                this.socket,
+                msg.settings!,
+                trusted,
+                this.clientId,
+                msg.lastPayloadId
+            );
             return trusted
                 ? ListenerResult.STOP_LISTENING
                 : ListenerResult.KEEP_LISTENING;
@@ -223,18 +217,15 @@ class InitialisationTask {
 }
 
 class KeepaliveTask {
-    private readonly socket: SocketInterface;
-    private readonly pingCallback: (latency: number) => void;
+    private readonly socket: SocketClient;
+    private readonly pingCallback: PingCallback;
 
     private readonly pings: Map<number, number>;
     private lastPing: number;
     private lastPong: number;
     private readonly timer?: ReturnType<typeof setInterval>;
 
-    constructor(
-        socket: SocketInterface,
-        pingCallback: (latency: number) => void
-    ) {
+    constructor(socket: SocketClient, pingCallback: PingCallback) {
         this.socket = socket;
         this.pingCallback = pingCallback;
         this.pings = new Map();
@@ -246,7 +237,7 @@ class KeepaliveTask {
         this.task().then(_ => {});
     }
 
-    onMessage: Listener = packet => {
+    onMessage: PacketListener = packet => {
         if (packet.oneofKind === 'serverPong') {
             if (!packet.serverPong.ok) {
                 console.log(

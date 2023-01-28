@@ -1,6 +1,13 @@
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
-import { Suspense, useContext, useEffect, useMemo, useState } from 'react';
+import {
+    Suspense,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import HeaderWithMappings from '../components/HeaderWithMappings';
 import SparkLayout from '../components/SparkLayout';
 import TextBox from '../components/TextBox';
@@ -66,6 +73,20 @@ export default function SparkViewer() {
 
     const mappings = useMappings(
         metadata && isSamplerMetadata(metadata) ? metadata : undefined
+    );
+
+    const fetchUpdatedData = useCallback(
+        async (payloadId: string) => {
+            const { type, buf, exportCallback } = await fetchFromBytebin(
+                payloadId,
+                null,
+                false
+            );
+            setExportCallback(() => exportCallback);
+            const [data] = parse(type, buf, true);
+            setData(data);
+        },
+        [setExportCallback, setData]
     );
 
     // On page load, if status is set to LOADING_DATA, make
@@ -151,8 +172,8 @@ export default function SparkViewer() {
                 <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Sampler
                         data={data as SamplerData}
+                        fetchUpdatedData={fetchUpdatedData}
                         metadata={metadata as SamplerMetadata}
-                        setData={setData}
                         setMetadata={setMetadata}
                         mappings={mappings.mappingsResolver}
                         exportCallback={exportCallback!}

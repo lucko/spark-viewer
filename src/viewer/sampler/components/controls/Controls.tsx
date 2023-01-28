@@ -31,9 +31,9 @@ export interface ControlsProps {
     graphSupported: boolean;
     showGraph: boolean;
     setShowGraph: Dispatch<SetStateAction<boolean>>;
+    socket: SocketBinding;
     showSocketInfo: boolean;
     setShowSocketInfo: Dispatch<SetStateAction<boolean>>;
-    socketBinding?: SocketBinding;
     flameData?: StackTraceNode | ThreadNode;
     setFlameData: Dispatch<
         SetStateAction<StackTraceNode | ThreadNode | undefined>
@@ -51,9 +51,9 @@ export default function Controls({
     graphSupported,
     showGraph,
     setShowGraph,
+    socket,
     showSocketInfo,
     setShowSocketInfo,
-    socketBinding,
     flameData,
     setFlameData,
     searchQuery,
@@ -86,9 +86,9 @@ export default function Controls({
                 <ExitFlameButton setFlameData={setFlameData} />
             )}
             <LastUpdateSpinner
+                socket={socket}
                 showSocketInfo={showSocketInfo}
                 setShowSocketInfo={setShowSocketInfo}
-                socketBinding={socketBinding}
             />
         </div>
     );

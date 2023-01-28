@@ -33,15 +33,15 @@ import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 import 'react-contexify/dist/ReactContexify.css';
 import SocketInfo from '../../common/components/SocketInfo';
 import { ExportCallback } from '../../common/logic/export';
-import useSocket from '../hooks/useSocket';
 import useSocketBindings from '../hooks/useSocketBindings';
+import useSocketClient from '../hooks/useSocketClient';
 
 const Graph = dynamic(() => import('./graph/Graph'));
 
 export interface SamplerProps {
     data: SamplerData;
+    fetchUpdatedData: (payloadId: string) => void;
     metadata: SamplerMetadata;
-    setData: (data: SamplerData) => void;
     setMetadata: (metadata: SamplerMetadata) => void;
     mappings: MappingsResolver;
     exportCallback: ExportCallback;
@@ -49,8 +49,8 @@ export interface SamplerProps {
 
 export default function Sampler({
     data,
+    fetchUpdatedData,
     metadata,
-    setData,
     setMetadata,
     mappings,
     exportCallback,
@@ -89,9 +89,14 @@ export default function Sampler({
         });
     }, [data]);
 
-    const channelInfo = data.channelInfo;
-    const [socket, socketLatency] = useSocket(channelInfo);
-    const socketBindings = useSocketBindings({ socket, metadata, setMetadata });
+    // WebSocket
+    const socketClient = useSocketClient(data.channelInfo, fetchUpdatedData);
+    const socket = useSocketBindings({
+        socket: socketClient,
+        fetchUpdatedData,
+        metadata,
+        setMetadata,
+    });
 
     const metadataToggle = useMetadataToggle();
 
@@ -125,16 +130,16 @@ export default function Sampler({
                 graphSupported={timeSelector.supported}
                 showGraph={showGraph}
                 setShowGraph={setShowGraph}
+                socket={socket}
                 showSocketInfo={showSocketInfo}
                 setShowSocketInfo={setShowSocketInfo}
-                socketBinding={socket ? socketBindings : undefined}
                 flameData={flameData}
                 setFlameData={setFlameData}
                 searchQuery={searchQuery}
             />
 
-            {showSocketInfo && socket && (
-                <SocketInfo socketLatency={socketLatency} />
+            {showSocketInfo && socket.socket.socket && (
+                <SocketInfo socket={socket} />
             )}
 
             {!supported && <VersionWarning />}

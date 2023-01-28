@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { Listener, SocketInterface } from '../ws/socket';
+import { PacketListener, SocketClient } from '../ws/socket';
 
 export default function useSocketListener(
-    socket: SocketInterface | null,
-    listener: Listener
+    socket: SocketClient | undefined,
+    listener: PacketListener
 ) {
     useEffect(() => {
         if (!socket) return;

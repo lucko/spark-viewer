@@ -1,27 +1,33 @@
 import { useCallback, useState } from 'react';
 import { SamplerMetadata } from '../../proto/spark_pb';
-import { ListenerResult, SocketInterface } from '../ws/socket';
+import { ListenerResult } from '../ws/listener';
+import { SocketClientHook } from './useSocketClient';
 import useSocketListener from './useSocketListener';
 
 export interface SocketBindingsProps {
-    socket: SocketInterface | null;
+    socket: SocketClientHook;
+    fetchUpdatedData: (payloadId: string) => void;
     metadata: SamplerMetadata;
     setMetadata: (metadata: SamplerMetadata) => void;
 }
 
 export interface SocketBinding {
-    lastStatsUpdate: number;
+    socket: SocketClientHook;
+    lastStatsUpdate?: number;
+    lastSamplerUpdate?: number;
 }
 
 export default function useSocketBindings({
     socket,
+    fetchUpdatedData,
     metadata,
     setMetadata,
 }: SocketBindingsProps): SocketBinding {
-    const [lastStatsUpdate, setLastStatsUpdate] = useState(0);
+    const [lastStatsUpdate, setLastStatsUpdate] = useState<number>();
+    const [lastSamplerUpdate, setLastSamplerUpdate] = useState<number>();
 
     useSocketListener(
-        socket,
+        socket.socket,
         useCallback(
             packet => {
                 if (packet.oneofKind === 'serverUpdateStatistics') {
@@ -35,13 +41,21 @@ export default function useSocketBindings({
                     setLastStatsUpdate(Date.now());
                 }
 
+                if (packet.oneofKind === 'serverUpdateSampler') {
+                    const payloadId = packet.serverUpdateSampler.payloadId;
+                    fetchUpdatedData(payloadId);
+                    setLastSamplerUpdate(Date.now());
+                }
+
                 return ListenerResult.KEEP_LISTENING;
             },
-            [metadata, setMetadata]
+            [metadata, setMetadata, fetchUpdatedData]
         )
     );
 
     return {
+        socket,
         lastStatsUpdate,
+        lastSamplerUpdate,
     };
 }

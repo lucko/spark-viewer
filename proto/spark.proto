@@ -226,7 +226,7 @@ message SamplerData {
   map<string, string> lineSources = 5; // optional
   repeated int32 timeWindows = 6;
   map<int32, WindowStatistics> timeWindowStatistics = 7;
-  LiveChannelInfo channelInfo = 8;
+  SocketChannelInfo channelInfo = 8;
 }
 
 message SamplerMetadata {
@@ -307,7 +307,7 @@ message StackTraceNode {
   repeated int32 childrenRefs = 9;
 }
 
-message LiveChannelInfo {
+message SocketChannelInfo {
   string channelId = 1;
   bytes publicKey = 2;
 }
@@ -347,11 +347,18 @@ message ServerPong {
 message ServerConnectResponse {
   string clientId = 1;
   State state = 2;
+  Settings settings = 3;
+  string lastPayloadId = 4;
 
   enum State {
     ACCEPTED = 0;
     UNTRUSTED = 1;
     REJECTED = 2;
+  }
+
+  message Settings {
+    int32 statisticsInterval = 1;
+    int32 samplerInterval = 2;
   }
 }
 
