@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     ServerConnectResponse_Settings,
     SocketChannelInfo,
@@ -24,32 +24,35 @@ export default function useSocketClient(
     const [settings, setSettings] = useState<ServerConnectResponse_Settings>();
     const [latency, setLatency] = useState<number>();
 
-    async function init(channelInfo: SocketChannelInfo) {
-        await SocketClient.connect(channelInfo, {
-            onConnect(
-                socket: SocketClient,
-                settings: ServerConnectResponse_Settings,
-                trusted: boolean,
-                clientId: string,
-                initialPayloadId: string
-            ) {
-                setSocket(socket);
-                setClientId(clientId);
-                setTrusted(trusted);
-                setSettings(settings);
+    const init = useCallback(
+        async (channelInfo: SocketChannelInfo) => {
+            await SocketClient.connect(channelInfo, {
+                onConnect(
+                    socket: SocketClient,
+                    settings: ServerConnectResponse_Settings,
+                    trusted: boolean,
+                    clientId: string,
+                    initialPayloadId: string
+                ) {
+                    setSocket(socket);
+                    setClientId(clientId);
+                    setTrusted(trusted);
+                    setSettings(settings);
 
-                if (initialPayloadId) {
-                    initialPayloadCallback(initialPayloadId);
-                }
-            },
-            onPing(latency: number) {
-                setLatency(latency);
-            },
-            onClose() {
-                setSocket(undefined);
-            },
-        });
-    }
+                    if (initialPayloadId) {
+                        initialPayloadCallback(initialPayloadId);
+                    }
+                },
+                onPing(latency: number) {
+                    setLatency(latency);
+                },
+                onClose() {
+                    setSocket(undefined);
+                },
+            });
+        },
+        [initialPayloadCallback]
+    );
 
     useEffect(() => {
         if (!channelInfo || initialized) {
@@ -60,7 +63,7 @@ export default function useSocketClient(
         init(channelInfo).catch(err => {
             console.log('Error initialising the socket', err);
         });
-    }, [channelInfo, initialized]);
+    }, [channelInfo, initialized, init]);
 
     return { socket, clientId, trusted, settings, latency };
 }

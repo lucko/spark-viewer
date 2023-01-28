@@ -31,11 +31,11 @@ import SourcesView from './views/SourcesView';
 import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 
 import 'react-contexify/dist/ReactContexify.css';
-import SocketInfo from './misc/SocketInfo';
 import { ExportCallback } from '../../common/logic/export';
 import useSocketBindings from '../hooks/useSocketBindings';
 import useSocketClient from '../hooks/useSocketClient';
-import NoData from "./misc/NoData";
+import NoData from './misc/NoData';
+import SocketInfo from './misc/SocketInfo';
 
 const Graph = dynamic(() => import('./graph/Graph'));
 
@@ -203,7 +203,9 @@ export default function Sampler({
                 </SamplerContext>
             </div>
 
-            {data.threads.length === 0 && <NoData isConnectedToSocket={!!socket.socket.socket} />}
+            {data.threads.length === 0 && (
+                <NoData isConnectedToSocket={!!socket.socket.socket} />
+            )}
 
             <Menu id={'sampler-cm'} theme={theme.dark}>
                 <Item onClick={handleFlame}>View as Flame Graph</Item>

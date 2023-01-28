@@ -16,11 +16,11 @@ export default function NoData({ isConnectedToSocket }: NoDataProps) {
             </h2>
             {isConnectedToSocket ? (
                 <p>
-                    This profile doesn't contain any data yet! The viewer will
-                    refresh shortly.
+                    This profile doesn&apos;t contain any data yet! The viewer
+                    will refresh shortly.
                 </p>
             ) : (
-                <p>This profile doesn't contain any data!</p>
+                <p>This profile doesn&apos;t contain any data!</p>
             )}
         </TextBox>
     );
