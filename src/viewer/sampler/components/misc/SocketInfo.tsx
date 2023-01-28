@@ -1,9 +1,9 @@
 import { faCloud } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import TextBox from '../../../components/TextBox';
+import TextBox from '../../../../components/TextBox';
 
-import styles from '../../../style/sampler.module.scss';
-import { SocketBinding } from '../../sampler/hooks/useSocketBindings';
+import styles from '../../../../style/sampler.module.scss';
+import { SocketBinding } from '../../hooks/useSocketBindings';
 
 export interface SocketInfoProps {
     socket: SocketBinding;
