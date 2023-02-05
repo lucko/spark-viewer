@@ -22,21 +22,21 @@ export class MappingsResolver {
         className = className || node.className;
         methodName = methodName || node.methodName;
 
-        let packageName;
         let lambda;
-
-        // separate out package name
-        let i = className.lastIndexOf('.');
-        if (i !== -1) {
-            packageName = className.substring(0, i + 1);
-            className = className.substring(i + 1);
-        }
+        let packageName;
 
         // separate out lambda description
-        i = className.indexOf('$$Lambda');
+        let i = className.indexOf('$$Lambda');
         if (i !== -1) {
             lambda = className.substring(i);
             className = className.substring(0, i);
+        }
+
+        // separate out package name
+        i = className.lastIndexOf('.');
+        if (i !== -1) {
+            packageName = className.substring(0, i + 1);
+            className = className.substring(i + 1);
         }
 
         return {
