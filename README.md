@@ -17,7 +17,7 @@ The website contains:
 
 ### Viewer
 
-The viewer component of the website reads data from [bytebin](https://github.com/lucko/bytebin), a separate service for content storage, then renders this data client-side as an interactive viewer in which the user can interpret and analyse their results.
+The viewer component of the website reads data from [bytebin](https://github.com/lucko/bytebin) (content storage service) and [bytesocks](https://github.com/lucko/bytesocks) (WebSocket server). It then renders this data as an interactive viewer in which the user can interpret and analyse their results.
 
 The profile viewer renders the data as an expandable call stack tree, with support for applying deobfuscation mappings, searching, bookmarks and viewing as a flame graph.
 
