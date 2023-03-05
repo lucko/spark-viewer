@@ -26,14 +26,11 @@ import {
     LOADING_DATA,
     Status,
 } from './common/logic/status';
+import HeapData from './heap/HeapData';
 import { isSamplerMetadata } from './proto/guards';
-import {
-    HeapData,
-    HeapMetadata,
-    SamplerData,
-    SamplerMetadata,
-} from './proto/spark_pb';
+import { HeapMetadata, SamplerMetadata } from './proto/spark_pb';
 import useMappings from './sampler/hooks/useMappings';
+import SamplerData from './sampler/SamplerData';
 
 const Heap = dynamic(() => import('./heap/Heap'), {
     suspense: true,
@@ -58,14 +55,6 @@ export default function SparkViewer() {
     const [metadata, setMetadata] = useState<SamplerMetadata | HeapMetadata>();
     const [exportCallback, setExportCallback] = useState<ExportCallback>();
 
-    useEffect(() => {
-        setMetadata(data?.metadata);
-    }, [data]);
-
-    if (data && !metadata) {
-        setMetadata(data.metadata);
-    }
-
     // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
     const thumbnailOnly = useMemo(() => {
         return router.query['x-render-thumbnail'] !== undefined;
@@ -83,8 +72,9 @@ export default function SparkViewer() {
                 false
             );
             setExportCallback(() => exportCallback);
-            const [data] = parse(type, buf, true);
+            const [data] = parse(type, buf);
             setData(data);
+            setMetadata(data.metadata);
         },
         [setExportCallback, setData]
     );
@@ -117,12 +107,9 @@ export default function SparkViewer() {
                     mappings.load(result.type);
                 }
 
-                const [data, status] = parse(
-                    result.type,
-                    result.buf,
-                    !thumbnailOnly
-                );
+                const [data, status] = parse(result.type, result.buf);
                 setData(data);
+                setMetadata(data.metadata);
                 setStatus(status);
             } catch (e) {
                 console.log(e);

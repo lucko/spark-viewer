@@ -1,4 +1,4 @@
-import { StackTraceNode } from '../../proto/spark_pb';
+import { StackTraceNodeDetails } from '../../proto/nodes';
 
 export interface RawMappingsResult {
     className?: string;
@@ -6,5 +6,5 @@ export interface RawMappingsResult {
 }
 
 export interface MappingFunction {
-    map(node: StackTraceNode): RawMappingsResult;
+    map(node: StackTraceNodeDetails): RawMappingsResult;
 }

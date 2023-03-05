@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import TextBox from '../../../../components/TextBox';
+import SourceThreadVirtualNode from '../../node/SourceThreadVirtualNode';
+import SamplerData from '../../SamplerData';
 import {
-    ExtendedThreadNode,
-    ThreadNodeWithSourceTime,
-} from '../../../proto/nodes';
-import { SourcesViewData } from '../../preprocessing/preprocessingWorker';
+    SourcesViewData,
+    SourceViewData,
+} from '../../worker/SourceViewGenerator';
 import { LabelModeContext, MetadataContext } from '../SamplerContext';
 import BaseNode from '../tree/BaseNode';
 import LabelModeButton from './button/LabelModeButton';
@@ -12,20 +13,20 @@ import MergeModeButton from './button/MergeModeButton';
 import SourcesViewHeader from './header/SourcesViewHeader';
 
 export interface SourcesViewProps {
-    dataMerged?: SourcesViewData[];
-    dataSeparate?: SourcesViewData[];
+    data: SamplerData;
+    viewData?: SourcesViewData;
     setLabelMode: Dispatch<SetStateAction<boolean>>;
 }
 
 // The sampler view in which there is a stack displayed for each known source.
 export default function SourcesView({
-    dataMerged,
-    dataSeparate,
+    data,
+    viewData,
     setLabelMode,
 }: SourcesViewProps) {
     const labelMode = useContext(LabelModeContext);
     const [merged, setMerged] = useState(true);
-    const data = merged ? dataMerged : dataSeparate;
+    const view = merged ? viewData?.sourcesMerged : viewData?.sourcesSeparate;
 
     return (
         <div className="sourceview">
@@ -37,19 +38,20 @@ export default function SourcesView({
                 <MergeModeButton merged={merged} setMerged={setMerged} />
             </SourcesViewHeader>
             <hr />
-            {!data ? (
+            {!view ? (
                 <TextBox>Loading...</TextBox>
             ) : (
                 <>
-                    {data.map(({ source, totalTime, threads }) => (
+                    {view.map(viewData => (
                         <SourceSection
-                            source={source}
-                            totalTime={totalTime}
-                            threads={threads}
-                            key={source}
+                            data={data}
+                            viewData={viewData}
+                            key={viewData.source}
                         />
                     ))}
-                    <OtherSourcesSection data={data} />
+                    <OtherSourcesSection
+                        alreadyShown={view.map(s => s.source)}
+                    />
                 </>
             )}
         </div>
@@ -60,15 +62,14 @@ const formatVersion = (version: string) => {
     return version.startsWith('v') ? version : 'v' + version;
 };
 
-const SourceSection = ({
-    source,
-    totalTime,
-    threads,
-}: {
-    source: string;
-    totalTime: number;
-    threads: ThreadNodeWithSourceTime[];
-}) => {
+interface SourceSectionProps {
+    data: SamplerData;
+    viewData: SourceViewData;
+}
+
+const SourceSection = ({ data, viewData }: SourceSectionProps) => {
+    const { source, threads } = viewData;
+
     const metadata = useContext(MetadataContext)!;
     const sourceInfo = metadata.sources[source.toLowerCase()];
 
@@ -85,8 +86,7 @@ const SourceSection = ({
             {threads.map(thread => (
                 <BaseNode
                     parents={[]}
-                    node={thread as ExtendedThreadNode}
-                    isSourceRoot={true}
+                    node={new SourceThreadVirtualNode(data, thread)}
                     key={thread.name}
                 />
             ))}
@@ -94,13 +94,12 @@ const SourceSection = ({
     );
 };
 
-const OtherSourcesSection = ({ data }: { data: SourcesViewData[] }) => {
+const OtherSourcesSection = ({ alreadyShown }: { alreadyShown: string[] }) => {
     const metadata = useContext(MetadataContext)!;
     if (!metadata.sources) {
         return null;
     }
 
-    const alreadyShown = data.map(s => s.source);
     const otherSources = Object.values(metadata.sources).filter(
         source => !alreadyShown.includes(source.name)
     );

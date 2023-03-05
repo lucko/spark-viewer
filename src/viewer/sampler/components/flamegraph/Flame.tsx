@@ -1,21 +1,18 @@
+// @ts-ignore
+import { FlameGraph } from '@lucko/react-flame-graph';
 import { useMemo } from 'react';
 import { AutoSizer } from 'react-virtualized';
-import { isThreadNode } from '../../../proto/guards';
+import { formatBytesShort } from '../../../common/util/format';
 import {
     SamplerMetadata,
     SamplerMetadata_SamplerMode,
-    StackTraceNode,
-    ThreadNode,
 } from '../../../proto/spark_pb';
 import { TimeSelector } from '../../hooks/useTimeSelector';
 import { MappingsResolver } from '../../mappings/resolver';
-
-// @ts-ignore
-import { FlameGraph } from '@lucko/react-flame-graph';
-import { formatBytesShort } from '../../../common/util/format';
+import VirtualNode from '../../node/VirtualNode';
 
 export interface FlameProps {
-    flameData: StackTraceNode | ThreadNode;
+    flameData: VirtualNode;
     mappings: MappingsResolver;
     metadata: SamplerMetadata;
     timeSelector: TimeSelector;
@@ -57,7 +54,7 @@ interface FlameNode {
 }
 
 function toFlameNode(
-    node: StackTraceNode | ThreadNode,
+    node: VirtualNode,
     mappings: MappingsResolver,
     getTimeFunction: TimeSelector['getTime'],
     isAlloc: boolean
@@ -65,13 +62,15 @@ function toFlameNode(
     let name;
     let tooltip;
 
-    if (isThreadNode(node)) {
-        name = node.name;
-    } else {
-        let resolved = mappings.resolve(node);
+    const details = node.getDetails();
+
+    if (details.type === 'thread') {
+        name = details.name;
+    } else if (details.type === 'stackTrace') {
+        let resolved = mappings.resolve(details);
 
         if (resolved.type === 'native') {
-            name = node.methodName + ' (native)';
+            name = details.methodName + ' (native)';
         } else {
             let { className, methodName, packageName } = resolved;
 
@@ -86,11 +85,13 @@ function toFlameNode(
 
             name = `${packageName || ''}${className}.${methodName}()`;
             const formattedValue = isAlloc
-                ? formatBytesShort(node.time)
-                : `${node.time}ms`;
+                ? formatBytesShort(node.getTime())
+                : `${node.getTime()}ms`;
 
-            tooltip = `${node.className}.${node.methodName}() - ${formattedValue}`;
+            tooltip = `${details.className}.${details.methodName}() - ${formattedValue}`;
         }
+    } else {
+        throw new Error('unknown type: ' + (details as any).type);
     }
 
     const value = getTimeFunction(node);
@@ -98,9 +99,9 @@ function toFlameNode(
 
     let depth = 1;
 
-    const sortedChildren = node.children.sort(
-        (a, b) => getTimeFunction(b) - getTimeFunction(a)
-    );
+    const sortedChildren = node
+        .getChildren()
+        .sort((a, b) => getTimeFunction(b) - getTimeFunction(a));
 
     for (const child of sortedChildren) {
         const [childData, childDepth] = toFlameNode(

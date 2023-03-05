@@ -1,9 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import {
-    StackTraceNode,
-    ThreadNode,
-    WindowStatistics,
-} from '../../proto/spark_pb';
+import { WindowStatistics } from '../../proto/spark_pb';
+import VirtualNode from '../node/VirtualNode';
 
 export interface TimeSelector {
     supported: boolean;
@@ -12,7 +9,7 @@ export interface TimeSelector {
     setSelectedTimes: (filterFunc: TimeFilterFunction) => void;
     allTimesSelected: boolean;
     filterTimes: (times: number[]) => number[];
-    getTime: (node: StackTraceNode | ThreadNode) => number;
+    getTime: (node: VirtualNode) => number;
     getTicksInRange: () => number;
     getMillisInRange: () => number;
 }
@@ -75,10 +72,11 @@ export default function useTimeSelector(
 
     const getTime: TimeSelector['getTime'] = useCallback(
         node => {
-            if (node.times && !allTimesSelected) {
-                return filterTimes(node.times).reduce((a, b) => a + b, 0);
+            const times = node.getTimes();
+            if (times && !allTimesSelected) {
+                return filterTimes(times).reduce((a, b) => a + b, 0);
             }
-            return node.time;
+            return node.getTime();
         },
         [allTimesSelected, filterTimes]
     );

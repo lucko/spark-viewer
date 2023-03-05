@@ -1,4 +1,4 @@
-import { StackTraceNode } from '../../../proto/spark_pb';
+import { StackTraceNodeDetails } from '../../../proto/nodes';
 import { MappingFunction, RawMappingsResult } from '../types';
 
 export default class NoOpMappingFunction implements MappingFunction {
@@ -6,7 +6,7 @@ export default class NoOpMappingFunction implements MappingFunction {
 
     constructor() {}
 
-    map(node: StackTraceNode): RawMappingsResult {
+    map(node: StackTraceNodeDetails): RawMappingsResult {
         return {};
     }
 }

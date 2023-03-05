@@ -1,4 +1,4 @@
-import { StackTraceNode } from '../../proto/spark_pb';
+import { StackTraceNodeDetails } from '../../proto/nodes';
 import { MappingFunction } from './types';
 
 /**
@@ -7,7 +7,7 @@ import { MappingFunction } from './types';
 export class MappingsResolver {
     constructor(private readonly mappingFunction: MappingFunction) {}
 
-    public resolve(node: StackTraceNode): ResolvedMappingsResult {
+    public resolve(node: StackTraceNodeDetails): ResolvedMappingsResult {
         // the node's className is native, it is a native stack frame
         // so can be rendered accordingly.
         if (node.className === 'native') {

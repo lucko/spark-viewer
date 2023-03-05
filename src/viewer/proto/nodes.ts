@@ -2,39 +2,25 @@ import { StackTraceNode, ThreadNode } from './spark_pb';
 
 export type Node = StackTraceNode | ThreadNode;
 
-export interface ThreadNodeWithSourceTime extends ThreadNode {
-    sourceTime: number;
-}
-
-export interface StackTraceNodeWithSource extends StackTraceNode {
-    source: string;
-}
-
 export interface StackTraceNodeWithId extends StackTraceNode {
-    id: number | number[];
+    id: number;
+    children: StackTraceNodeWithId[];
 }
 
 export interface ThreadNodeWithId extends ThreadNode {
-    id: number | number[];
+    id: number;
+    children: StackTraceNodeWithId[];
 }
 
 export type NodeWithId = StackTraceNodeWithId | ThreadNodeWithId;
 
-export interface StackTraceNodeWithParents extends StackTraceNode {
-    parents: StackTraceNode[];
-}
-
-export type ExtendedStackTraceNode = StackTraceNode &
-    StackTraceNodeWithSource &
-    StackTraceNodeWithId &
-    StackTraceNodeWithParents & { sourceTime?: never };
-
-export type ExtendedThreadNode = ThreadNode &
-    ThreadNodeWithSourceTime &
-    ThreadNodeWithId & {
-        parents?: never;
-        source?: never;
-        parentLineNumber?: never;
-    };
-
-export type ExtendedNode = ExtendedStackTraceNode | ExtendedThreadNode;
+export type StackTraceNodeDetails = { type: 'stackTrace' } & Pick<
+    StackTraceNode,
+    | 'className'
+    | 'methodName'
+    | 'parentLineNumber'
+    | 'lineNumber'
+    | 'methodDesc'
+>;
+export type ThreadNodeDetails = { type: 'thread' } & Pick<ThreadNode, 'name'>;
+export type NodeDetails = StackTraceNodeDetails | ThreadNodeDetails;

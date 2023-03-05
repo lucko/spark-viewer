@@ -4,14 +4,11 @@ import ExportButton from '../../../common/components/controls/ExportButton';
 import ShowInfoButton from '../../../common/components/controls/ShowInfoButton';
 import { MetadataToggle } from '../../../common/hooks/useMetadataToggle';
 import { ExportCallback } from '../../../common/logic/export';
-import {
-    SamplerData,
-    SamplerMetadata,
-    StackTraceNode,
-    ThreadNode,
-} from '../../../proto/spark_pb';
+import { SamplerMetadata } from '../../../proto/spark_pb';
 import { SearchQuery } from '../../hooks/useSearchQuery';
 import { SocketBinding } from '../../hooks/useSocketBindings';
+import VirtualNode from '../../node/VirtualNode';
+import SamplerData from '../../SamplerData';
 import SamplerTitle from '../SamplerTitle';
 import { View } from '../views/types';
 import ExitFlameButton from './ExitFlameButton';
@@ -28,16 +25,15 @@ export interface ControlsProps {
     exportCallback: ExportCallback;
     view: View;
     setView: Dispatch<SetStateAction<View>>;
+    sourcesViewSupported: boolean;
     graphSupported: boolean;
     showGraph: boolean;
     setShowGraph: Dispatch<SetStateAction<boolean>>;
     socket: SocketBinding;
     showSocketInfo: boolean;
     setShowSocketInfo: Dispatch<SetStateAction<boolean>>;
-    flameData?: StackTraceNode | ThreadNode;
-    setFlameData: Dispatch<
-        SetStateAction<StackTraceNode | ThreadNode | undefined>
-    >;
+    flameData?: VirtualNode;
+    setFlameData: Dispatch<SetStateAction<VirtualNode | undefined>>;
     searchQuery: SearchQuery;
 }
 
@@ -48,6 +44,7 @@ export default function Controls({
     exportCallback,
     view,
     setView,
+    sourcesViewSupported,
     graphSupported,
     showGraph,
     setShowGraph,
@@ -73,10 +70,10 @@ export default function Controls({
             {!flameData ? (
                 <>
                     <ToggleViewButton
-                        data={data}
                         metadata={metadata}
                         view={view}
                         setView={setView}
+                        sourcesViewSupported={sourcesViewSupported}
                     />
                     <FlameButton data={data} setFlameData={setFlameData} />
                     <ExportButton exportCallback={exportCallback} />

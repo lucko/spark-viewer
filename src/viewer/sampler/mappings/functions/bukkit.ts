@@ -1,9 +1,9 @@
+import { StackTraceNodeDetails } from '../../../proto/nodes';
 import {
     BukkitMappings,
     ClassMapping,
     McpMappings,
     MojangMappings,
-    StackTraceNode,
 } from '../../../proto/spark_pb';
 import { MappingFunction, RawMappingsResult } from '../types';
 
@@ -28,7 +28,7 @@ export default class BukkitMappingFunction implements MappingFunction {
         }
     }
 
-    map(node: StackTraceNode): RawMappingsResult {
+    map(node: StackTraceNodeDetails): RawMappingsResult {
         // ignore non-NMS packages
         if (!node.className.startsWith(this.expectedPackage)) {
             return {};

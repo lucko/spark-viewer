@@ -1,10 +1,11 @@
-import { StackTraceNode, YarnMappings } from '../../../proto/spark_pb';
+import { StackTraceNodeDetails } from '../../../proto/nodes';
+import { YarnMappings } from '../../../proto/spark_pb';
 import { MappingFunction, RawMappingsResult } from '../types';
 
 export default class YarnMappingFunction implements MappingFunction {
     constructor(private readonly yarnMappings: YarnMappings) {}
 
-    map(node: StackTraceNode): RawMappingsResult {
+    map(node: StackTraceNodeDetails): RawMappingsResult {
         const methodName = this.yarnMappings.methods[node.methodName];
 
         let className;

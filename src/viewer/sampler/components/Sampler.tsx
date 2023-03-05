@@ -6,38 +6,32 @@ import VersionWarning from '../../common/components/VersionWarning';
 import WidgetsAndMetadata from '../../common/components/WidgetsAndMetadata';
 import useMetadataToggle from '../../common/hooks/useMetadataToggle';
 import useToggle from '../../common/hooks/useToggle';
-import { ExtendedThreadNode } from '../../proto/nodes';
-import {
-    SamplerData,
-    SamplerMetadata,
-    StackTraceNode,
-    ThreadNode,
-} from '../../proto/spark_pb';
+import { ExportCallback } from '../../common/logic/export';
+import { SamplerMetadata } from '../../proto/spark_pb';
 import useHighlight from '../hooks/useHighlight';
 import useSearchQuery from '../hooks/useSearchQuery';
+import useSocketBindings from '../hooks/useSocketBindings';
+import useSocketClient from '../hooks/useSocketClient';
 import useTimeSelector from '../hooks/useTimeSelector';
 import { MappingsResolver } from '../mappings/resolver';
-import { createWorker } from '../preprocessing/preprocessing';
-import {
-    FlatViewDataContainer,
-    SourcesViewDataContainer,
-} from '../preprocessing/preprocessingWorker';
+import VirtualNode from '../node/VirtualNode';
+import SamplerData from '../SamplerData';
+import { FlatViewData } from '../worker/FlatViewGenerator';
+import RemoteSamplerWorker from '../worker/RemoteSamplerWorker';
+import { SourcesViewData } from '../worker/SourceViewGenerator';
 import Controls from './controls/Controls';
 import Flame from './flamegraph/Flame';
+import NoData from './misc/NoData';
+import SocketInfo from './misc/SocketInfo';
 import SamplerContext from './SamplerContext';
 import AllView from './views/AllView';
 import FlatView from './views/FlatView';
 import SourcesView from './views/SourcesView';
 import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 
-import 'react-contexify/dist/ReactContexify.css';
-import { ExportCallback } from '../../common/logic/export';
-import useSocketBindings from '../hooks/useSocketBindings';
-import useSocketClient from '../hooks/useSocketClient';
-import NoData from './misc/NoData';
-import SocketInfo from './misc/SocketInfo';
-
 const Graph = dynamic(() => import('./graph/Graph'));
+
+import 'react-contexify/dist/ReactContexify.css';
 
 export interface SamplerProps {
     data: SamplerData;
@@ -56,7 +50,7 @@ export default function Sampler({
     mappings,
     exportCallback,
 }: SamplerProps) {
-    const searchQuery = useSearchQuery();
+    const searchQuery = useSearchQuery(data);
     const highlighted = useHighlight();
     const [labelMode, setLabelMode] = useState(false);
     const timeSelector = useTimeSelector(
@@ -64,7 +58,7 @@ export default function Sampler({
         data.timeWindowStatistics
     );
 
-    const [flameData, setFlameData] = useState<StackTraceNode | ThreadNode>();
+    const [flameData, setFlameData] = useState<VirtualNode>();
     const [view, setView] = useState<View>(VIEW_ALL);
     const [showGraph, setShowGraph] = useToggle('prefShowGraph', true);
     const [showSocketInfo, setShowSocketInfo] = useToggle(
@@ -72,22 +66,24 @@ export default function Sampler({
         false
     );
 
-    const [flatViewData, setFlatViewData] = useState<FlatViewDataContainer>({});
-    const [sourcesViewData, setSourcesViewData] =
-        useState<SourcesViewDataContainer>({});
+    const [flatViewData, setFlatViewData] = useState<FlatViewData>();
+    const [sourcesViewData, setSourcesViewData] = useState<SourcesViewData>();
 
     // Generate flat & sources view in the background on first load
     useEffect(() => {
-        createWorker(worker => {
-            worker.generateFlatView(data).then(res => {
-                setFlatViewData(res);
-            });
-        });
-        createWorker(worker => {
-            worker.generateSourceViews(data).then(res => {
-                setSourcesViewData(res);
-            });
-        });
+        (async () => {
+            const worker = await RemoteSamplerWorker.create(data);
+
+            if (data.sources.hasSources()) {
+                const sourcesView = await worker.generateSourcesView();
+                setSourcesViewData(sourcesView);
+            }
+
+            const flatView = await worker.generateFlatView();
+            setFlatViewData(flatView);
+
+            worker.close();
+        })();
     }, [data]);
 
     // WebSocket
@@ -102,8 +98,9 @@ export default function Sampler({
     const metadataToggle = useMetadataToggle();
 
     // Callback function for the "Toggle bookmark" context menu button
-    function handleHighlight(args: ItemParams) {
-        highlighted.toggle(args.props.node.id);
+    function handleHighlight(args: ItemParams<{ node: VirtualNode }>) {
+        if (!args.props) return;
+        highlighted.toggle(args.props.node);
     }
 
     // Callback function for the "Clear all bookmarks" context menu button
@@ -112,8 +109,10 @@ export default function Sampler({
     }
 
     // Callback function for the "View as Flame Graph" context menu button
-    function handleFlame(args: ItemParams) {
-        setFlameData(args.props.node);
+    function handleFlame(args: ItemParams<{ node: VirtualNode }>) {
+        const node = args.props?.node;
+        if (!node) return;
+        setFlameData(node);
     }
 
     const supported =
@@ -128,6 +127,7 @@ export default function Sampler({
                 exportCallback={exportCallback}
                 view={view}
                 setView={setView}
+                sourcesViewSupported={data.sources.hasSources()}
                 graphSupported={timeSelector.supported}
                 showGraph={showGraph}
                 setShowGraph={setShowGraph}
@@ -179,24 +179,17 @@ export default function Sampler({
                     timeSelector={timeSelector}
                 >
                     {view === VIEW_ALL ? (
-                        <AllView
-                            threads={data.threads as ExtendedThreadNode[]}
-                            setLabelMode={setLabelMode}
-                        />
+                        <AllView data={data} setLabelMode={setLabelMode} />
                     ) : view === VIEW_FLAT ? (
                         <FlatView
-                            dataSelfTime={
-                                flatViewData.flatSelfTime as ExtendedThreadNode[]
-                            }
-                            dataTotalTime={
-                                flatViewData.flatTotalTime as ExtendedThreadNode[]
-                            }
+                            data={data}
+                            viewData={flatViewData}
                             setLabelMode={setLabelMode}
                         />
                     ) : (
                         <SourcesView
-                            dataMerged={sourcesViewData.sourcesMerged}
-                            dataSeparate={sourcesViewData.sourcesSeparate}
+                            data={data}
+                            viewData={sourcesViewData}
                             setLabelMode={setLabelMode}
                         />
                     )}

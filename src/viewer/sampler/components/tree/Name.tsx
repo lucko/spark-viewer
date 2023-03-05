@@ -1,22 +1,38 @@
-import { isThreadNode } from '../../../proto/guards';
-import { ExtendedNode } from '../../../proto/nodes';
+import {
+    NodeDetails,
+    StackTraceNodeDetails,
+    ThreadNodeDetails,
+} from '../../../proto/nodes';
 import { MappingsResolver } from '../../mappings/resolver';
 
-export interface NameProps {
-    node: ExtendedNode;
+export interface NameProps<T extends NodeDetails> {
+    details: T;
     mappings: MappingsResolver;
 }
 
-export default function Name({ node, mappings }: NameProps) {
-    if (isThreadNode(node)) {
-        return <>{node.name}</>;
+export default function Name({ details, mappings }: NameProps<NodeDetails>) {
+    switch (details.type) {
+        case 'thread':
+            return <ThreadName details={details} mappings={mappings} />;
+        case 'stackTrace': {
+            return <StackTraceName details={details} mappings={mappings} />;
+        }
     }
+}
 
-    const resolved = mappings.resolve(node);
+const ThreadName = ({ details, mappings }: NameProps<ThreadNodeDetails>) => {
+    return <>{details.name}</>;
+};
+
+const StackTraceName = ({
+    details,
+    mappings,
+}: NameProps<StackTraceNodeDetails>) => {
+    const resolved = mappings.resolve(details);
     if (resolved.type === 'native') {
         return (
             <>
-                <span className="native-part">{node.methodName}</span>
+                <span className="native-part">{details.methodName}</span>
                 <span className="package-part"> (native)</span>
             </>
         );
@@ -37,7 +53,7 @@ export default function Name({ node, mappings }: NameProps) {
                 <span className="package-part">{packageName}</span>
             )}
             {remappedClass ? (
-                <span className="class-part remapped" title={node.className}>
+                <span className="class-part remapped" title={details.className}>
                     {className}
                 </span>
             ) : (
@@ -45,7 +61,10 @@ export default function Name({ node, mappings }: NameProps) {
             )}
             {!!lambda && <span className="lambda-part">{lambda}</span>}.
             {remappedMethod ? (
-                <span className="method-part remapped" title={node.methodName}>
+                <span
+                    className="method-part remapped"
+                    title={details.methodName}
+                >
                     {methodName}
                 </span>
             ) : (
@@ -54,4 +73,4 @@ export default function Name({ node, mappings }: NameProps) {
             ()
         </>
     );
-}
+};
