@@ -1,12 +1,10 @@
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Dispatch, SetStateAction } from 'react';
 import FaButton from '../../../../components/FaButton';
-import { StackTraceNode, ThreadNode } from '../../../proto/spark_pb';
+import VirtualNode from '../../node/VirtualNode';
 
 export interface ExitFlameButtonProps {
-    setFlameData: Dispatch<
-        SetStateAction<StackTraceNode | ThreadNode | undefined>
-    >;
+    setFlameData: Dispatch<SetStateAction<VirtualNode | undefined>>;
 }
 
 export default function ExitFlameButton({

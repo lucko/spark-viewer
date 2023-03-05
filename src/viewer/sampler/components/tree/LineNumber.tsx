@@ -1,22 +1,30 @@
-import { StackTraceNode } from '../../../proto/spark_pb';
+import VirtualNode from '../../node/VirtualNode';
 
 export interface LineNumberProps {
-    node: StackTraceNode;
-    parent: StackTraceNode;
+    node: VirtualNode;
+    parent: VirtualNode | null;
 }
 
 export default function LineNumber({ node, parent }: LineNumberProps) {
+    if (!parent) return null;
+
+    const details = node.getDetails();
+    if (details.type !== 'stackTrace' || !details.parentLineNumber) return null;
+
+    const parentDetails = parent.getDetails();
+    if (parentDetails.type !== 'stackTrace') return null;
+
     const title =
         'Invoked on line ' +
-        node.parentLineNumber +
+        details.parentLineNumber +
         ' of ' +
-        parent.className +
+        parentDetails.className +
         '.' +
-        parent.methodName +
+        parentDetails.methodName +
         '()';
     return (
         <span className="lineNumber" title={title}>
-            :{node.parentLineNumber}
+            :{details.parentLineNumber}
         </span>
     );
 }

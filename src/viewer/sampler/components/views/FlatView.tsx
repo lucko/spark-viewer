@@ -6,7 +6,9 @@ import {
     useState,
 } from 'react';
 import TextBox from '../../../../components/TextBox';
-import { ExtendedThreadNode } from '../../../proto/nodes';
+import FlatThreadVirtualNode from '../../node/FlatThreadVirtualNode';
+import SamplerData from '../../SamplerData';
+import { FlatViewData } from '../../worker/FlatViewGenerator';
 import { LabelModeContext } from '../SamplerContext';
 import BaseNode from '../tree/BaseNode';
 import BottomUpButton from './button/BottomUpButton';
@@ -17,22 +19,25 @@ import FlatViewHeader from './header/FlatViewHeader';
 export const BottomUpContext = createContext(false);
 
 export interface FlatViewProps {
-    dataSelfTime?: ExtendedThreadNode[];
-    dataTotalTime?: ExtendedThreadNode[];
+    data: SamplerData;
+    viewData?: FlatViewData;
     setLabelMode: Dispatch<SetStateAction<boolean>>;
 }
 
 // The sampler view in which the stack is flattened to the top x nodes
 // according to total time or self time.
 export default function FlatView({
-    dataSelfTime,
-    dataTotalTime,
+    data,
+    viewData,
     setLabelMode,
 }: FlatViewProps) {
     const labelMode = useContext(LabelModeContext);
     const [bottomUp, setBottomUp] = useState(false);
     const [selfTimeMode, setSelfTimeMode] = useState(false);
-    const data = selfTimeMode ? dataSelfTime : dataTotalTime;
+
+    const view = selfTimeMode
+        ? viewData?.flatSelfTime
+        : viewData?.flatTotalTime;
 
     return (
         <div className="flatview">
@@ -48,15 +53,15 @@ export default function FlatView({
                 />
             </FlatViewHeader>
             <hr />
-            {!data ? (
+            {!view ? (
                 <TextBox>Loading...</TextBox>
             ) : (
                 <div className="stack">
                     <BottomUpContext.Provider value={bottomUp}>
-                        {data.map(thread => (
+                        {view.map(thread => (
                             <BaseNode
                                 parents={[]}
-                                node={thread}
+                                node={new FlatThreadVirtualNode(data, thread)}
                                 key={thread.name}
                             />
                         ))}

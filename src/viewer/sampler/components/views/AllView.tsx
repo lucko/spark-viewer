@@ -1,17 +1,18 @@
 import { Dispatch, SetStateAction, useContext } from 'react';
-import { ExtendedThreadNode } from '../../../proto/nodes';
+import BasicVirtualNode from '../../node/BasicVirtualNode';
+import SamplerData from '../../SamplerData';
 import { LabelModeContext } from '../SamplerContext';
 import BaseNode from '../tree/BaseNode';
 import LabelModeButton from './button/LabelModeButton';
 import AllViewHeader from './header/AllViewHeader';
 
 export interface AllViewProps {
-    threads: ExtendedThreadNode[];
+    data: SamplerData;
     setLabelMode: Dispatch<SetStateAction<boolean>>;
 }
 
 // The sampler view in which all data is shown in one, single stack.
-export default function AllView({ threads, setLabelMode }: AllViewProps) {
+export default function AllView({ data, setLabelMode }: AllViewProps) {
     const labelMode = useContext(LabelModeContext);
 
     return (
@@ -24,8 +25,12 @@ export default function AllView({ threads, setLabelMode }: AllViewProps) {
             </AllViewHeader>
             <hr />
             <div className="stack">
-                {threads.map(thread => (
-                    <BaseNode parents={[]} node={thread} key={thread.name} />
+                {data.threads.map(thread => (
+                    <BaseNode
+                        parents={[]}
+                        node={new BasicVirtualNode(data, thread)}
+                        key={thread.name}
+                    />
                 ))}
             </div>
         </div>

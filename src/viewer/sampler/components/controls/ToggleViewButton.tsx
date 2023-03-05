@@ -1,27 +1,22 @@
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { Dispatch, SetStateAction } from 'react';
 import FaButton from '../../../../components/FaButton';
-import { SamplerData, SamplerMetadata } from '../../../proto/spark_pb';
+import { SamplerMetadata } from '../../../proto/spark_pb';
 import { View, VIEW_ALL, VIEW_FLAT, VIEW_SOURCES } from '../views/types';
 
 export interface ToggleViewButtonProps {
-    data: SamplerData;
     metadata: SamplerMetadata;
     view: View;
     setView: Dispatch<SetStateAction<View>>;
+    sourcesViewSupported: boolean;
 }
 
 export default function ToggleViewButton({
-    data,
     metadata,
     view,
     setView,
+    sourcesViewSupported,
 }: ToggleViewButtonProps) {
-    const sourcesViewSupported =
-        Object.keys(data.classSources).length ||
-        Object.keys(data.methodSources).length ||
-        Object.keys(data.lineSources).length;
-
     const supportedViews: View[] = [
         VIEW_ALL,
         VIEW_FLAT,

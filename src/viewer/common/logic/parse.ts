@@ -1,40 +1,25 @@
-import { HeapData, SamplerData } from '../../proto/spark_pb';
-import {
-    calculateTotalTimes,
-    labelData,
-    labelDataWithSource,
-    unflattenData,
-} from '../../sampler/preprocessing/preprocessing';
+import HeapData from '../../heap/HeapData';
+import SamplerData from '../../sampler/SamplerData';
 import { SparkContentType } from './contentType';
 import { LOADED_HEAP_DATA, LOADED_PROFILE_DATA, Status } from './status';
 
 export function parse(
     type: SparkContentType,
-    buf: ArrayBuffer,
-    runPreprocessing: boolean
+    buf: ArrayBuffer
 ): [SamplerData | HeapData, Status] {
     if (type === 'application/x-spark-sampler') {
-        return parseSampler(buf, runPreprocessing);
+        return parseSampler(buf);
     } else {
         return parseHeap(buf);
     }
 }
 
-function parseSampler(
-    buf: ArrayBuffer,
-    runPreprocessing: boolean
-): [SamplerData, Status] {
-    const data = SamplerData.fromBinary(new Uint8Array(buf));
-    if (runPreprocessing) {
-        unflattenData(data.threads);
-        labelData(data.threads, 0);
-        labelDataWithSource(data);
-        calculateTotalTimes(data.threads);
-    }
+function parseSampler(buf: ArrayBuffer): [SamplerData, Status] {
+    const data = new SamplerData(buf);
     return [data, LOADED_PROFILE_DATA];
 }
 
 function parseHeap(buf: ArrayBuffer): [HeapData, Status] {
-    const data = HeapData.fromBinary(new Uint8Array(buf));
+    const data = new HeapData(buf);
     return [data, LOADED_HEAP_DATA];
 }

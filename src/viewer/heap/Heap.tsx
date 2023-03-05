@@ -22,7 +22,6 @@ export default function Heap({ data, metadata, exportCallback }: HeapProps) {
     return (
         <div className={styles.heap}>
             <Controls
-                data={data}
                 metadata={metadata}
                 metadataToggle={metadataToggle}
                 searchQuery={searchQuery}

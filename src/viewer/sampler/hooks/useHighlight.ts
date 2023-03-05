@@ -1,12 +1,11 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
-import { StackTraceNodeWithId } from '../../proto/nodes';
-import { StackTraceNode, ThreadNode } from '../../proto/spark_pb';
+import VirtualNode from '../node/VirtualNode';
 
 export interface Highlight {
-    toggle: (id: number | number[]) => void;
-    check: (node: StackTraceNode | ThreadNode) => boolean;
-    has: (id: number | number[]) => boolean;
+    toggle: (node: VirtualNode) => void;
+    check: (node: VirtualNode) => boolean;
+    has: (node: VirtualNode) => boolean;
     clear: () => void;
 }
 
@@ -40,13 +39,13 @@ export default function useHighlight(): Highlight {
 
     // Toggles the highlighted state of an id
     const toggle: Highlight['toggle'] = useCallback(
-        id => {
+        node => {
             setHighlighted(prev => {
                 const set = new Set(prev);
-                if (setHas(set, id)) {
-                    setDelete(set, id);
+                if (setHas(set, node.getId())) {
+                    setDelete(set, node.getId());
                 } else {
-                    setAdd(set, id);
+                    setAdd(set, node.getId());
                 }
                 return set;
             });
@@ -61,10 +60,10 @@ export default function useHighlight(): Highlight {
                 return false;
             }
 
-            if (setHas(highlighted, (node as StackTraceNodeWithId).id)) {
+            if (setHas(highlighted, node.getId())) {
                 return true;
             }
-            for (const c of node.children) {
+            for (const c of node.getChildren()) {
                 if (check(c)) {
                     return true;
                 }
@@ -76,7 +75,7 @@ export default function useHighlight(): Highlight {
 
     // Checks whether a node with the given id is in the highlighted set
     const has: Highlight['has'] = useCallback(
-        id => setHas(highlighted, id),
+        node => setHas(highlighted, node.getId()),
         [highlighted]
     );
 

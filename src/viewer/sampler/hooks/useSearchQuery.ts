@@ -1,70 +1,46 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import { isThreadNode } from '../../proto/guards';
-import { StackTraceNodeWithSource } from '../../proto/nodes';
-import { StackTraceNode, ThreadNode } from '../../proto/spark_pb';
+import {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useMemo,
+    useState,
+} from 'react';
+import SearchResolver from '../data/SearchResolver';
+import VirtualNode from '../node/VirtualNode';
+import SamplerData from '../SamplerData';
 
 export interface SearchQuery {
     value: string;
     setValue: Dispatch<SetStateAction<string>>;
-    matches: (
-        node: StackTraceNode | ThreadNode,
-        parents: (StackTraceNode | ThreadNode)[]
-    ) => boolean;
+    matches: (node: VirtualNode) => boolean;
 }
 
-export default function useSearchQuery(): SearchQuery {
+export default function useSearchQuery(data: SamplerData): SearchQuery {
     const [value, setValue] = useState('');
 
-    const matches: SearchQuery['matches'] = (node, parents) => {
-        if (!value) {
-            return true;
-        }
+    const resolvedNodes: Set<number> | null = useMemo(() => {
+        return value
+            ? new SearchResolver(data).resolveSearchQuery(value)
+            : null;
+    }, [data, value]);
 
-        if (nodeMatchesQuery(value, node)) {
-            return true;
-        }
-        for (const parent of parents) {
-            if (nodeMatchesQuery(value, parent)) {
+    const matches: SearchQuery['matches'] = useCallback(
+        node => {
+            if (resolvedNodes == null) {
                 return true;
             }
-        }
-        return searchMatchesChildren(value, node);
-    };
+
+            const id = node.getId();
+            return Array.isArray(id)
+                ? id.some(i => resolvedNodes.has(i))
+                : resolvedNodes.has(id);
+        },
+        [resolvedNodes]
+    );
 
     return {
         value,
         setValue,
         matches,
     };
-}
-
-function nodeMatchesQuery(query: string, node: StackTraceNode | ThreadNode) {
-    if (isThreadNode(node)) {
-        return node.name.toLowerCase().includes(query);
-    } else {
-        const source = (node as StackTraceNodeWithSource).source;
-        return (
-            node.className.toLowerCase().includes(query) ||
-            node.methodName.toLowerCase().includes(query) ||
-            (source && source.toLowerCase().includes(query))
-        );
-    }
-}
-
-function searchMatchesChildren(
-    query: string,
-    node: StackTraceNode | ThreadNode
-) {
-    if (!node.children) {
-        return false;
-    }
-    for (const child of node.children) {
-        if (nodeMatchesQuery(query, child)) {
-            return true;
-        }
-        if (searchMatchesChildren(query, child)) {
-            return true;
-        }
-    }
-    return false;
 }
