@@ -200,6 +200,10 @@ message HeapData {
   repeated HeapEntry entries = 2;
 }
 
+message HeapDataLite {
+  HeapMetadata metadata = 1;
+}
+
 message HeapMetadata {
   CommandSenderMetadata user = 1;
   PlatformMetadata platform = 2;
@@ -227,6 +231,10 @@ message SamplerData {
   repeated int32 timeWindows = 6;
   map<int32, WindowStatistics> timeWindowStatistics = 7;
   SocketChannelInfo channelInfo = 8;
+}
+
+message SamplerDataLite {
+  SamplerMetadata metadata = 1;
 }
 
 message SamplerMetadata {

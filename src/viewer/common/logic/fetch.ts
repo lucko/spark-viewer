@@ -17,10 +17,10 @@ export interface FetchResult {
 export async function fetchFromBytebin(
     code: string,
     router: NextRouter | null,
-    thumbnailOnly: boolean
+    thumbnail: boolean
 ) {
     let bytebinUrl = 'https://spark-usercontent.lucko.me/';
-    if (thumbnailOnly && router && router.query['x-bytebin-url']) {
+    if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }
 

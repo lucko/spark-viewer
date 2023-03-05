@@ -38,9 +38,6 @@ const Heap = dynamic(() => import('./heap/Heap'), {
 const Sampler = dynamic(() => import('./sampler/components/Sampler'), {
     suspense: true,
 });
-const Thumbnail = dynamic(() => import('./common/components/Thumbnail'), {
-    suspense: true,
-});
 
 export default function SparkViewer() {
     const router = useRouter();
@@ -54,11 +51,6 @@ export default function SparkViewer() {
     const [data, setData] = useState<SamplerData | HeapData>();
     const [metadata, setMetadata] = useState<SamplerMetadata | HeapMetadata>();
     const [exportCallback, setExportCallback] = useState<ExportCallback>();
-
-    // if rendering thumbnail -- '?x-render-thumbnail=true' flag in the URL
-    const thumbnailOnly = useMemo(() => {
-        return router.query['x-render-thumbnail'] !== undefined;
-    }, [router]);
 
     const mappings = useMappings(
         metadata && isSamplerMetadata(metadata) ? metadata : undefined
@@ -90,11 +82,7 @@ export default function SparkViewer() {
             try {
                 let result: FetchResult;
                 if (code !== '_') {
-                    result = await fetchFromBytebin(
-                        code,
-                        router,
-                        thumbnailOnly
-                    );
+                    result = await fetchFromBytebin(code, router, false);
                 } else {
                     result = await fetchFromFile(selectedFile);
                 }
@@ -103,9 +91,7 @@ export default function SparkViewer() {
                     setExportCallback(() => result.exportCallback);
                 }
 
-                if (!thumbnailOnly) {
-                    mappings.load(result.type);
-                }
+                mappings.load(result.type);
 
                 const [data, status] = parse(result.type, result.buf);
                 setData(data);
@@ -116,26 +102,7 @@ export default function SparkViewer() {
                 setStatus(FAILED_DATA);
             }
         })();
-    }, [
-        status,
-        setStatus,
-        code,
-        selectedFile,
-        thumbnailOnly,
-        mappings,
-        router,
-    ]);
-
-    if (
-        thumbnailOnly &&
-        (status === LOADED_PROFILE_DATA || status === LOADED_HEAP_DATA)
-    ) {
-        return (
-            <Suspense fallback={null}>
-                <Thumbnail code={code} metadata={metadata!} />
-            </Suspense>
-        );
-    }
+    }, [status, setStatus, code, selectedFile, mappings, router]);
 
     let contents;
     switch (status) {
