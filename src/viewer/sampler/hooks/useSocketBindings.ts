@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { SamplerMetadata } from '../../proto/spark_pb';
+import { PlatformStatistics, SamplerMetadata } from '../../proto/spark_pb';
 import { ListenerResult } from '../ws/listener';
 import { SocketClientHook } from './useSocketClient';
 import useSocketListener from './useSocketListener';
@@ -32,9 +32,15 @@ export default function useSocketBindings({
             packet => {
                 if (packet.oneofKind === 'serverUpdateStatistics') {
                     const { platform, system } = packet.serverUpdateStatistics;
+
+                    const platformWithWorld = {
+                        ...platform,
+                        world: metadata.platformStatistics?.world,
+                    } as PlatformStatistics;
+
                     const newMetadata: SamplerMetadata = {
                         ...metadata,
-                        platformStatistics: platform,
+                        platformStatistics: platformWithWorld,
                         systemStatistics: system,
                     };
                     setMetadata(newMetadata);
