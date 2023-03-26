@@ -1,6 +1,5 @@
 import { get as lsGet, remove as lsRemove, set as lsSet } from 'local-storage';
 import { useCallback, useEffect, useState } from 'react';
-import { SparkContentType } from '../../common/logic/contentType';
 import { SamplerMetadata } from '../../proto/spark_pb';
 import { fetchMappingsMetadata, MappingsMetadata } from '../mappings/fetch';
 import NoOpMappingFunction from '../mappings/functions/noop';
@@ -8,14 +7,13 @@ import loadMappings from '../mappings/loader';
 import { MappingsResolver } from '../mappings/resolver';
 
 export interface MappingsHook {
-    load: (type: SparkContentType) => void;
     requestMappings: (type: string) => void;
     mappingsMetadata?: MappingsMetadata;
     mappingsResolver: MappingsResolver;
     mappingsType: string;
 }
 
-export default function useMappings(metadata?: SamplerMetadata): MappingsHook {
+export default function useMappings(metadata: SamplerMetadata): MappingsHook {
     const [mappingsMetadata, setMappingsMetadata] =
         useState<MappingsMetadata>();
     const [mappingsResolver, setMappingsResolver] = useState<MappingsResolver>(
@@ -25,15 +23,9 @@ export default function useMappings(metadata?: SamplerMetadata): MappingsHook {
         lsGet('spark-mappings-pref') === 'none' ? 'none' : 'auto'
     );
 
-    // Called when mappings should be initialised
-    const load = useCallback(
-        (type: SparkContentType) => {
-            if (type === 'application/x-spark-sampler') {
-                fetchMappingsMetadata().then(setMappingsMetadata);
-            }
-        },
-        [setMappingsMetadata]
-    );
+    useEffect(() => {
+        fetchMappingsMetadata().then(setMappingsMetadata);
+    }, []);
 
     // Function called whenever the user picks mappings, either
     // from the input dropdown, or 'auto' when mappings info is loaded.
@@ -66,7 +58,6 @@ export default function useMappings(metadata?: SamplerMetadata): MappingsHook {
     }, [mappingsType, mappingsMetadata, metadata]);
 
     return {
-        load,
         requestMappings,
         mappingsMetadata,
         mappingsResolver,

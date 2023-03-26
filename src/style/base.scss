@@ -57,7 +57,7 @@ button {
     background-color: #252b2d;
     border-style: none;
     color: #ccc;
-    border-radius: 6px;
+    border-radius: 5px;
     padding: 5px;
 
     :focus {
@@ -91,6 +91,13 @@ article {
         content: '# ';
         color: #ffc93a;
     }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+    h2 {
+        font-size: 2rem;
+    }
 }
 
 .textbox {
@@ -100,12 +107,12 @@ article {
     background: #252b2d;
     padding: 8px;
     margin: 12px 0;
-    border-radius: 6px;
+    border-radius: 5px;
 }
 
 .link {
     background-color: #252b2d;
-    border-radius: 15px;
+    border-radius: 5px;
 
     display: flex;
     justify-content: space-between;

@@ -4,7 +4,6 @@ import Head from 'next/head';
 import { Suspense } from 'react';
 import SparkLayout from '../components/SparkLayout';
 import TextBox from '../components/TextBox';
-import { NextPageWithLayout } from './_app';
 
 const SparkViewer = dynamic(() => import('../viewer/SparkViewer'), {
     suspense: true,
@@ -14,7 +13,7 @@ interface ViewerPageProps {
     code: string;
 }
 
-const ViewerPage: NextPageWithLayout<ViewerPageProps> = ({ code }) => {
+export default function ViewerPage({ code }: ViewerPageProps) {
     return (
         <>
             {code !== '_' && <ThumbnailMetaTags code={code} />}
@@ -29,7 +28,7 @@ const ViewerPage: NextPageWithLayout<ViewerPageProps> = ({ code }) => {
             </Suspense>
         </>
     );
-};
+}
 
 const ThumbnailMetaTags = ({ code }: ViewerPageProps) => {
     return (
@@ -63,8 +62,3 @@ export async function getServerSideProps({
     res.setHeader('Cache-Control', 'public, maxage=31536000');
     return { props: { code: query.code } };
 }
-
-// Don't use app-level layout
-ViewerPage.getLayout = page => page;
-
-export default ViewerPage;

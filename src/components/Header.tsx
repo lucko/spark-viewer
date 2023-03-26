@@ -1,15 +1,13 @@
 import Link from 'next/link';
 import SparkLogo from '../assets/spark-logo.svg';
 
-import { ReactNode } from 'react';
 import styles from '../style/header.module.scss';
 
 export interface HeaderProps {
-    children?: ReactNode;
     title?: string;
 }
 
-export default function Header({ children, title = 'spark' }: HeaderProps) {
+export default function Header({ title = 'spark' }: HeaderProps) {
     return (
         <header className={styles.header}>
             <Link href="/">
@@ -18,7 +16,6 @@ export default function Header({ children, title = 'spark' }: HeaderProps) {
                     <h1>{title}</h1>
                 </a>
             </Link>
-            {children}
         </header>
     );
 }

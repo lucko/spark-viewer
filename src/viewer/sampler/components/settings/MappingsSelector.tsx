@@ -1,17 +1,17 @@
 import { MappingsMetadata } from '../../mappings/fetch';
 
-export interface MappingsMenuProps {
+export interface MappingsSelectorProps {
     mappingsMetadata: MappingsMetadata;
     mappings: string;
     setMappings: (type: string) => void;
 }
 
-export default function MappingsMenu({
+export default function MappingsSelector({
     mappingsMetadata,
     mappings,
     setMappings,
-}: MappingsMenuProps) {
-    let groups: MappingsMenuGroup[] = [
+}: MappingsSelectorProps) {
+    let groups: MappingsSelectorGroup[] = [
         {
             id: 'none',
             label: 'None',
@@ -49,18 +49,18 @@ export default function MappingsMenu({
     );
 }
 
-interface MappingsMenuGroup {
+interface MappingsSelectorGroup {
     id: string;
     label: string;
-    options: MappingsMenuGroupOptions[];
+    options: MappingsSelectorGroupOptions[];
 }
 
-interface MappingsMenuGroupOptions {
+interface MappingsSelectorGroupOptions {
     id: string;
     label: string;
 }
 
-const MappingsGroup = ({ group }: { group: MappingsMenuGroup }) => {
+const MappingsGroup = ({ group }: { group: MappingsSelectorGroup }) => {
     return (
         <optgroup label={group.label}>
             {group.options.map(opt => (
@@ -70,6 +70,6 @@ const MappingsGroup = ({ group }: { group: MappingsMenuGroup }) => {
     );
 };
 
-const MappingsOption = ({ option }: { option: MappingsMenuGroupOptions }) => {
+const MappingsOption = ({ option }: { option: MappingsSelectorGroupOptions }) => {
     return <option value={option.id}>{option.label}</option>;
 };

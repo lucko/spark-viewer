@@ -8,8 +8,6 @@ import {
     useMemo,
     useState,
 } from 'react';
-import HeaderWithMappings from '../components/HeaderWithMappings';
-import SparkLayout from '../components/SparkLayout';
 import TextBox from '../components/TextBox';
 import { SelectedFileContext } from '../pages/_app';
 import { ExportCallback } from './common/logic/export';
@@ -27,9 +25,7 @@ import {
     Status,
 } from './common/logic/status';
 import HeapData from './heap/HeapData';
-import { isSamplerMetadata } from './proto/guards';
 import { HeapMetadata, SamplerMetadata } from './proto/spark_pb';
-import useMappings from './sampler/hooks/useMappings';
 import SamplerData from './sampler/SamplerData';
 
 const Heap = dynamic(() => import('./heap/Heap'), {
@@ -51,10 +47,6 @@ export default function SparkViewer() {
     const [data, setData] = useState<SamplerData | HeapData>();
     const [metadata, setMetadata] = useState<SamplerMetadata | HeapMetadata>();
     const [exportCallback, setExportCallback] = useState<ExportCallback>();
-
-    const mappings = useMappings(
-        metadata && isSamplerMetadata(metadata) ? metadata : undefined
-    );
 
     const fetchUpdatedData = useCallback(
         async (payloadId: string) => {
@@ -91,8 +83,6 @@ export default function SparkViewer() {
                     setExportCallback(() => result.exportCallback);
                 }
 
-                mappings.load(result.type);
-
                 const [data, status] = parse(result.type, result.buf);
                 setData(data);
                 setMetadata(data.metadata);
@@ -102,41 +92,36 @@ export default function SparkViewer() {
                 setStatus(FAILED_DATA);
             }
         })();
-    }, [status, setStatus, code, selectedFile, mappings, router]);
+    }, [status, setStatus, code, selectedFile, router]);
 
-    let contents;
     switch (status) {
         case LOADING_DATA:
-            contents = (
+            return (
                 <TextBox>
                     {code === '_' ? 'Loading file...' : 'Downloading...'}
                 </TextBox>
             );
-            break;
         case FAILED_DATA:
-            contents = (
+            return (
                 <TextBox extraClassName="loading-error">
                     Unable to load the data. Perhaps it expired? Are you using a
                     recent version?
                 </TextBox>
             );
-            break;
         case LOADED_PROFILE_DATA:
-            contents = (
+            return (
                 <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Sampler
                         data={data as SamplerData}
                         fetchUpdatedData={fetchUpdatedData}
                         metadata={metadata as SamplerMetadata}
                         setMetadata={setMetadata}
-                        mappings={mappings.mappingsResolver}
                         exportCallback={exportCallback!}
                     />
                 </Suspense>
             );
-            break;
         case LOADED_HEAP_DATA:
-            contents = (
+            return (
                 <Suspense fallback={<TextBox>Loading...</TextBox>}>
                     <Heap
                         data={data as HeapData}
@@ -145,23 +130,7 @@ export default function SparkViewer() {
                     />
                 </Suspense>
             );
-            break;
         default:
-            contents = <TextBox>Unknown state - this is a bug.</TextBox>;
-            break;
+            return <TextBox>Unknown state - this is a bug.</TextBox>;
     }
-
-    return (
-        <SparkLayout
-            header={
-                <HeaderWithMappings
-                    mappingsMetadata={mappings.mappingsMetadata}
-                    mappings={mappings.mappingsType}
-                    setMappings={mappings.requestMappings}
-                />
-            }
-        >
-            {contents}
-        </SparkLayout>
-    );
 }

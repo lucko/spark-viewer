@@ -1,7 +1,7 @@
 .homepage {
     section {
         background-color: #252b2d;
-        border-radius: 15px;
+        border-radius: 5px;
         margin: 25px 0;
         padding: 0.1px 15px;
     }
@@ -11,6 +11,10 @@
             .link-description {
                 width: 17.5rem;
                 font-weight: normal;
+            }
+
+            .link-title h3 {
+                font-size: 2rem;
             }
 
             @media (max-width: 640px) {

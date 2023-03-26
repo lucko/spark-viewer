@@ -13,7 +13,6 @@ import useSearchQuery from '../hooks/useSearchQuery';
 import useSocketBindings from '../hooks/useSocketBindings';
 import useSocketClient from '../hooks/useSocketClient';
 import useTimeSelector from '../hooks/useTimeSelector';
-import { MappingsResolver } from '../mappings/resolver';
 import VirtualNode from '../node/VirtualNode';
 import SamplerData from '../SamplerData';
 import { FlatViewData } from '../worker/FlatViewGenerator';
@@ -32,13 +31,14 @@ import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 const Graph = dynamic(() => import('./graph/Graph'));
 
 import 'react-contexify/dist/ReactContexify.css';
+import useMappings from '../hooks/useMappings';
+import SettingsMenu from './settings/SettingsMenu';
 
 export interface SamplerProps {
     data: SamplerData;
     fetchUpdatedData: (payloadId: string) => void;
     metadata: SamplerMetadata;
     setMetadata: (metadata: SamplerMetadata) => void;
-    mappings: MappingsResolver;
     exportCallback: ExportCallback;
 }
 
@@ -47,7 +47,6 @@ export default function Sampler({
     fetchUpdatedData,
     metadata,
     setMetadata,
-    mappings,
     exportCallback,
 }: SamplerProps) {
     const searchQuery = useSearchQuery(data);
@@ -57,10 +56,11 @@ export default function Sampler({
         data.timeWindows,
         data.timeWindowStatistics
     );
-
+    const mappings = useMappings(metadata);
     const [flameData, setFlameData] = useState<VirtualNode>();
     const [view, setView] = useState<View>(VIEW_ALL);
     const [showGraph, setShowGraph] = useToggle('prefShowGraph', true);
+    const [showSettings, setShowSettings] = useState<boolean>(false);
     const [showSocketInfo, setShowSocketInfo] = useToggle(
         'prefShowSocket',
         false
@@ -125,6 +125,8 @@ export default function Sampler({
                 metadata={metadata}
                 metadataToggle={metadataToggle}
                 exportCallback={exportCallback}
+                showSettings={showSettings}
+                setShowSettings={setShowSettings}
                 view={view}
                 setView={setView}
                 sourcesViewSupported={data.sources.hasSources()}
@@ -138,6 +140,14 @@ export default function Sampler({
                 setFlameData={setFlameData}
                 searchQuery={searchQuery}
             />
+
+            {showSettings && (
+                <SettingsMenu
+                    mappingsMetadata={mappings.mappingsMetadata}
+                    mappings={mappings.mappingsType}
+                    setMappings={mappings.requestMappings}
+                />
+            )}
 
             {showSocketInfo && socket.socket.socket && (
                 <SocketInfo socket={socket} />
@@ -163,7 +173,7 @@ export default function Sampler({
             {!!flameData && (
                 <Flame
                     flameData={flameData}
-                    mappings={mappings}
+                    mappings={mappings.mappingsResolver}
                     metadata={metadata}
                     timeSelector={timeSelector}
                 />
@@ -171,7 +181,7 @@ export default function Sampler({
 
             <div style={{ display: flameData ? 'none' : undefined }}>
                 <SamplerContext
-                    mappings={mappings}
+                    mappings={mappings.mappingsResolver}
                     highlighted={highlighted}
                     searchQuery={searchQuery}
                     labelMode={labelMode}
