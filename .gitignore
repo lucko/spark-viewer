@@ -30,3 +30,5 @@ yarn-error.log*
 next-env.d.ts
 
 tsconfig.tsbuildinfo
+
+sentry.*.config.ts
