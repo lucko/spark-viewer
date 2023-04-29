@@ -10,11 +10,9 @@ export interface HeaderProps {
 export default function Header({ title = 'spark' }: HeaderProps) {
     return (
         <header className={styles.header}>
-            <Link href="/">
-                <a className="logo">
-                    <SparkLogo width="2.5em" height="2.5em" />
-                    <h1>{title}</h1>
-                </a>
+            <Link href="/" className="logo">
+                <SparkLogo width="2.5em" height="2.5em" />
+                <h1>{title}</h1>
             </Link>
         </header>
     );

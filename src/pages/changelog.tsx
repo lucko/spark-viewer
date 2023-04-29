@@ -77,11 +77,8 @@ const ChangelogList = ({ info }: { info: ChangelogData }) => {
                 .
             </p>
             <p>
-                Go to the{' '}
-                <Link href={'download'}>
-                    <a>downloads</a>
-                </Link>{' '}
-                page to get the latest version.
+                Go to the <Link href={'download'}>downloads</Link> page to get
+                the latest version.
             </p>
             <br />
 

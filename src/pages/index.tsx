@@ -59,14 +59,12 @@ interface LinkProps {
 
 const Link = ({ title, icon, url, children }: LinkProps) => {
     return (
-        <NextLink href={url}>
-            <a className="link">
-                <div className="link-title">
-                    <FontAwesomeIcon icon={icon} fixedWidth />
-                    <h3>{title}</h3>
-                </div>
-                <div className="link-description">{children}</div>
-            </a>
+        <NextLink href={url} className="link">
+            <div className="link-title">
+                <FontAwesomeIcon icon={icon} fixedWidth />
+                <h3>{title}</h3>
+            </div>
+            <div className="link-description">{children}</div>
         </NextLink>
     );
 };

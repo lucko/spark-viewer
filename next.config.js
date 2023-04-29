@@ -29,7 +29,7 @@ const nextConfig = {
 };
 
 if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
-    console.log('Configuring Sentry...')
+    console.log('Configuring Sentry...');
 
     // dynamically create sentry config
     for (const path of [
@@ -45,7 +45,11 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 
     module.exports = withSentryConfig(
         nextConfig,
-        { silent: false },
+        {
+            silent: false,
+            validate: true,
+            urlPrefix: 'app:///',
+        },
         {
             // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
             tunnelRoute: '/error',
