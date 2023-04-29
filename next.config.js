@@ -48,8 +48,8 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
         { silent: false },
         {
             // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-            tunnelRoute: '/monitoring',
-            hideSourceMaps: true,
+            tunnelRoute: '/error',
+            hideSourceMaps: false,
             autoInstrumentServerFunctions: false,
             autoInstrumentMiddleware: false,
         }
