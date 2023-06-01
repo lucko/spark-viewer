@@ -1,3 +1,5 @@
+import { env } from '../../../env.mjs';
+
 export type MappingsInfoType =
     | 'bukkit-mojang'
     | 'bukkit'
@@ -22,7 +24,7 @@ export interface MappingsMetadata {
     };
 }
 
-const MAPPING_DATA_URL = 'https://spark-mappings.lucko.me/dist/';
+const MAPPING_DATA_URL = `${env.NEXT_PUBLIC_MAPPINGS_URL}/dist/`;
 
 /**
  * Gets metadata about the mappings that are available.

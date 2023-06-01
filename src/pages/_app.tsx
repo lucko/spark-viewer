@@ -17,6 +17,7 @@ import {
     useState,
 } from 'react';
 import SparkLayout from '../components/SparkLayout';
+import { env } from '../env.mjs';
 
 export interface SelectedFile {
     selectedFile?: File;
@@ -69,7 +70,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 />
                 <meta
                     name="twitter:image"
-                    content="https://spark.lucko.me/assets/logo-inverted-512.png"
+                    content={`${env.NEXT_PUBLIC_BASE_URL}/assets/logo-inverted-512.png`}
                     key="twitter-image"
                 />
 
@@ -81,10 +82,10 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <meta property="og:type" content="product" />
                 <meta
                     property="og:image"
-                    content="https://spark.lucko.me/assets/logo-inverted-512.png"
+                    content={`${env.NEXT_PUBLIC_BASE_URL}/assets/logo-inverted-512.png`}
                     key="og-image"
                 />
-                <meta property="og:url" content="https://spark.lucko.me/" />
+                <meta property="og:url" content={env.NEXT_PUBLIC_BASE_URL} />
                 <title>{title}</title>
             </Head>
             <SelectedFileContext.Provider

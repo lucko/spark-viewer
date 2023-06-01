@@ -16,7 +16,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@lucko/react-flame-graph": "1.4.1",
-    "@protobuf-ts/plugin": "^2.9.4",
+    "@t3-oss/env-nextjs": "^0.3.1",
     "base64-arraybuffer": "^1.0.2",
     "bowser": "^2.11.0",
     "classnames": "^2.5.1",
@@ -29,12 +29,7 @@
     "react-contexify": "^6.0.0",
     "react-countdown-circle-timer": "^3.2.1",
     "react-dom": "^18.2.0",
-    "react-dropzone": "^14.3.5",
-    "react-tooltip": "^5.28.0",
-    "react-virtualized": "^9.22.5",
-    "sass": "^1.83.4",
-    "sharp": "^0.33.5",
-    "victory": "^37.3.6"
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
