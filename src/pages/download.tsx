@@ -117,14 +117,14 @@ const DownloadList = ({ info }: { info: JenkinsInfo }) => {
                 <DownloadInfo
                     artifacts={artifacts}
                     name="Fabric"
-                    comment="MC 1.19"
+                    comment="MC 1.20"
                     artifact="fabric"
                     logo={fabricLogo}
                 />
                 <DownloadInfo
                     artifacts={artifacts}
                     name="Forge"
-                    comment="MC 1.19"
+                    comment="MC 1.20"
                     artifact="forge"
                     logo={forgeLogo}
                 />
