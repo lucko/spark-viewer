@@ -1,4 +1,10 @@
 .downloads {
+
+    h2 {
+        font-size: 25px;
+        padding-top: 25px;
+    }
+
     :global {
         .version-number {
             color: #f77669;
@@ -46,6 +52,23 @@
 
             .link-description {
                 width: 250px;
+            }
+        }
+
+        .older-versions {
+            display: flex;
+            gap: 35px;
+
+            h3 {
+                margin-bottom: 0;
+            }
+
+            > div {
+                flex-grow: 1;
+            }
+
+            li {
+                padding: 2px 0;
             }
         }
     }

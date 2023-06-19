@@ -1,17 +1,11 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useEffect, useState } from 'react';
-
-dayjs.extend(relativeTime);
-
-import TextBox from '../components/TextBox';
-
 import Link from 'next/link';
+import TextBox from '../components/TextBox';
+import useFetchResult, { Status } from '../hooks/useFetchResult';
 import styles from '../style/changelog.module.scss';
 
-const WAITING = 'waiting';
-const OK = 'ok';
-const ERROR = 'error';
+dayjs.extend(relativeTime);
 
 export interface ChangelogData {
     changelog?: ChangelogEntry[];
@@ -25,34 +19,13 @@ export interface ChangelogEntry {
 }
 
 export default function Changelog() {
-    const [status, setStatus] = useState(WAITING);
-    const [info, setInfo] = useState<ChangelogData>();
-
-    useEffect(() => {
-        if (status !== WAITING) {
-            return;
-        }
-
-        (async () => {
-            try {
-                const req = await fetch('https://sparkapi.lucko.me/changelog');
-                if (!req.ok) {
-                    setStatus(ERROR);
-                    return;
-                }
-
-                setInfo(await req.json());
-                setStatus(OK);
-            } catch (e) {
-                console.log(e);
-                setStatus(ERROR);
-            }
-        })();
-    }, [status]);
+    const [info, status] = useFetchResult<ChangelogData>(
+        'https://sparkapi.lucko.me/changelog'
+    );
 
     let content;
-    if (status === WAITING || status === OK) {
-        content = <ChangelogList info={info!} />;
+    if (status !== Status.ERROR) {
+        content = <ChangelogPage info={info} />;
     } else {
         content = <TextBox>Error: unable to get changelog.</TextBox>;
     }
@@ -65,7 +38,7 @@ export default function Changelog() {
     );
 }
 
-const ChangelogList = ({ info }: { info: ChangelogData }) => {
+const ChangelogPage = ({ info }: { info?: ChangelogData }) => {
     const changelog = info?.changelog || [];
     return (
         <>
@@ -81,13 +54,18 @@ const ChangelogList = ({ info }: { info: ChangelogData }) => {
                 the latest version.
             </p>
             <br />
-
-            <ul>
-                {changelog.map((entry, i) => (
-                    <ChangelogItem key={i} entry={entry} />
-                ))}
-            </ul>
+            <ChangelogList entries={changelog} />
         </>
+    );
+};
+
+export const ChangelogList = ({ entries }: { entries: ChangelogEntry[] }) => {
+    return (
+        <ul>
+            {entries.map((entry, i) => (
+                <ChangelogItem key={i} entry={entry} />
+            ))}
+        </ul>
     );
 };
 

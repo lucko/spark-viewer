@@ -1,8 +1,5 @@
-import { useEffect, useState } from 'react';
-
-import TextBox from '../components/TextBox';
-
 import Image, { StaticImageData } from 'next/image';
+import Link from 'next/link';
 import bukkitLogo from '../assets/logos/bukkit.png';
 import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
@@ -10,13 +7,12 @@ import forgeLogo from '../assets/logos/forge.png';
 import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
+import TextBox from '../components/TextBox';
+import useFetchResult, { Status } from '../hooks/useFetchResult';
 
-import Link from 'next/link';
+import changelogStyles from '../style/changelog.module.scss';
 import styles from '../style/downloads.module.scss';
-
-const WAITING = 'waiting';
-const OK = 'ok';
-const ERROR = 'error';
+import { ChangelogData, ChangelogEntry, ChangelogList } from './changelog';
 
 interface JenkinsInfo {
     artifacts: JenkinsArtifact[];
@@ -29,37 +25,40 @@ interface JenkinsArtifact {
     relativePath: string;
 }
 
+interface OldVersion {
+    modloader: string;
+    curseGameVersionTypeId: number;
+    logo: StaticImageData;
+    versions: string[];
+}
+
+const OLD_VERSIONS: OldVersion[] = [
+    {
+        modloader: 'Forge',
+        curseGameVersionTypeId: 1,
+        logo: forgeLogo,
+        versions: ['1.19.4', '1.18.2', '1.17.1', '1.16.5', '1.12.2'],
+    },
+    {
+        modloader: 'Fabric',
+        curseGameVersionTypeId: 4,
+        logo: fabricLogo,
+        versions: ['1.19.4', '1.18.2', '1.17.1', '1.16.5'],
+    },
+];
+
 export default function Download() {
-    const [status, setStatus] = useState(WAITING);
-    const [info, setInfo] = useState<JenkinsInfo>();
+    const [info, status] = useFetchResult<JenkinsInfo>(
+        `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,artifacts[fileName,relativePath]`
+    );
 
-    useEffect(() => {
-        if (status !== WAITING) {
-            return;
-        }
-
-        (async () => {
-            try {
-                const req = await fetch(
-                    `https://ci.lucko.me/job/spark/lastSuccessfulBuild/api/json?tree=url,timestamp,artifacts[fileName,relativePath]`
-                );
-                if (!req.ok) {
-                    setStatus(ERROR);
-                    return;
-                }
-
-                setInfo(await req.json());
-                setStatus(OK);
-            } catch (e) {
-                console.log(e);
-                setStatus(ERROR);
-            }
-        })();
-    }, [status]);
+    const [changelog] = useFetchResult<ChangelogData>(
+        'https://sparkapi.lucko.me/changelog'
+    );
 
     let content;
-    if (status === WAITING || status === OK) {
-        content = <DownloadList info={info!} />;
+    if (status !== Status.ERROR) {
+        content = <DownloadPage info={info} changelog={changelog} />;
     } else {
         content = <TextBox>Error: unable to get version information.</TextBox>;
     }
@@ -79,88 +78,45 @@ interface ArtifactsMap {
     };
 }
 
-const DownloadList = ({ info }: { info: JenkinsInfo }) => {
+const processJenkinsInfo = (
+    info: JenkinsInfo | undefined
+): [string, string, ArtifactsMap] => {
     const artifacts: ArtifactsMap = {};
     let version = 'unknown';
+    const timestamp = info
+        ? new Date(info?.timestamp).toLocaleString()
+        : 'unknown';
     for (const { fileName, relativePath } of info?.artifacts || []) {
         const [v, platform] = fileName.slice(0, -4).split('-').slice(1);
         version = v;
         artifacts[platform] = {
             fileName,
-            url: info.url + 'artifact/' + relativePath,
+            url: info!.url + 'artifact/' + relativePath,
         };
     }
+    return [version, timestamp, artifacts];
+};
+
+const DownloadPage = ({
+    info,
+    changelog,
+}: {
+    info?: JenkinsInfo;
+    changelog?: ChangelogData;
+}) => {
+    const [version, timestamp, artifacts] = processJenkinsInfo(info);
+    const changelogSlice = changelog?.changelog?.slice(0, 5) || [];
 
     return (
         <>
-            {info?.artifacts && (
-                <p>
-                    The latest version of spark is{' '}
-                    <span className="version-number">v{version}</span>, which
-                    was created at {new Date(info.timestamp).toLocaleString()}.
-                </p>
-            )}
             <p>
-                You can check the <Link href={'changelog'}>changelog</Link> to
-                see what&apos;s new in the latest release, and use the links
-                below to download the jar for your server/client/proxy!
+                The latest version of spark is{' '}
+                <span className="version-number">v{version}</span>, which was
+                created at {timestamp}.
             </p>
             <br />
 
-            <div className="download-buttons">
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Bukkit"
-                    artifact="bukkit"
-                    logo={bukkitLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Fabric"
-                    comment="MC 1.20"
-                    artifact="fabric"
-                    logo={fabricLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Forge"
-                    comment="MC 1.20"
-                    artifact="forge"
-                    logo={forgeLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Sponge"
-                    comment="API 6/7"
-                    artifact="sponge7"
-                    logo={spongeLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Sponge"
-                    comment="API 8"
-                    artifact="sponge8"
-                    logo={spongeLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Nukkit"
-                    artifact="nukkit"
-                    logo={nukkitLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="BungeeCord"
-                    artifact="bungeecord"
-                    logo={bungeeCordLogo}
-                />
-                <DownloadInfo
-                    artifacts={artifacts}
-                    name="Velocity"
-                    artifact="velocity"
-                    logo={velocityLogo}
-                />
-            </div>
+            <DownloadButtons artifacts={artifacts} />
 
             <br />
             <p>
@@ -168,16 +124,93 @@ const DownloadList = ({ info }: { info: JenkinsInfo }) => {
                 <a href="https://spark.lucko.me/docs">documentation</a> to learn
                 how to use it!
             </p>
+
+            <h2>Recent Changes</h2>
+            <RecentChangelog changelog={changelogSlice} />
+
+            <h2>Older Versions</h2>
             <p>
-                Unless stated otherwise, the downloads on this page target the
-                latest versions for each platform. Historic releases of spark
-                (for older Minecraft versions) can be downloaded from{' '}
-                <a href="https://www.curseforge.com/minecraft/mc-mods/spark">
-                    CurseForge
-                </a>
+                Releases for older Minecraft versions are listed below. These
+                are not actively supported, but should still work ok :)
+            </p>
+            <OlderVersionsList versions={OLD_VERSIONS} />
+            <p>(Note: The links above will open CurseForge.com in a new tab)</p>
+        </>
+    );
+};
+
+const RecentChangelog = ({ changelog }: { changelog: ChangelogEntry[] }) => {
+    if (changelog.length === 0) {
+        return <p>Loading...</p>;
+    }
+
+    return (
+        <div className={changelogStyles.changelog}>
+            <ChangelogList entries={changelog} />
+            <p>
+                And more! See the <Link href={'changelog'}>full changelog</Link>
                 .
             </p>
-        </>
+        </div>
+    );
+};
+
+const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
+    return (
+        <div className="download-buttons">
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Bukkit"
+                artifact="bukkit"
+                logo={bukkitLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Fabric"
+                comment="MC 1.20"
+                artifact="fabric"
+                logo={fabricLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Forge"
+                comment="MC 1.20"
+                artifact="forge"
+                logo={forgeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Sponge"
+                comment="API 6/7"
+                artifact="sponge7"
+                logo={spongeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Sponge"
+                comment="API 8"
+                artifact="sponge8"
+                logo={spongeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Nukkit"
+                artifact="nukkit"
+                logo={nukkitLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="BungeeCord"
+                artifact="bungeecord"
+                logo={bungeeCordLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Velocity"
+                artifact="velocity"
+                logo={velocityLogo}
+            />
+        </div>
     );
 };
 
@@ -204,7 +237,7 @@ const DownloadInfo = ({
         <a className="link" href={url}>
             <Image
                 src={logo}
-                objectFit="contain"
+                style={{ objectFit: 'contain' }}
                 width={50}
                 height={50}
                 alt={name + ' logo'}
@@ -216,5 +249,49 @@ const DownloadInfo = ({
                 </div>
             </div>
         </a>
+    );
+};
+
+const OlderVersionsList = ({ versions }: { versions: OldVersion[] }) => {
+    return (
+        <div className="older-versions">
+            {versions.map(oldVersion => {
+                const getUrl = (version: string) => {
+                    return `https://www.curseforge.com/minecraft/mc-mods/spark/files?gameVersionTypeId=${oldVersion.curseGameVersionTypeId}&version=${version}`;
+                };
+
+                return (
+                    <div>
+                        <h3>
+                            <Image
+                                src={oldVersion.logo}
+                                style={{
+                                    objectFit: 'contain',
+                                    verticalAlign: 'middle',
+                                }}
+                                width={40}
+                                height={40}
+                                alt={oldVersion.modloader + ' logo'}
+                            />{' '}
+                            {oldVersion.modloader}
+                        </h3>
+                        <hr />
+                        <ul>
+                            {oldVersion.versions.map(version => (
+                                <li>
+                                    <a
+                                        href={getUrl(version)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {version}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                );
+            })}
+        </div>
     );
 };
