@@ -32,7 +32,7 @@ export default function useFetchResult<T>(
                 setStatus(Status.ERROR);
             }
         })();
-    }, [status]);
+    }, [status, url]);
 
     return [result, status];
 }

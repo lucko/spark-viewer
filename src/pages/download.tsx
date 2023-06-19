@@ -261,7 +261,7 @@ const OlderVersionsList = ({ versions }: { versions: OldVersion[] }) => {
                 };
 
                 return (
-                    <div>
+                    <div key={oldVersion.modloader}>
                         <h3>
                             <Image
                                 src={oldVersion.logo}
@@ -278,7 +278,7 @@ const OlderVersionsList = ({ versions }: { versions: OldVersion[] }) => {
                         <hr />
                         <ul>
                             {oldVersion.versions.map(version => (
-                                <li>
+                                <li key={version}>
                                     <a
                                         href={getUrl(version)}
                                         target="_blank"
