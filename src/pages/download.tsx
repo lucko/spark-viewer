@@ -161,6 +161,7 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Bukkit"
+                comment="Paper/Spigot"
                 artifact="bukkit"
                 logo={bukkitLogo}
             />
