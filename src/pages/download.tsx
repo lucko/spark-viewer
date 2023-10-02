@@ -37,13 +37,13 @@ const OLD_VERSIONS: OldVersion[] = [
         modloader: 'Forge',
         curseGameVersionTypeId: 1,
         logo: forgeLogo,
-        versions: ['1.19.4', '1.18.2', '1.17.1', '1.16.5', '1.12.2'],
+        versions: ['1.20.1', '1.19.4', '1.18.2', '1.17.1', '1.16.5', '1.12.2'],
     },
     {
         modloader: 'Fabric',
         curseGameVersionTypeId: 4,
         logo: fabricLogo,
-        versions: ['1.19.4', '1.18.2', '1.17.1', '1.16.5'],
+        versions: ['1.20.1', '1.19.4', '1.18.2', '1.17.1', '1.16.5'],
     },
 ];
 
