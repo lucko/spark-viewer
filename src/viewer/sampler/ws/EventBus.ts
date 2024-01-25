@@ -1,9 +1,4 @@
-export type Listener<E> = (event: E) => ListenerResult;
-
-export enum ListenerResult {
-    KEEP_LISTENING,
-    STOP_LISTENING,
-}
+import { Listener, ListenerResult } from './Listener';
 
 export class EventBus<E> {
     private readonly listeners: Listener<E>[] = [];

@@ -70,6 +70,10 @@ const MappingsGroup = ({ group }: { group: MappingsSelectorGroup }) => {
     );
 };
 
-const MappingsOption = ({ option }: { option: MappingsSelectorGroupOptions }) => {
+const MappingsOption = ({
+    option,
+}: {
+    option: MappingsSelectorGroupOptions;
+}) => {
     return <option value={option.id}>{option.label}</option>;
 };

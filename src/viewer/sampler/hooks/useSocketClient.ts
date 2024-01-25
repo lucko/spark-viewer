@@ -3,10 +3,10 @@ import {
     ServerConnectResponse_Settings,
     SocketChannelInfo,
 } from '../../proto/spark_pb';
-import { SocketClient } from '../ws/socket';
+import { LocalSocketClient } from '../ws/LocalSocketClient';
 
 export interface SocketClientHook {
-    socket?: SocketClient;
+    socket?: LocalSocketClient;
     clientId?: string;
     trusted: boolean;
     settings?: ServerConnectResponse_Settings;
@@ -18,7 +18,7 @@ export default function useSocketClient(
     initialPayloadCallback: (payloadId: string) => void
 ): SocketClientHook {
     const [initialized, setInitialized] = useState(false);
-    const [socket, setSocket] = useState<SocketClient>();
+    const [socket, setSocket] = useState<LocalSocketClient>();
     const [clientId, setClientId] = useState<string>();
     const [trusted, setTrusted] = useState<boolean>(false);
     const [settings, setSettings] = useState<ServerConnectResponse_Settings>();
@@ -26,9 +26,9 @@ export default function useSocketClient(
 
     const init = useCallback(
         async (channelInfo: SocketChannelInfo) => {
-            await SocketClient.connect(channelInfo, {
+            await LocalSocketClient.connect(channelInfo, {
                 onConnect(
-                    socket: SocketClient,
+                    socket: LocalSocketClient,
                     settings: ServerConnectResponse_Settings,
                     trusted: boolean,
                     clientId: string,

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { PlatformStatistics, SamplerMetadata } from '../../proto/spark_pb';
-import { ListenerResult } from '../ws/listener';
+import { ListenerResult } from '../ws/Listener';
 import { SocketClientHook } from './useSocketClient';
 import useSocketListener from './useSocketListener';
 

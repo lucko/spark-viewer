@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
-import { PacketListener, SocketClient } from '../ws/socket';
+import { LocalSocketClient } from '../ws/LocalSocketClient';
+import { PacketListener } from '../ws/Packet';
 
 export default function useSocketListener(
-    socket: SocketClient | undefined,
+    socket: LocalSocketClient | undefined,
     listener: PacketListener
 ) {
     useEffect(() => {
         if (!socket) return;
-        return socket.registerListener(listener);
+        return socket.eventBus.register(listener);
     }, [socket, listener]);
 }
