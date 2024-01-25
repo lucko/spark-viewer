@@ -16,8 +16,8 @@ import FlameButton from './FlameButton';
 import GraphButton from './GraphButton';
 import LastUpdateSpinner from './LastUpdateSpinner';
 import SearchBar from './SearchBar';
+import SettingsButton from './SettingsButton';
 import ToggleViewButton from './ToggleViewButton';
-import SettingsButton from "./SettingsButton";
 
 export interface ControlsProps {
     data: SamplerData;
@@ -72,7 +72,10 @@ export default function Controls({
                 showGraph={showGraph}
                 setShowGraph={setShowGraph}
             />
-            <SettingsButton showSettings={showSettings} setShowSettings={setShowSettings} />
+            <SettingsButton
+                showSettings={showSettings}
+                setShowSettings={setShowSettings}
+            />
             {!flameData ? (
                 <>
                     <ToggleViewButton
