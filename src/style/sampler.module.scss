@@ -165,7 +165,7 @@
                     padding-right: 10px;
 
                     span {
-                        color: #ffc93a;
+                        color: #60a5fa;
                     }
                 }
 
@@ -179,7 +179,7 @@
         }
 
         .flame {
-            background-color: #252b2d;
+            background-color: var(--clr-card-pri);
             padding: 20px;
             box-sizing: border-box;
             border-radius: 0.5rem;
@@ -195,7 +195,7 @@
             }
 
             .LabeledRect_rect__11W7H {
-                stroke: #181d1f !important;
+                stroke: var(--clr-bg-sec) !important;
             }
         }
 
@@ -234,7 +234,7 @@
         }
 
         .react-contexify {
-            background-color: #181d1f !important;
+            background-color: var(--clr-bg-sec) !important;
         }
     }
 }
@@ -268,7 +268,7 @@
                 border-radius: 5px;
 
                 span {
-                    color: #ffc93a;
+                    color: #60a5fa;
                 }
 
                 select {

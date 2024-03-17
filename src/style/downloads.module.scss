@@ -6,7 +6,7 @@
 
     :global {
         .version-number {
-            color: #f77669;
+            color: var(--clr-text-red);
             font-weight: bold;
             font-size: larger;
         }

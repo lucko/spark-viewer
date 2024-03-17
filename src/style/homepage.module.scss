@@ -1,6 +1,6 @@
 .homepage {
     section {
-        background-color: #252b2d;
+        background-color: var(--clr-card-pri);
         border-radius: 5px;
         margin: 25px 0;
         padding: 0.1px 15px;
@@ -49,7 +49,7 @@
 
                 h3 {
                     margin: 0;
-                    color: #ffc93a;
+                    color: #60a5fa;
                 }
             }
         }

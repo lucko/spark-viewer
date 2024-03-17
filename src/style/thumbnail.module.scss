@@ -1,6 +1,6 @@
 .thumbnail {
     height: 100%;
-    background-color: #1e2527;
+    background-color: var(--clr-bg-pri);
     overflow: hidden;
     padding: 60px;
 
@@ -59,7 +59,7 @@
             text-overflow: ellipsis;
 
             svg {
-                color: #f77669;
+                color: var(--clr-text-red);
             }
 
             span {

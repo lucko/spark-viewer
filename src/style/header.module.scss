@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    background: #181d1f;
+    background: var(--clr-bg-sec);
     color: #ccc;
     padding: 5px 20px;
     margin: 0;
@@ -15,7 +15,7 @@
     > a {
         display: flex;
         align-items: center;
-        background-color: #252b2d;
+        background-color: var(--clr-card-pri);
         border-radius: 5px;
         padding: 3px 5px 3px 3px;
         margin: 3px 0;
@@ -37,7 +37,7 @@
 }
 
 .homepage-header {
-    background: #181d1f;
+    background: var(--clr-bg-sec);
     display: flex;
     justify-content: center;
 

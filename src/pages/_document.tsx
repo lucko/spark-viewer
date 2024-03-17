@@ -5,20 +5,20 @@ export default function Document() {
         <Html lang="en">
             <Head>
                 <meta charSet="utf-8" />
-                <meta name="theme-color" content="#FFC93A" />
+                <meta name="theme-color" content="#60a5fa" />
                 <meta
                     name="description"
                     content="spark is a performance profiler for Minecraft clients, servers, and proxies."
                 />
                 <link
-                    href="/assets/logo-inverted-512.png"
+                    href="/assets/logo-543.png"
                     rel="shortcut icon"
                     sizes="512x512"
                     type="image/png"
                 />
                 <link
                     rel="apple-touch-icon"
-                    href="/assets/logo-inverted-160.png"
+                    href="/assets/logo-144.png"
                 />
                 <script
                     async

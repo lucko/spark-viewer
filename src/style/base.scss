@@ -1,8 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
 @import 'node_modules/@fortawesome/fontawesome-svg-core/styles';
 
+:root{
+    --cdu-clr-font: #f7f3f5;
+    --clr-bg-pri: #111827;
+    --clr-bg-sec: #0c0f1f;
+    --clr-card-pri: #161e2d;
+    --clr-text-red: rgb(167 139 250);
+    // --clr-bg-sec: #111827;
+    color: rgb(17, 24, 39);
+    color: rgb(24, 29, 31);
+    color: rgb(30, 37, 39);
+    color: rgb(37, 43, 45);
+}
+
 html {
-    background-color: #1e2527;
+    background-color: var(--clr-bg-pri);
     color-scheme: dark;
 }
 
@@ -39,22 +52,22 @@ main {
 
 a:link,
 a:visited {
-    color: #f77669;
+    color: var(--clr-text-red);
     text-decoration: none;
 }
 
 a:hover,
 a:active {
-    color: #f77669;
+    color: var(--clr-text-red);
     text-decoration: none;
-    border-bottom: 1px solid #f77669;
+    border-bottom: 1px solid var(--clr-text-red);
 }
 
 select,
 input,
 button {
     font-family: 'JetBrains Mono', monospace;
-    background-color: #252b2d;
+    background-color: var(--clr-card-pri);
     border-style: none;
     color: #ccc;
     border-radius: 5px;
@@ -78,7 +91,7 @@ button {
 }
 
 hr {
-    border: 2px solid #252b2d;
+    border: 2px solid var(--clr-card-pri);
 }
 
 article {
@@ -89,7 +102,8 @@ article {
     h1::before,
     h2::before {
         content: '# ';
-        color: #ffc93a;
+        color: #60a5fa;
+        // color: rgb(96, 165, 250)
     }
 
     h1 {
@@ -104,14 +118,14 @@ article {
     font-size: 130%;
     letter-spacing: -1px;
     color: #b5b5b5;
-    background: #252b2d;
+    background: var(--clr-card-pri);
     padding: 8px;
     margin: 12px 0;
     border-radius: 5px;
 }
 
 .link {
-    background-color: #252b2d;
+    background-color: var(--clr-card-pri);
     border-radius: 5px;
 
     display: flex;
@@ -134,7 +148,7 @@ article {
     }
 
     svg {
-        color: #f77669;
+        color: var(--clr-text-red);
         font-size: 40px;
     }
 
