@@ -4,6 +4,10 @@
 //}
 
 .sampler {
+    --clr-native-part: 251, 146, 60;
+    --clr-package-part: 186, 219, 255;
+    --clr-lambda-part: 167, 139, 250;
+
     :global {
         .stack {
             margin-top: 20px;
@@ -74,15 +78,16 @@
             }
 
             .native-part {
-                color: #5a5a5a;
+                color: rgba(var(--clr-native-part), .8);
             }
-
+            
             .package-part {
-                color: #5a5a5a;
+              
+                color: rgba(var(--clr-package-part), .8);
             }
 
             .lambda-part {
-                color: #5a5a5a;
+                color: rgb(var(--clr-lambda-part));
             }
 
             .lineNumber {
@@ -91,7 +96,7 @@
             }
 
             .remapped {
-                background: #293134;
+                background: #ff92001f;
                 border-radius: 3px;
                 padding: 0 2px;
             }
@@ -115,7 +120,7 @@
                 .inner {
                     display: inline-block;
                     height: 15px;
-                    background: #e2b671;
+                    background: rgb(var(--clr-lambda-part));
                 }
 
                 @media screen and (max-width: 880px) {

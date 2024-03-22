@@ -15,13 +15,13 @@ export function getAxisLabel(statisticName: WindowStatisticsKey) {
 
 export function getColor(statisticName: WindowStatisticsKey) {
     return {
-        tps: '#71E27D',
-        msptMedian: '#E271D5',
-        cpuProcess: '#719DE2',
-        cpuSystem: '#F7AD48',
-        players: '#b72c7d',
-        entities: '#fc704f',
-        tileEntities: '#addcff',
+        tps: '#4ade80',
+        msptMedian: '#e879f9',
+        cpuProcess: '#818cf8',
+        cpuSystem: '#facc15',
+        players: '#f43f5e',
+        entities: '#fb923c',
+        tileEntities: '#5eead4',
         chunks: '#d9dee3',
     }[statisticName];
 }
