@@ -17,7 +17,7 @@ export interface MappingsMetadata {
     };
 }
 
-const MAPPING_DATA_URL = 'https://sparkmappings.lucko.me/dist/';
+const MAPPING_DATA_URL = 'https://spark-mappings.lucko.me/dist/';
 
 /**
  * Gets metadata about the mappings that are available.
