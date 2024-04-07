@@ -5,6 +5,7 @@ import SourceThreadVirtualNode from '../../node/SourceThreadVirtualNode';
 import VirtualNode from '../../node/VirtualNode';
 import {
     HighlightedContext,
+    InfoPointsContext,
     MappingsContext,
     SearchQueryContext,
     TimeSelectorContext,
@@ -15,6 +16,7 @@ import Name from './Name';
 import NodeInfo from './NodeInfo';
 
 import 'react-contexify/dist/ReactContexify.css';
+import InfoPoint from './InfoPoint';
 
 export interface BaseNodeProps {
     parents: VirtualNode[];
@@ -25,6 +27,7 @@ export interface BaseNodeProps {
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
 const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
     const mappings = useContext(MappingsContext)!;
+    const infoPoints = useContext(InfoPointsContext)!;
     const highlighted = useContext(HighlightedContext)!;
     const searchQuery = useContext(SearchQueryContext)!;
     const timeSelector = useContext(TimeSelectorContext)!;
@@ -129,6 +132,13 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
                     importance={importance}
                     significance={significance}
                     source={node.getSource()}
+                    infoPoint={
+                        <InfoPoint
+                            node={node}
+                            mappings={mappings}
+                            lookup={infoPoints}
+                        />
+                    }
                     isSourceRoot={node instanceof SourceThreadVirtualNode}
                 >
                     <Name details={node.getDetails()} mappings={mappings} />

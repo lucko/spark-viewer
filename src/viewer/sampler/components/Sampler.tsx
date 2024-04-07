@@ -31,6 +31,8 @@ import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 const Graph = dynamic(() => import('./graph/Graph'));
 
 import 'react-contexify/dist/ReactContexify.css';
+import { Tooltip } from 'react-tooltip';
+import useInfoPoints from '../hooks/useInfoPoints';
 import useMappings from '../hooks/useMappings';
 import SettingsMenu from './settings/SettingsMenu';
 
@@ -57,6 +59,7 @@ export default function Sampler({
         data.timeWindowStatistics
     );
     const mappings = useMappings(metadata);
+    const infoPoints = useInfoPoints();
     const [flameData, setFlameData] = useState<VirtualNode>();
     const [view, setView] = useState<View>(VIEW_ALL);
     const [showGraph, setShowGraph] = useToggle('prefShowGraph', true);
@@ -146,6 +149,8 @@ export default function Sampler({
                     mappingsMetadata={mappings.mappingsMetadata}
                     mappings={mappings.mappingsType}
                     setMappings={mappings.requestMappings}
+                    infoPoints={infoPoints.enabled}
+                    toggleInfoPoints={infoPoints.toggleEnabled}
                 />
             )}
 
@@ -182,6 +187,7 @@ export default function Sampler({
             <div style={{ display: flameData ? 'none' : undefined }}>
                 <SamplerContext
                     mappings={mappings.mappingsResolver}
+                    infoPoints={infoPoints}
                     highlighted={highlighted}
                     searchQuery={searchQuery}
                     labelMode={labelMode}
@@ -201,6 +207,14 @@ export default function Sampler({
                             data={data}
                             viewData={sourcesViewData}
                             setLabelMode={setLabelMode}
+                        />
+                    )}
+                    {infoPoints.enabled && (
+                        <Tooltip
+                            id="infopoint-tooltip"
+                            place="right"
+                            className="infopoint-tooltip"
+                            clickable
                         />
                     )}
                 </SamplerContext>
