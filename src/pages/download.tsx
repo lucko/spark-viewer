@@ -4,6 +4,7 @@ import bukkitLogo from '../assets/logos/bukkit.png';
 import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
 import forgeLogo from '../assets/logos/forge.png';
+import neoForgeLogo from '../assets/logos/neoforge.png';
 import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
@@ -167,6 +168,18 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             />
             <DownloadInfo
                 artifacts={artifacts}
+                name="BungeeCord"
+                artifact="bungeecord"
+                logo={bungeeCordLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Velocity"
+                artifact="velocity"
+                logo={velocityLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
                 name="Fabric"
                 comment="MC 1.20.4"
                 artifact="fabric"
@@ -178,6 +191,13 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
                 comment="MC 1.20.4"
                 artifact="forge"
                 logo={forgeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="NeoForge"
+                comment="MC 1.20.4"
+                artifact="neoforge"
+                logo={neoForgeLogo}
             />
             <DownloadInfo
                 artifacts={artifacts}
@@ -199,18 +219,7 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
                 artifact="nukkit"
                 logo={nukkitLogo}
             />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="BungeeCord"
-                artifact="bungeecord"
-                logo={bungeeCordLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Velocity"
-                artifact="velocity"
-                logo={velocityLogo}
-            />
+
         </div>
     );
 };

@@ -4,7 +4,9 @@ import { HeaderProps } from './types';
 
 export default function SourcesViewHeader({ children }: HeaderProps) {
     const metadata = useContext(MetadataContext)!;
-    const sourceNoun = ['Fabric', 'Forge'].includes(metadata.platform?.name!)
+    const sourceNoun = ['Fabric', 'Forge', 'NeoForge'].includes(
+        metadata.platform?.name!
+    )
         ? { singular: 'mod', plural: 'Mods' }
         : { singular: 'plugin', plural: 'Plugins' };
 

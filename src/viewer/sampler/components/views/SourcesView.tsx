@@ -108,7 +108,9 @@ const OtherSourcesSection = ({ alreadyShown }: { alreadyShown: string[] }) => {
         return null;
     }
 
-    const sourceNoun = ['Fabric', 'Forge'].includes(metadata?.platform?.name!)
+    const sourceNoun = ['Fabric', 'Forge', 'NeoForge'].includes(
+        metadata?.platform?.name!
+    )
         ? 'mods'
         : 'plugins';
 
