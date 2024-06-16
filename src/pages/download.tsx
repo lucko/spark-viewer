@@ -38,13 +38,13 @@ const OLD_VERSIONS: OldVersion[] = [
         modloader: 'Forge',
         curseGameVersionTypeId: 1,
         logo: forgeLogo,
-        versions: ['1.20.4', '1.19.4', '1.18.2', '1.17.1', '1.16.5', '1.12.2'],
+        versions: ['1.20.6', '1.20.4', '1.19.4', '1.18.2', '1.17.1', '1.16.5', '1.12.2'],
     },
     {
         modloader: 'Fabric',
         curseGameVersionTypeId: 4,
         logo: fabricLogo,
-        versions: ['1.20.4', '1.19.4', '1.18.2', '1.17.1', '1.16.5'],
+        versions: ['1.20.6', '1.20.4', '1.19.4', '1.18.2', '1.17.1', '1.16.5'],
     },
 ];
 
@@ -181,21 +181,21 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Fabric"
-                comment="MC 1.20.6"
+                comment="MC 1.21"
                 artifact="fabric"
                 logo={fabricLogo}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
-                comment="MC 1.20.4"
+                comment="MC 1.21"
                 artifact="forge"
                 logo={forgeLogo}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="NeoForge"
-                comment="MC 1.20.6"
+                comment="MC 1.21"
                 artifact="neoforge"
                 logo={neoForgeLogo}
             />
