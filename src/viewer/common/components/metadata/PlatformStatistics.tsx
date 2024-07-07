@@ -29,7 +29,7 @@ export default function PlatformStatistics({
     return (
         <>
             <p>
-                The platform is a <span>{platform.name}</span> {platformType}{' '}
+                The platform is a <span>{platform.brand || platform.name}</span> {platformType}{' '}
                 running version &quot;
                 <span>{platform.version}</span>&quot;.
             </p>

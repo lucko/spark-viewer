@@ -51,6 +51,7 @@ export default function Thumbnail({ metadata, code }: ThumbnailProps) {
             minecraftVersion: '',
             sparkVersion: 0,
             name: 'Unknown',
+            brand: 'Unknown',
             version: 'unknown',
             type: 0,
         };
@@ -84,7 +85,7 @@ export default function Thumbnail({ metadata, code }: ThumbnailProps) {
                 )}
                 <p>
                     <FontAwesomeIcon fixedWidth={true} icon={faServer} />{' '}
-                    <span>{platform.name}</span> {platformType} &quot;
+                    <span>{platform.brand || platform.name}</span> {platformType} &quot;
                     <span>{platform.version}</span>&quot;
                 </p>
                 {!!platformStatistics?.playerCount && (

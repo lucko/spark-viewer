@@ -12,6 +12,7 @@ message PlatformMetadata {
   string version = 3;
   string minecraftVersion = 4; // optional
   int32 sparkVersion = 7;
+  string brand = 8;
 
   // replaced
   reserved 5, 6;
