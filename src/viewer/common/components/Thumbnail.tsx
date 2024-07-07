@@ -85,7 +85,8 @@ export default function Thumbnail({ metadata, code }: ThumbnailProps) {
                 )}
                 <p>
                     <FontAwesomeIcon fixedWidth={true} icon={faServer} />{' '}
-                    <span>{platform.brand || platform.name}</span> {platformType} &quot;
+                    <span>{platform.brand || platform.name}</span>{' '}
+                    {platformType} &quot;
                     <span>{platform.version}</span>&quot;
                 </p>
                 {!!platformStatistics?.playerCount && (
