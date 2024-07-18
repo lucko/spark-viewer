@@ -24,8 +24,13 @@ export default function detectMappings(
             metadata.platform.minecraftVersion = rc[1];
         }
 
+        let platformName = metadata.platform.name.toLowerCase();
+        if (platformName === 'paper') {
+            platformName = 'bukkit';
+        }
+
         const id =
-            metadata.platform.name.toLowerCase() +
+            platformName +
             '/' +
             metadata.platform.minecraftVersion;
         return mappingsInfo.auto[id];
