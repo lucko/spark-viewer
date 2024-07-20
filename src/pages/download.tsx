@@ -133,6 +133,10 @@ const DownloadPage = ({
                 <a href="https://spark.lucko.me/docs">documentation</a> to learn
                 how to use it!
             </p>
+            <p className="caveat">
+                Note: spark is pre-bundled with Paper 1.21+, so you don&apos;t
+                need to install the plugin!
+            </p>
 
             <h2>Recent Changes</h2>
             <RecentChangelog changelog={changelogSlice} />
