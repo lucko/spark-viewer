@@ -54,7 +54,7 @@ export default function GraphChart({
                         fill: 'white',
                         fillOpacity: 0.05,
                     }}
-                    onBrushDomainChangeEnd={domain => {
+                    onBrushDomainChangeEnd={(domain: any) => {
                         selectionCallback(domain.x);
                     }}
                 />
@@ -93,7 +93,9 @@ export default function GraphChart({
                     orientation={i === 0 ? 'left' : 'right'}
                     invertAxis={i !== 0}
                     dependentAxis
-                    tickFormat={value => formatAxisTicks(value, i, wrapper)}
+                    tickFormat={(value: any) =>
+                        formatAxisTicks(value, i, wrapper)
+                    }
                     label={getAxisLabel(wrapper.statisticName)}
                     axisLabelComponent={
                         <VictoryLabel dy={i === 0 ? -35 : 35} />
@@ -106,7 +108,7 @@ export default function GraphChart({
 
             <VictoryAxis
                 domain={[0, -scale]}
-                tickFormat={x => `${x}m`}
+                tickFormat={(x: any) => `${x}m`}
                 crossAxis={false}
             />
         </VictoryChart>

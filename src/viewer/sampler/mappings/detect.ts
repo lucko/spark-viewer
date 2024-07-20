@@ -29,10 +29,7 @@ export default function detectMappings(
             platformName = 'bukkit';
         }
 
-        const id =
-            platformName +
-            '/' +
-            metadata.platform.minecraftVersion;
+        const id = platformName + '/' + metadata.platform.minecraftVersion;
         return mappingsInfo.auto[id];
     }
     return null;
