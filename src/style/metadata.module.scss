@@ -36,7 +36,8 @@
             }
 
             .metadata-detail-content > p,
-            .metadata-detail-content > .configurations > p {
+            .metadata-detail-content > .configurations > p,
+            .metadata-detail-content > .gamerules > p {
                 margin: 0 5px;
             }
 
@@ -60,6 +61,31 @@
                 }
                 .type-number {
                     color: #9bffa2;
+                }
+            }
+
+            .gamerules {
+                h2 {
+                    margin-bottom: 2px;
+                }
+                span {
+                    color: #888;
+                }
+                button {
+                    background-color: #293134;
+                    margin: 15px 0;
+                }
+                .value-true {
+                    color: #9bffa2;
+                }
+                .value-false {
+                    color: #fa7f95;
+                }
+                .value-number {
+                    color: #78e6ff;
+                }
+                .value-string {
+                    color: #f7df97;
                 }
             }
 

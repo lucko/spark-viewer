@@ -11,6 +11,7 @@ import {
     unwrapSamplerMetadata,
 } from '../../util/metadata';
 import ExtraPlatformMetadata from './ExtraPlatformMetadata';
+import GameRules from './GameRules';
 import JvmStartupArgs from './JvmStartupArgs';
 import PlatformStatistics from './PlatformStatistics';
 import ServerConfigurations from './ServerConfigurations';
@@ -70,6 +71,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
             platformStatistics?.world &&
             platformStatistics?.world?.totalEntities,
         'Misc': () => !!parsedExtraMetadata,
+        'Game Rules': () => !!platformStatistics?.world?.gameRules.length,
     };
 
     return (
@@ -113,6 +115,10 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                 ) : view === 'World' ? (
                     <WorldStatistics
                         worldStatistics={platformStatistics!.world!}
+                    />
+                ) : view === 'Game Rules' ? (
+                    <GameRules
+                        gameRules={platformStatistics?.world?.gameRules!}
                     />
                 ) : view === 'Misc' ? (
                     <ExtraPlatformMetadata data={parsedExtraMetadata!} />

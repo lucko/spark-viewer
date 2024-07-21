@@ -161,6 +161,7 @@ message WorldStatistics {
   int32 totalEntities = 1;
   map<string, int32> entityCounts = 2;
   repeated World worlds = 3;
+  repeated GameRule gameRules = 4;
 
   message World {
     string name = 1;
@@ -178,6 +179,12 @@ message WorldStatistics {
     int32 z = 2;
     int32 totalEntities = 3;
     map<string, int32> entityCounts = 4;
+  }
+
+  message GameRule {
+    string name = 1;
+    string defaultValue = 2;
+    map<string, string> worldValues = 3;
   }
 }
 
