@@ -103,6 +103,12 @@ const SystemStatistics = ({ systemStatistics }: SystemStatisticsProps) => {
                 <span>{systemStatistics.java!.version}</span> (
                 <span>{systemStatistics.java!.vendorVersion}</span> from{' '}
                 <span>{systemStatistics.java!.vendor}</span>).
+                {systemStatistics.jvm?.name && (
+                    <>
+                        {' '}
+                        The JVM is a <span>{systemStatistics.jvm?.name}</span>.
+                    </>
+                )}
             </p>
             <p>
                 The current process uptime is{' '}
