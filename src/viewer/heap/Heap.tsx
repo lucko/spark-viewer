@@ -3,11 +3,12 @@ import styles from '../../style/heap.module.scss';
 import WidgetsAndMetadata from '../common/components/WidgetsAndMetadata';
 import useMetadataToggle from '../common/hooks/useMetadataToggle';
 import { ExportCallback } from '../common/logic/export';
-import { HeapData, HeapMetadata } from '../proto/spark_pb';
+import { HeapMetadata } from '../proto/spark_pb';
 import Controls from './controls/Controls';
 import HeapTable from './HeapTable';
 
 import 'react-virtualized/styles.css';
+import HeapData from './HeapData';
 
 export interface HeapProps {
     data: HeapData;

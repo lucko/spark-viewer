@@ -1,25 +1,35 @@
-import { isSamplerMetadata } from '../../proto/guards';
-import {
-    HeapMetadata,
-    SamplerMetadata,
-    SamplerMetadata_SamplerMode,
-} from '../../proto/spark_pb';
+import { isSamplerMetadata, SparkMetadata } from '../../proto/guards';
+import { SamplerMetadata_SamplerMode } from '../../proto/spark_pb';
 import { formatDate } from './format';
 
+export interface UnwrappedDateMetadata {
+    time?: string;
+    date?: string;
+}
+
 export interface UnwrappedSamplerMetadata {
-    startTime?: string;
-    startDate?: string;
     runningTime?: number;
     numberOfTicks?: number;
     numberOfIncludedTicks?: number;
     samplerMode?: SamplerMetadata_SamplerMode;
 }
 
+export function unwrapDateMetadata(metadata: SparkMetadata) {
+    if (isSamplerMetadata(metadata)) {
+        const [time, date] = formatDate(metadata.startTime);
+        return { time, date };
+    } else if (metadata.generatedTime) {
+        const [time, date] = formatDate(metadata.generatedTime);
+        return { time, date };
+    } else {
+        return {};
+    }
+}
+
 export function unwrapSamplerMetadata(
-    metadata: SamplerMetadata | HeapMetadata
+    metadata: SparkMetadata
 ): UnwrappedSamplerMetadata {
     if (isSamplerMetadata(metadata)) {
-        const [startTime, startDate] = formatDate(metadata.startTime);
         const runningTime =
             metadata.endTime && metadata.startTime
                 ? metadata.endTime - metadata.startTime
@@ -29,8 +39,6 @@ export function unwrapSamplerMetadata(
             metadata.dataAggregator?.numberOfIncludedTicks;
         const samplerMode = metadata.samplerMode;
         return {
-            startTime,
-            startDate,
             runningTime,
             numberOfTicks,
             numberOfIncludedTicks,

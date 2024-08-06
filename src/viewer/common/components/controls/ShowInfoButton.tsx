@@ -1,10 +1,10 @@
 import { faGauge, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import FaButton from '../../../../components/FaButton';
-import { HeapMetadata, SamplerMetadata } from '../../../proto/spark_pb';
+import { SparkMetadata } from '../../../proto/guards';
 import { MetadataToggle } from '../../hooks/useMetadataToggle';
 
 export interface ShowInfoButtonProps {
-    metadata: SamplerMetadata | HeapMetadata;
+    metadata: SparkMetadata;
     metadataToggle: MetadataToggle;
 }
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import styles from '../../../../style/widgets.module.scss';
-import { HeapMetadata, SamplerMetadata } from '../../../proto/spark_pb';
+import { SparkMetadata } from '../../../proto/guards';
 import CpuWidget from './types/CpuWidget';
 import DiskWidget from './types/DiskWidget';
 import GcWidget from './types/GcWidget';
@@ -10,7 +10,7 @@ import PingWidget from './types/PingWidget';
 import TpsWidget from './types/TpsWidget';
 
 export interface WidgetsProps {
-    metadata: SamplerMetadata | HeapMetadata;
+    metadata: SparkMetadata;
     expanded: boolean;
 }
 

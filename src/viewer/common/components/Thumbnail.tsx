@@ -9,24 +9,24 @@ import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import SparkLogo from '../../../assets/spark-logo.svg';
 import styles from '../../../style/thumbnail.module.scss';
-import { isSamplerMetadata } from '../../proto/guards';
+import { SparkMetadata } from '../../proto/guards';
 import {
-    HeapMetadata,
     PlatformMetadata_Type,
-    SamplerMetadata,
     SamplerMetadata_SamplerMode,
 } from '../../proto/spark_pb';
+import { SparkContentType } from '../logic/contentType';
 import { formatDuration } from '../util/format';
-import { unwrapSamplerMetadata } from '../util/metadata';
+import { unwrapDateMetadata, unwrapSamplerMetadata } from '../util/metadata';
 import Avatar from './Avatar';
 import Widgets from './widgets/Widgets';
 
 export interface ThumbnailProps {
-    metadata: SamplerMetadata | HeapMetadata;
+    metadata: SparkMetadata;
     code: string;
+    type: SparkContentType;
 }
 
-export default function Thumbnail({ metadata, code }: ThumbnailProps) {
+export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
     const ref = useRef<HTMLDivElement>(null);
 
     // override the css of body/#root to fix a specific size
@@ -59,15 +59,23 @@ export default function Thumbnail({ metadata, code }: ThumbnailProps) {
 
     const platformType = PlatformMetadata_Type[platform.type].toLowerCase();
 
-    const { startTime, startDate, runningTime, numberOfTicks, samplerMode } =
+    const { runningTime, numberOfTicks, samplerMode } =
         unwrapSamplerMetadata(metadata);
+
+    const { time, date } = unwrapDateMetadata(metadata);
 
     return (
         <div ref={ref} className={classNames('thumbnail', styles.thumbnail)}>
             <div>
                 <h1>
                     spark{' '}
-                    {isSamplerMetadata(metadata) ? 'profile' : 'heap summary'}
+                    {
+                        {
+                            'application/x-spark-sampler': 'profile',
+                            'application/x-spark-heap': 'heap summary',
+                            'application/x-spark-health': 'health report',
+                        }[type]
+                    }
                 </h1>
                 <h2>/{code}</h2>
             </div>
@@ -114,10 +122,10 @@ export default function Thumbnail({ metadata, code }: ThumbnailProps) {
                 <p>
                     Uploaded by <Avatar user={metadata.user!} />
                     {metadata.user?.name}
-                    {startTime && (
+                    {time && (
                         <>
                             {' '}
-                            • {startDate} at {startTime}
+                            • {date} at {time}
                         </>
                     )}
                 </p>

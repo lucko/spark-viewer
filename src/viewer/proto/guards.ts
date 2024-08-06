@@ -1,42 +1,25 @@
 import {
-    HeapData,
+    HealthMetadata,
     HeapMetadata,
-    SamplerData,
     SamplerMetadata,
     StackTraceNode,
     ThreadNode,
 } from './spark_pb';
 
-export function isSamplerData(
-    data: SamplerData | HeapData
-): data is SamplerData {
-    return 'threads' in data;
-}
-
-export function isHeapData(data: SamplerData | HeapData): data is HeapData {
-    return 'entries' in data;
-}
+export type SparkMetadata = SamplerMetadata | HeapMetadata | HealthMetadata;
 
 export function isSamplerMetadata(
-    metadata: SamplerMetadata | HeapMetadata
+    metadata: SparkMetadata
 ): metadata is SamplerMetadata {
     return 'startTime' in metadata;
 }
 
-export function isHeapMetadata(
-    metadata: SamplerMetadata | HeapMetadata
-): metadata is HeapMetadata {
-    return 'user' in metadata && !('startTime' in metadata);
-}
+export type SamplerNode = StackTraceNode | ThreadNode;
 
-export function isStackTraceNode(
-    node: StackTraceNode | ThreadNode
-): node is StackTraceNode {
+export function isStackTraceNode(node: SamplerNode): node is StackTraceNode {
     return 'className' in node;
 }
 
-export function isThreadNode(
-    node: StackTraceNode | ThreadNode
-): node is ThreadNode {
+export function isThreadNode(node: SamplerNode): node is ThreadNode {
     return 'name' in node && !('className' in node);
 }

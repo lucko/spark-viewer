@@ -19,13 +19,21 @@ import {
 import { parse } from './common/logic/parse';
 import {
     FAILED_DATA,
+    LOADED_HEALTH_DATA,
     LOADED_HEAP_DATA,
     LOADED_PROFILE_DATA,
     LOADING_DATA,
     Status,
 } from './common/logic/status';
+import Health from './health/Health';
+import HealthData from './health/HealthData';
 import HeapData from './heap/HeapData';
-import { HeapMetadata, SamplerMetadata } from './proto/spark_pb';
+import { SparkMetadata } from './proto/guards';
+import {
+    HealthMetadata,
+    HeapMetadata,
+    SamplerMetadata,
+} from './proto/spark_pb';
 import SamplerData from './sampler/SamplerData';
 
 const Heap = dynamic(() => import('./heap/Heap'), {
@@ -44,8 +52,8 @@ export default function SparkViewer() {
 
     const { selectedFile } = useContext(SelectedFileContext);
     const [status, setStatus] = useState<Status>(LOADING_DATA);
-    const [data, setData] = useState<SamplerData | HeapData>();
-    const [metadata, setMetadata] = useState<SamplerMetadata | HeapMetadata>();
+    const [data, setData] = useState<SamplerData | HeapData | HealthData>();
+    const [metadata, setMetadata] = useState<SparkMetadata>();
     const [exportCallback, setExportCallback] = useState<ExportCallback>();
 
     const fetchUpdatedData = useCallback(
@@ -126,6 +134,16 @@ export default function SparkViewer() {
                     <Heap
                         data={data as HeapData}
                         metadata={metadata as HeapMetadata}
+                        exportCallback={exportCallback!}
+                    />
+                </Suspense>
+            );
+        case LOADED_HEALTH_DATA:
+            return (
+                <Suspense fallback={<TextBox>Loading...</TextBox>}>
+                    <Health
+                        data={data as HealthData}
+                        metadata={metadata as HealthMetadata}
                         exportCallback={exportCallback!}
                     />
                 </Suspense>

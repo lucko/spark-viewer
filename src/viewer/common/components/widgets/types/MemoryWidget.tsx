@@ -1,11 +1,16 @@
-import { PlatformStatistics_Memory_MemoryPool } from '../../../../proto/spark_pb';
+import {
+    PlatformStatistics_Memory_MemoryUsage,
+    SystemStatistics_Memory_MemoryPool,
+} from '../../../../proto/spark_pb';
 import { formatBytes } from '../../../util/format';
 import { Formatter, WidgetFormat } from '../format';
 import Widget from '../Widget';
 import WidgetSingleValue from '../WidgetSingleValue';
 
 export interface MemoryWidgetProps {
-    memory: PlatformStatistics_Memory_MemoryPool;
+    memory:
+        | PlatformStatistics_Memory_MemoryUsage
+        | SystemStatistics_Memory_MemoryPool;
     label: string;
 }
 
@@ -26,9 +31,13 @@ export default function MemoryWidget({ memory, label }: MemoryWidgetProps) {
         },
     };
 
+    const total =
+        (memory as PlatformStatistics_Memory_MemoryUsage).committed ??
+        (memory as SystemStatistics_Memory_MemoryPool).total;
+
     return (
         <Widget title="Memory" label={label} formatter={formatter}>
-            <WidgetSingleValue value={memory.used} total={memory.total} />
+            <WidgetSingleValue value={memory.used} total={total} />
         </Widget>
     );
 }

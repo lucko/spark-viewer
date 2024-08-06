@@ -104,13 +104,24 @@ message PlatformStatistics {
   Ping ping = 6; // optional
   int64 playerCount = 7; // optional
   WorldStatistics world = 8; // optional
+  OnlineMode onlineMode = 9; // optional
 
   message Memory {
-    MemoryPool heap = 1;
+    MemoryUsage heap = 1;
+    MemoryUsage nonHeap = 2;
+    repeated MemoryPool pools = 3;
 
     message MemoryPool {
+      string name = 1;
+      MemoryUsage usage = 2;
+      MemoryUsage collectionUsage = 3;
+    }
+
+    message MemoryUsage {
       int64 used = 1;
-      int64 total = 2;
+      int64 committed = 2;
+      int64 init = 3; // optional
+      int64 max = 4; // optional
     }
   }
 
@@ -133,6 +144,12 @@ message PlatformStatistics {
 
   message Ping {
     RollingAverageValues last15m = 1;
+  }
+
+  enum OnlineMode {
+    UNKNOWN = 0;
+    OFFLINE = 1;
+    ONLINE = 2;
   }
 }
 
@@ -206,6 +223,32 @@ message CommandSenderMetadata {
   }
 }
 
+message PluginOrModMetadata {
+  string name = 1;
+  string version = 2;
+  string author = 3;
+}
+
+message HealthData {
+  HealthMetadata metadata = 1;
+  map<int32, WindowStatistics> timeWindowStatistics = 2;
+}
+
+message HealthDataLite {
+  HealthMetadata metadata = 1;
+}
+
+message HealthMetadata {
+  CommandSenderMetadata user = 1;
+  PlatformMetadata platform = 2;
+  PlatformStatistics platformStatistics = 3;
+  SystemStatistics systemStatistics = 4;
+  int64 generatedTime = 5;
+  map<string, string> serverConfigurations = 6;
+  map<string, PluginOrModMetadata> sources = 7;
+  map<string, string> extraPlatformMetadata = 8;
+}
+
 // -----------------------------------------------------------------------------------------------------
 // spark_heap
 // -----------------------------------------------------------------------------------------------------
@@ -224,6 +267,10 @@ message HeapMetadata {
   PlatformMetadata platform = 2;
   PlatformStatistics platformStatistics = 3;
   SystemStatistics systemStatistics = 4;
+  int64 generatedTime = 5;
+  map<string, string> serverConfigurations = 6;
+  map<string, PluginOrModMetadata> sources = 7;
+  map<string, string> extraPlatformMetadata = 8;
 }
 
 message HeapEntry {
@@ -265,7 +312,7 @@ message SamplerMetadata {
   map<string, string> serverConfigurations = 10;
   int64 endTime = 11;
   int32 numberOfTicks = 12;
-  map<string, SourceMetadata> sources = 13;
+  map<string, PluginOrModMetadata> sources = 13;
   map<string, string> extraPlatformMetadata = 14;
   SamplerMode samplerMode = 15;
 
@@ -297,11 +344,6 @@ message SamplerMetadata {
       BY_POOL = 1;
       AS_ONE = 2;
     }
-  }
-
-  message SourceMetadata {
-    string name = 1;
-    string version = 2;
   }
 
   enum SamplerMode {

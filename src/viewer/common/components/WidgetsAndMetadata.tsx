@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import styles from '../../../style/metadata.module.scss';
-import { HeapMetadata, SamplerMetadata } from '../../proto/spark_pb';
+import { SparkMetadata } from '../../proto/guards';
 import { MetadataToggle } from '../hooks/useMetadataToggle';
 import MetadataDetail from './metadata/MetadataDetail';
 import Widgets from './widgets/Widgets';
 
 export interface WidgetsAndMetadataProps {
-    metadata: SamplerMetadata | HeapMetadata;
+    metadata: SparkMetadata;
     metadataToggle: MetadataToggle;
 }
 

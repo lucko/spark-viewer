@@ -1,10 +1,6 @@
 import { useMemo, useState } from 'react';
-import { isSamplerMetadata } from '../../../proto/guards';
-import {
-    HeapMetadata,
-    PlatformMetadata_Type,
-    SamplerMetadata,
-} from '../../../proto/spark_pb';
+import { SparkMetadata } from '../../../proto/guards';
+import { PlatformMetadata_Type } from '../../../proto/spark_pb';
 import {
     detectOnlineMode,
     objectMap,
@@ -18,18 +14,16 @@ import ServerConfigurations from './ServerConfigurations';
 import WorldStatistics from './WorldStatistics';
 
 interface MetadataDetailProps {
-    metadata: SamplerMetadata | HeapMetadata;
+    metadata: SparkMetadata;
 }
 
 export default function MetadataDetail({ metadata }: MetadataDetailProps) {
     const { platform, platformStatistics, systemStatistics } = metadata;
 
-    let serverConfigurations: Record<string, string> | undefined;
-    let extraPlatformMetadata: Record<string, string> | undefined;
-    if (isSamplerMetadata(metadata)) {
-        serverConfigurations = metadata.serverConfigurations;
-        extraPlatformMetadata = metadata.extraPlatformMetadata;
-    }
+    let serverConfigurations: Record<string, string> | undefined =
+        metadata.serverConfigurations;
+    let extraPlatformMetadata: Record<string, string> | undefined =
+        metadata.extraPlatformMetadata;
 
     const platformType = PlatformMetadata_Type[platform!.type].toLowerCase();
 
