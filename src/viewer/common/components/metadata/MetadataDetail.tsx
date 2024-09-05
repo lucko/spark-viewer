@@ -35,11 +35,15 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
             parsedConfigurations = objectMap(serverConfigurations, v =>
                 JSON.parse(v)
             );
-            try {
-                onlineMode = detectOnlineMode(parsedConfigurations);
-            } catch (e) {
-                // ignore
-            }
+        }
+
+        try {
+            onlineMode = detectOnlineMode(
+                metadata.platformStatistics?.onlineMode,
+                parsedConfigurations
+            );
+        } catch (e) {
+            // ignore
         }
         return { parsedConfigurations, onlineMode };
     }, [serverConfigurations]);

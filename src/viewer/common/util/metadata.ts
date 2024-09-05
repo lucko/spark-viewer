@@ -1,5 +1,8 @@
 import { isSamplerMetadata, SparkMetadata } from '../../proto/guards';
-import { SamplerMetadata_SamplerMode } from '../../proto/spark_pb';
+import {
+    PlatformStatistics_OnlineMode,
+    SamplerMetadata_SamplerMode,
+} from '../../proto/spark_pb';
 import { formatDate } from './format';
 
 export interface UnwrappedDateMetadata {
@@ -58,44 +61,65 @@ export function objectMap<K extends string | number | symbol, V1, V2>(
     ) as Record<K, V2>;
 }
 
-export function detectOnlineMode(
-    parsedConfigurations: Record<string, any>
-): string {
-    const serverProperties = parsedConfigurations['server.properties'];
-    const spigotConfig = parsedConfigurations['spigot.yml'];
-    const oldPaperConfig = parsedConfigurations['paper.yml'];
-    const newPaperConfig = parsedConfigurations['paper/']?.['global.yml'];
+type ProxyKind = 'BungeeCord' | 'Velocity';
+export type OnlineModeStatus =
+    | 'online mode'
+    | 'offline mode'
+    | `online mode (${ProxyKind})`
+    | `offline mode (${ProxyKind})`;
 
-    if (serverProperties?.['online-mode'] === true) {
+export function detectOnlineMode(
+    onlineMode: PlatformStatistics_OnlineMode | undefined,
+    parsedConfigurations: Record<string, any> | undefined
+): OnlineModeStatus {
+    if (onlineMode === PlatformStatistics_OnlineMode.ONLINE) {
         return 'online mode';
     }
-
-    if (spigotConfig?.settings?.bungeecord === true) {
-        if (
-            oldPaperConfig?.['settings']?.['bungee-online-mode'] === false ||
-            newPaperConfig?.['proxies']?.['bungee-cord']?.['online-mode'] ===
-                false
-        ) {
-            return 'offline mode (BungeeCord)';
-        }
-
-        return 'online mode (BungeeCord)';
+    if (onlineMode === PlatformStatistics_OnlineMode.OFFLINE) {
+        return 'offline mode';
     }
 
-    if (
-        oldPaperConfig?.['settings']?.['velocity-support']?.enabled === true ||
-        newPaperConfig?.['proxies']?.['velocity']?.enabled === true
-    ) {
-        if (
-            oldPaperConfig?.['settings']?.['velocity-support']?.[
-                'online-mode'
-            ] === false ||
-            newPaperConfig?.['proxies']?.['velocity']?.['online-mode'] === false
-        ) {
-            return 'offline mode (Velocity)';
+    if (parsedConfigurations) {
+        const serverProperties = parsedConfigurations['server.properties'];
+        if (serverProperties?.['online-mode'] === true) {
+            return 'online mode';
         }
 
-        return 'online mode (Velocity)';
+        const spigotConfig = parsedConfigurations['spigot.yml'];
+        const oldPaperConfig = parsedConfigurations['paper.yml'];
+        const newPaperConfig = parsedConfigurations['paper/']?.['global.yml'];
+
+        if (spigotConfig?.settings?.bungeecord === true) {
+            if (
+                oldPaperConfig?.['settings']?.['bungee-online-mode'] ===
+                    false ||
+                newPaperConfig?.['proxies']?.['bungee-cord']?.[
+                    'online-mode'
+                ] === false
+            ) {
+                return 'offline mode (BungeeCord)';
+            }
+
+            return 'online mode (BungeeCord)';
+        }
+
+        if (
+            oldPaperConfig?.['settings']?.['velocity-support']?.enabled ===
+                true ||
+            newPaperConfig?.['proxies']?.['velocity']?.enabled === true
+        ) {
+            if (
+                oldPaperConfig?.['settings']?.['velocity-support']?.[
+                    'online-mode'
+                ] === false ||
+                newPaperConfig?.['proxies']?.['velocity']?.['online-mode'] ===
+                    false
+            ) {
+                return 'offline mode (Velocity)';
+            }
+
+            return 'online mode (Velocity)';
+        }
     }
 
     return 'offline mode';
