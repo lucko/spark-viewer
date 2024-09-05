@@ -234,6 +234,7 @@ message PluginOrModMetadata {
   string name = 1;
   string version = 2;
   string author = 3;
+  string description = 4;
 }
 
 message HealthData {
