@@ -18,13 +18,7 @@ interface MetadataDetailProps {
 }
 
 export default function MetadataDetail({ metadata }: MetadataDetailProps) {
-    const { platform, platformStatistics, systemStatistics } = metadata;
-
-    let serverConfigurations: Record<string, string> | undefined =
-        metadata.serverConfigurations;
-    let extraPlatformMetadata: Record<string, string> | undefined =
-        metadata.extraPlatformMetadata;
-
+    const { platform, platformStatistics, systemStatistics, serverConfigurations, extraPlatformMetadata } = metadata;
     const platformType = PlatformMetadata_Type[platform!.type].toLowerCase();
 
     const { parsedConfigurations, onlineMode } = useMemo(() => {
@@ -39,14 +33,14 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
 
         try {
             onlineMode = detectOnlineMode(
-                metadata.platformStatistics?.onlineMode,
+                platformStatistics?.onlineMode,
                 parsedConfigurations
             );
         } catch (e) {
             // ignore
         }
         return { parsedConfigurations, onlineMode };
-    }, [serverConfigurations]);
+    }, [serverConfigurations, platformStatistics]);
 
     const parsedExtraMetadata = useMemo(() => {
         if (
