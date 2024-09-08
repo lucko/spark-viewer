@@ -76,8 +76,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
         'Misc': () => !!parsedExtraMetadata,
         'Game Rules': () => !!platformStatistics?.world?.gameRules.length,
         'Plugins/Mods': () =>
-            !!platformStatistics?.world?.dataPacks.length ||
-            metadata.sources.length,
+            !!platformStatistics?.world?.dataPacks.length || metadata.sources,
     };
 
     return (
@@ -135,7 +134,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                 ) : view === 'Plugins/Mods' ? (
                     <PluginsModsList
                         plugins={Object.values(metadata.sources || {})}
-                        datapacks={platformStatistics?.world?.dataPacks || []}
+                        dataPacks={platformStatistics?.world?.dataPacks || []}
                     />
                 ) : view === 'Misc' ? (
                     <ExtraPlatformMetadata data={parsedExtraMetadata!} />

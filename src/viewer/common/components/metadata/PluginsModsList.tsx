@@ -5,16 +5,16 @@ import {
 
 export interface PluginsModsListProps {
     plugins: PluginOrModMetadata[];
-    datapacks: WorldStatistics_DataPack[];
+    dataPacks: WorldStatistics_DataPack[];
 }
 
 export default function PluginsModsList({
     plugins,
-    datapacks,
+    dataPacks,
 }: PluginsModsListProps) {
     return (
         <div className="plugins-mods-list">
-            {plugins.length && (
+            {!!plugins.length && (
                 <>
                     <h2>Plugins/Mods</h2>
                     <ul>
@@ -26,13 +26,13 @@ export default function PluginsModsList({
                     </ul>
                 </>
             )}
-            {datapacks.length && (
+            {!!dataPacks.length && (
                 <>
                     <h2>Data Packs</h2>
                     <ul>
-                        {datapacks.map(datapack => (
-                            <li key={datapack.name}>
-                                <Datapack {...datapack} />
+                        {dataPacks.map(pack => (
+                            <li key={pack.name}>
+                                <Datapack {...pack} />
                             </li>
                         ))}
                     </ul>
