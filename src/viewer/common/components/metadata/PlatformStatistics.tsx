@@ -1,6 +1,7 @@
 import {
     PlatformMetadata,
     PlatformStatistics as PlatformStatisticsProto,
+    SamplerMetadata_SamplerEngine,
     SystemStatistics as SystemStatisticsProto,
 } from '../../../proto/spark_pb';
 import { formatDuration } from '../../util/format';
@@ -14,6 +15,7 @@ export interface PlatformStatisticsProps {
     runningTime?: number;
     numberOfTicks?: number;
     numberOfIncludedTicks?: number;
+    engine?: SamplerMetadata_SamplerEngine;
 }
 
 export default function PlatformStatistics({
@@ -25,6 +27,7 @@ export default function PlatformStatistics({
     runningTime,
     numberOfTicks,
     numberOfIncludedTicks,
+    engine,
 }: PlatformStatisticsProps) {
     return (
         <>
@@ -56,8 +59,21 @@ export default function PlatformStatistics({
             )}
             {runningTime && (
                 <p>
-                    The profiler was running for{' '}
-                    <span>{formatDuration(runningTime)}</span>
+                    The profiler{' '}
+                    {engine ? (
+                        <>
+                            (engine{' '}
+                            <span>
+                                {engine == SamplerMetadata_SamplerEngine.ASYNC
+                                    ? 'async'
+                                    : 'java'}
+                            </span>
+                            ){' '}
+                        </>
+                    ) : (
+                        ''
+                    )}
+                    was running for <span>{formatDuration(runningTime)}</span>
                     {!!numberOfTicks && (
                         <>
                             {' '}

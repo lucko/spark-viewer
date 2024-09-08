@@ -10,6 +10,7 @@ import ExtraPlatformMetadata from './ExtraPlatformMetadata';
 import GameRules from './GameRules';
 import JvmStartupArgs from './JvmStartupArgs';
 import PlatformStatistics from './PlatformStatistics';
+import PluginsModsList from './PluginsModsList';
 import ServerConfigurations from './ServerConfigurations';
 import WorldStatistics from './WorldStatistics';
 
@@ -18,7 +19,13 @@ interface MetadataDetailProps {
 }
 
 export default function MetadataDetail({ metadata }: MetadataDetailProps) {
-    const { platform, platformStatistics, systemStatistics, serverConfigurations, extraPlatformMetadata } = metadata;
+    const {
+        platform,
+        platformStatistics,
+        systemStatistics,
+        serverConfigurations,
+        extraPlatformMetadata,
+    } = metadata;
     const platformType = PlatformMetadata_Type[platform!.type].toLowerCase();
 
     const { parsedConfigurations, onlineMode } = useMemo(() => {
@@ -51,7 +58,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
         }
     }, [extraPlatformMetadata]);
 
-    const { runningTime, numberOfTicks, numberOfIncludedTicks } =
+    const { runningTime, numberOfTicks, numberOfIncludedTicks, samplerEngine } =
         unwrapSamplerMetadata(metadata);
 
     const [view, setView] = useState('Platform');
@@ -64,27 +71,30 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
             platformStatistics?.world?.totalEntities,
         'Misc': () => !!parsedExtraMetadata,
         'Game Rules': () => !!platformStatistics?.world?.gameRules.length,
+        'Plugins/Mods': () =>
+            !!platformStatistics?.world?.dataPacks.length ||
+            metadata.sources.length,
     };
 
     return (
         <div className="textbox metadata-detail">
-            <ul className="metadata-detail-controls">
+            <div className="metadata-detail-controls">
                 {Object.entries(views).map(([name, func]) => {
                     return (
                         !!func() && (
-                            <li
+                            <div
                                 key={name}
                                 onClick={() => setView(name)}
                                 className={
-                                    view === name ? 'selected' : undefined
+                                    view === name ? 'toggled' : undefined
                                 }
                             >
                                 {name}
-                            </li>
+                            </div>
                         )
                     );
                 })}
-            </ul>
+            </div>
 
             <div className="metadata-detail-content">
                 {view === 'Platform' ? (
@@ -97,6 +107,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                         runningTime={runningTime}
                         numberOfTicks={numberOfTicks}
                         numberOfIncludedTicks={numberOfIncludedTicks}
+                        engine={samplerEngine}
                     />
                 ) : view === 'JVM Flags' ? (
                     <JvmStartupArgs systemStatistics={systemStatistics!} />
@@ -111,6 +122,11 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                 ) : view === 'Game Rules' ? (
                     <GameRules
                         gameRules={platformStatistics?.world?.gameRules!}
+                    />
+                ) : view === 'Plugins/Mods' ? (
+                    <PluginsModsList
+                        plugins={Object.values(metadata.sources || {})}
+                        datapacks={platformStatistics?.world?.dataPacks || []}
                     />
                 ) : view === 'Misc' ? (
                     <ExtraPlatformMetadata data={parsedExtraMetadata!} />

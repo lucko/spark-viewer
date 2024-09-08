@@ -1,6 +1,7 @@
 import { isSamplerMetadata, SparkMetadata } from '../../proto/guards';
 import {
     PlatformStatistics_OnlineMode,
+    SamplerMetadata_SamplerEngine,
     SamplerMetadata_SamplerMode,
 } from '../../proto/spark_pb';
 import { formatDate } from './format';
@@ -15,6 +16,7 @@ export interface UnwrappedSamplerMetadata {
     numberOfTicks?: number;
     numberOfIncludedTicks?: number;
     samplerMode?: SamplerMetadata_SamplerMode;
+    samplerEngine?: SamplerMetadata_SamplerEngine;
 }
 
 export function unwrapDateMetadata(metadata: SparkMetadata) {
@@ -41,11 +43,13 @@ export function unwrapSamplerMetadata(
         const numberOfIncludedTicks =
             metadata.dataAggregator?.numberOfIncludedTicks;
         const samplerMode = metadata.samplerMode;
+        const samplerEngine = metadata.samplerEngine;
         return {
             runningTime,
             numberOfTicks,
             numberOfIncludedTicks,
             samplerMode,
+            samplerEngine,
         };
     } else {
         return {};
