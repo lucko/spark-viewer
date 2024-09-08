@@ -19,9 +19,11 @@ export default function MemoryStatistics({
         <>
             <h2>Memory Areas</h2>
             <div className="memory">
-                <MemoryPool name="Heap" usage={memory.heap!} />
-                <MemoryPool name="Non Heap" usage={memory.nonHeap!} />
-                {memory.pools
+                {memory.heap && <MemoryPool name="Heap" usage={memory.heap} />}
+                {memory.nonHeap && (
+                    <MemoryPool name="Non Heap" usage={memory.nonHeap} />
+                )}
+                {(memory.pools || [])
                     .filter(pool => pool.usage)
                     .map(pool => {
                         return (

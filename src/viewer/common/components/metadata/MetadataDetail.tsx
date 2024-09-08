@@ -66,8 +66,8 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
     const views = {
         'Platform': () => true,
         'Memory': () =>
-            platformStatistics?.memory &&
-            platformStatistics.memory.pools.length,
+            platformStatistics?.memory?.heap ||
+            platformStatistics?.memory?.pools?.length,
         'JVM Flags': () => systemStatistics?.java?.vmArgs,
         'Configurations': () => parsedConfigurations,
         'World': () =>
