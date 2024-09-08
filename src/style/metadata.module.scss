@@ -43,6 +43,46 @@
                 margin: 0 5px;
             }
 
+            .memory {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+
+                .memory-pool {
+                    background-color: #293134;
+                    padding: 5px;
+                    border-radius: 5px;
+                }
+
+                .header {
+                    text-align: center;
+                    margin-bottom: 10px;
+                    color: #fff;
+                }
+
+                .usage-bar {
+                    height: 20px;
+                    width: 500px;
+                    border: 3px solid #252b2d;
+                    display: flex;
+                    background-color: #252b2d;
+
+                    > div {
+                        background-color: #b5b5b5;
+                    }
+                }
+
+                ul {
+                    li {
+                        list-style: none;
+
+                        span {
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+
             .configurations {
                 ul {
                     padding-left: 20px;

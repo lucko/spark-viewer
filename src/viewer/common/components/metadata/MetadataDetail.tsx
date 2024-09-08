@@ -9,6 +9,7 @@ import {
 import ExtraPlatformMetadata from './ExtraPlatformMetadata';
 import GameRules from './GameRules';
 import JvmStartupArgs from './JvmStartupArgs';
+import MemoryStatistics from './MemoryStatistics';
 import PlatformStatistics from './PlatformStatistics';
 import PluginsModsList from './PluginsModsList';
 import ServerConfigurations from './ServerConfigurations';
@@ -64,6 +65,9 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
     const [view, setView] = useState('Platform');
     const views = {
         'Platform': () => true,
+        'Memory': () =>
+            platformStatistics?.memory &&
+            platformStatistics.memory.pools.length,
         'JVM Flags': () => systemStatistics?.java?.vmArgs,
         'Configurations': () => parsedConfigurations,
         'World': () =>
@@ -108,6 +112,11 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                         numberOfTicks={numberOfTicks}
                         numberOfIncludedTicks={numberOfIncludedTicks}
                         engine={samplerEngine}
+                    />
+                ) : view === 'Memory' ? (
+                    <MemoryStatistics
+                        memory={platformStatistics?.memory!}
+                        gc={platformStatistics?.gc!}
                     />
                 ) : view === 'JVM Flags' ? (
                     <JvmStartupArgs systemStatistics={systemStatistics!} />
