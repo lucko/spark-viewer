@@ -5,7 +5,6 @@ import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
 import forgeLogo from '../assets/logos/forge.png';
 import neoForgeLogo from '../assets/logos/neoforge.png';
-import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 import TextBox from '../components/TextBox';
@@ -141,6 +140,24 @@ const DownloadPage = ({
             <h2>Recent Changes</h2>
             <RecentChangelog changelog={changelogSlice} />
 
+            <h2>Other Platforms</h2>
+            <p>
+                spark is also available for other platforms, including Folia,
+                Geyser, Minestom, and Nukkit. These releases are provided as-is
+                and are supported by the community.
+            </p>
+            <p>
+                For more info, please see{' '}
+                <a href="https://github.com/lucko/spark-extra-platforms">
+                    spark-extra-platforms
+                </a>{' '}
+                on GitHub. Downloads are available from{' '}
+                <a href="https://ci.lucko.me/job/spark-extra-platforms/">
+                    Jenkins
+                </a>
+                .
+            </p>
+
             <h2>Older Versions</h2>
             <p>
                 Releases for older Minecraft versions are listed below. These
@@ -214,22 +231,9 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Sponge"
-                comment="API 6/7"
-                artifact="sponge7"
+                comment="API 8+"
+                artifact="sponge"
                 logo={spongeLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Sponge"
-                comment="API 8"
-                artifact="sponge8"
-                logo={spongeLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Nukkit"
-                artifact="nukkit"
-                logo={nukkitLogo}
             />
         </div>
     );
