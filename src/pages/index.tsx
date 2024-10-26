@@ -131,11 +131,11 @@ const ViewerSection = ({
             <ol>
                 <li>
                     Generate a{' '}
-                    <a href="https://spark.lucko.me/docs/Command-Usage#spark-profiler">
+                    <a href="https://spark.spcraft.cn/docs/Command-Usage#spark-profiler">
                         profile
                     </a>{' '}
                     or{' '}
-                    <a href="https://spark.lucko.me/docs/Command-Usage#spark-heapsummary">
+                    <a href="https://spark.spcraft.cn/docs/Command-Usage#spark-heapsummary">
                         heap summary
                     </a>{' '}
                     using the appropriate spark commands.

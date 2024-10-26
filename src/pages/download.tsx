@@ -149,7 +149,7 @@ const DownloadPage = ({
             <br />
             <p>
                 Once you&apos;ve got spark installed, head over to the{' '}
-                <a href="https://spark.lucko.me/docs">documentation</a> to learn
+                <a href="https://spark.spcraft.cn/docs">documentation</a> to learn
                 how to use it!
             </p>
             <p className="caveat">

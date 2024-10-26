@@ -22,7 +22,7 @@ export interface SocketKeys {
 
 export class SocketClient {
     static VERSION = 1;
-    static HOST = 'spark-usersockets.lucko.me';
+    static HOST = 'usersockets.spark.spcraft.cn';
 
     private readonly remotePublicKey: CryptoKey;
     private readonly localPublicKey: Promise<Uint8Array>;

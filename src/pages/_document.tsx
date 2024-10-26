@@ -23,7 +23,7 @@ export default function Document() {
                 <script
                     async
                     defer
-                    data-domain="spark.lucko.me"
+                    data-domain="spark.spcraft.cn"
                     src="https://plausible.lucko.me/js/pl.js"
                 />
             </Head>

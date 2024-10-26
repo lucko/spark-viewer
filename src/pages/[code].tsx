@@ -36,12 +36,12 @@ const ThumbnailMetaTags = ({ code }: ViewerPageProps) => {
             <title>{`spark | ${code}`}</title>
             <meta
                 property="og:image"
-                content={`https://spark.lucko.me/thumb/${code}.png`}
+                content={`https://spark.spcraft.cn/thumb/${code}.png`}
                 key="og-image"
             />
             <meta
                 name="twitter:image"
-                content={`https://spark.lucko.me/thumb/${code}.png`}
+                content={`https://spark.spcraft.cn/thumb/${code}.png`}
                 key="twitter-image"
             />
             <meta
