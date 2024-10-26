@@ -53,7 +53,10 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return (
         <>
             <Head>
-                <meta name="robots" content="noindex, nofollow">
+                <meta
+                    name="robots"
+                    content="noindex, nofollow"
+                />
                 <title>{title}</title>
             </Head>
             <SelectedFileContext.Provider
