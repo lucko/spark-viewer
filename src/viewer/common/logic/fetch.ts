@@ -19,7 +19,7 @@ export async function fetchFromBytebin(
     router: NextRouter | null,
     thumbnail: boolean
 ) {
-    let bytebinUrl = 'https://usercontents.spark.spcraft.cn/';
+    let bytebinUrl = 'https://usercontents.spark.1l1.icu/';
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }
