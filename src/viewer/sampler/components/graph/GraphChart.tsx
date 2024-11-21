@@ -96,10 +96,6 @@ export default function GraphChart({
                     tickFormat={(value: any) =>
                         formatAxisTicks(value, i, wrapper)
                     }
-                    label={getAxisLabel(wrapper.statisticName)}
-                    axisLabelComponent={
-                        <VictoryLabel dy={i === 0 ? -35 : 35} />
-                    }
                     style={{
                         axisLabel: { fill: getColor(wrapper.statisticName) },
                     }}
