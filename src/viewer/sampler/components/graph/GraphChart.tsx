@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import {
+    createContainer,
     VictoryAxis,
-    VictoryBrushContainer,
     VictoryChart,
-    VictoryLabel,
     VictoryLine,
     VictoryScatter,
     VictoryTheme,
+    VictoryTooltip,
 } from 'victory';
 import { getAxisLabel, getColor } from './format';
 import { ChartDataWrapper } from './util';
@@ -26,17 +26,17 @@ export default function GraphChart({
 }: GraphChartProps) {
     const theme = useMemo(() => getTheme(), []);
 
-    function formatAxisTicks(
+    function formatValue(
         value: number,
-        i: number,
-        wrapper: ChartDataWrapper
+        unit: string
     ) {
-        const scaled = value * maxima[i];
-        if (['cpuProcess', 'cpuSystem'].includes(wrapper.statisticName)) {
-            return scaled * 100 + '%';
+        if (['cpuProcess', 'cpuSystem'].includes(unit)) {
+            return (value * 100).toFixed(2) + '%';
         }
-        return scaled.toFixed();
+        return value.toFixed(2);
     }
+
+    const VictoryBrushVoronoiContainer: any = createContainer("brush", "voronoi");
 
     return (
         <VictoryChart
@@ -46,7 +46,7 @@ export default function GraphChart({
             padding={{ top: 10, left: 60, right: 60, bottom: 30 }}
             domain={{ x: [-scale, 0], y: [0, 1] }}
             containerComponent={
-                <VictoryBrushContainer
+                <VictoryBrushVoronoiContainer
                     responsive={true}
                     brushDimension="x"
                     brushStyle={{
@@ -57,9 +57,37 @@ export default function GraphChart({
                     onBrushDomainChangeEnd={(domain: any) => {
                         selectionCallback(domain.x);
                     }}
+
+                    voronoiDimension="x"
+                    labelComponent={<VictoryTooltip flyoutStyle={{ fill: "#888", opacity: 0.05 }} flyoutPadding={{ top: 1, bottom: 1, left: 5, right: 5 }} />}
+                    labels={({ datum }: any) => {
+                        // to prevent from showing line data labels, which causes duplicated texts
+                        if (datum.childName.includes("scatter")) {
+                            return `${getAxisLabel(datum.unit)}: ${formatValue(datum.y, datum.unit)}`
+                        }
+                    }}
                 />
             }
         >
+            {data.map((wrapper, i) => (
+                <VictoryScatter
+                    key={i}
+                    name={`${wrapper.statisticName}-scatter`}
+                    data={wrapper.data}
+                    y={datum => datum.y / maxima[i]}
+                    size={({ datum, active }) => (datum.active || active ? 3 : 0)}
+                    style={{
+                        data: {
+                            fill: getColor(wrapper.statisticName),
+                        },
+                        labels: {
+                            fill: getColor(wrapper.statisticName),
+                            fontFamily: "JetBrains Mono",
+                            fontSize: 10
+                        }
+                    }}
+                />
+            ))}
             {data.map((wrapper, i) => (
                 <VictoryLine
                     key={i}
@@ -70,34 +98,6 @@ export default function GraphChart({
                         data: {
                             stroke: getColor(wrapper.statisticName),
                         },
-                    }}
-                />
-            ))}
-            {data.map((wrapper, i) => (
-                <VictoryScatter
-                    key={i}
-                    name={`${wrapper.statisticName}-scatter`}
-                    data={wrapper.data}
-                    y={datum => datum.y / maxima[i]}
-                    size={({ datum }) => (datum.active ? 3 : 0)}
-                    style={{
-                        data: {
-                            fill: getColor(wrapper.statisticName),
-                        },
-                    }}
-                />
-            ))}
-            {data.map((wrapper, i) => (
-                <VictoryAxis
-                    key={i}
-                    orientation={i === 0 ? 'left' : 'right'}
-                    invertAxis={i !== 0}
-                    dependentAxis
-                    tickFormat={(value: any) =>
-                        formatAxisTicks(value, i, wrapper)
-                    }
-                    style={{
-                        axisLabel: { fill: getColor(wrapper.statisticName) },
                     }}
                 />
             ))}
