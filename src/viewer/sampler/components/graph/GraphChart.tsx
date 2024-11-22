@@ -32,8 +32,10 @@ export default function GraphChart({
     ) {
         if (['cpuProcess', 'cpuSystem'].includes(unit)) {
             return (value * 100).toFixed(2) + '%';
+        } else if (['msptMedian', 'tps'].includes(unit)) {
+            return value.toFixed(2);
         }
-        return value.toFixed(2);
+        return value.toFixed();
     }
 
     const VictoryBrushVoronoiContainer: any = createContainer("brush", "voronoi");
@@ -61,7 +63,7 @@ export default function GraphChart({
                     voronoiDimension="x"
                     labelComponent={<VictoryTooltip flyoutStyle={{ fill: "#888", opacity: 0.05 }} flyoutPadding={{ top: 1, bottom: 1, left: 5, right: 5 }} />}
                     labels={({ datum }: any) => {
-                        // to prevent from showing line data labels, which causes duplicated texts
+                        // to prevent from showing line data labels, which causes text duplication
                         if (datum.childName.includes("scatter")) {
                             return `${getAxisLabel(datum.unit)}: ${formatValue(datum.y, datum.unit)}`
                         }
