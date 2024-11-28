@@ -61,7 +61,7 @@ export default function GraphChart({
                     }}
 
                     voronoiDimension="x"
-                    labelComponent={<VictoryTooltip flyoutStyle={{ fill: "#888", opacity: 0.05 }} flyoutPadding={{ top: 1, bottom: 1, left: 5, right: 5 }} />}
+                    labelComponent={<VictoryTooltip flyoutStyle={{ fill: "black", opacity: 0.6 }} flyoutPadding={{ top: 1, bottom: 1, left: 5, right: 5 }} />}
                     labels={({ datum }: any) => {
                         // to prevent from showing line data labels, which causes text duplication
                         if (datum.childName.includes("scatter")) {
