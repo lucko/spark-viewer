@@ -61,7 +61,12 @@ export default function GraphChart({
                     }}
 
                     voronoiDimension="x"
-                    labelComponent={<VictoryTooltip flyoutStyle={{ fill: "black", opacity: 0.6 }} flyoutPadding={{ top: 1, bottom: 1, left: 5, right: 5 }} />}
+                    labelComponent={<VictoryTooltip
+                        flyoutStyle={{ fill: "black", opacity: 0.6 }}
+                        flyoutWidth={140}
+                        flyoutHeight={80}
+                        centerOffset={{ x: 70, y: 40 }}
+                    />}
                     labels={({ datum }: any) => {
                         // to prevent from showing both line & scatter labels
                         if (datum.childName.includes("line")) {
@@ -98,8 +103,11 @@ export default function GraphChart({
                     size={({ datum, active }) => (datum.active || active ? 3 : 0)}
                     style={{
                         data: {
-                            fill: (datum) => datum.active ? "white" : getColor(wrapper.statisticName),
-                        },
+                            fill: getColor(wrapper.statisticName),
+                            stroke: getColor(wrapper.statisticName),
+                            strokeWidth: (data) => data.active ? 3 : 0,
+                            strokeOpacity: 0.5,
+                        }
                     }}
                 />
             ))}
