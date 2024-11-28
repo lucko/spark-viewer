@@ -63,8 +63,8 @@ export default function GraphChart({
                     voronoiDimension="x"
                     labelComponent={<VictoryTooltip flyoutStyle={{ fill: "black", opacity: 0.6 }} flyoutPadding={{ top: 1, bottom: 1, left: 5, right: 5 }} />}
                     labels={({ datum }: any) => {
-                        // to prevent from showing line data labels, which causes text duplication
-                        if (datum.childName.includes("scatter")) {
+                        // to prevent from showing both line & scatter labels
+                        if (datum.childName.includes("line")) {
                             return `${getAxisLabel(datum.unit)}: ${formatValue(datum.y, datum.unit)}`
                         }
                     }}
@@ -72,15 +72,14 @@ export default function GraphChart({
             }
         >
             {data.map((wrapper, i) => (
-                <VictoryScatter
+                <VictoryLine
                     key={i}
-                    name={`${wrapper.statisticName}-scatter`}
+                    name={`${wrapper.statisticName}-line`}
                     data={wrapper.data}
                     y={datum => datum.y / maxima[i]}
-                    size={({ datum, active }) => (datum.active || active ? 3 : 0)}
                     style={{
                         data: {
-                            fill: getColor(wrapper.statisticName),
+                            stroke: getColor(wrapper.statisticName),
                         },
                         labels: {
                             fill: getColor(wrapper.statisticName),
@@ -91,14 +90,15 @@ export default function GraphChart({
                 />
             ))}
             {data.map((wrapper, i) => (
-                <VictoryLine
+                <VictoryScatter
                     key={i}
-                    name={`${wrapper.statisticName}-line`}
+                    name={`${wrapper.statisticName}-scatter`}
                     data={wrapper.data}
                     y={datum => datum.y / maxima[i]}
+                    size={({ datum, active }) => (datum.active || active ? 3 : 0)}
                     style={{
                         data: {
-                            stroke: getColor(wrapper.statisticName),
+                            fill: (datum) => datum.active ? "white" : getColor(wrapper.statisticName),
                         },
                     }}
                 />
