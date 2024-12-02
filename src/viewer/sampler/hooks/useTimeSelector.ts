@@ -8,7 +8,6 @@ export interface TimeSelector {
     isTimeSelected: (time: number) => boolean;
     setSelectedTimes: (filterFunc: TimeFilterFunction) => void;
     allTimesSelected: boolean;
-    filterTimes: (times: number[]) => number[];
     getTime: (node: VirtualNode) => number;
     getTicksInRange: () => number;
     getMillisInRange: () => number;
@@ -24,83 +23,62 @@ export default function useTimeSelector(
         return timeWindows.length > 1;
     }, [timeWindows]);
 
-    // holds an array of booleans indicating if the time at the given index is active
-    const [selected, setSelected] = useState(() => {
-        const bools = [];
-        for (let i = 0; i < timeWindows.length; i++) {
-            bools.push(true);
-        }
-        return bools;
-    });
-
+    // holds a set of selected/active times - superseded if allTimesSelected is true
+    const [selected, setSelected] = useState<Set<number>>(new Set());
     const [allTimesSelected, setAllTimesSelected] = useState(true);
 
     // checks if the given time is selected
     const isTimeSelected: TimeSelector['isTimeSelected'] = useCallback(
         time => {
-            return selected[timeWindows.indexOf(time)];
+            return allTimesSelected || selected.has(time);
         },
-        [selected, timeWindows]
+        [selected, allTimesSelected]
     );
 
     // sets the selected times
     const setSelectedTimes: TimeSelector['setSelectedTimes'] = useCallback(
         filterFunc => {
-            const times = new Set(timeWindows.filter(filterFunc));
+            const allTimes = timeWindows;
+            const times = new Set(allTimes.filter(filterFunc));
 
-            const bools: boolean[] = [];
-            let allSelected = true;
-            for (const time of timeWindows) {
-                const state = times.has(time);
-                bools.push(state);
-                if (!state) {
-                    allSelected = false;
-                }
-            }
-            setSelected(bools);
-            setAllTimesSelected(allSelected);
+            setSelected(times);
+            setAllTimesSelected(allTimes.length === times.size);
         },
         [timeWindows]
-    );
-
-    const filterTimes: TimeSelector['filterTimes'] = useCallback(
-        times => {
-            return times.filter((item, i) => selected[i]);
-        },
-        [selected]
     );
 
     const getTime: TimeSelector['getTime'] = useCallback(
         node => {
             const times = node.getTimes();
             if (times && !allTimesSelected) {
-                return filterTimes(times).reduce((a, b) => a + b, 0);
+                const filteredTimes = times.filter((_, i) => isTimeSelected(timeWindows[i]));
+                return filteredTimes.reduce((a, b) => a + b, 0);
             }
             return node.getTime();
         },
-        [allTimesSelected, filterTimes]
+        [allTimesSelected, isTimeSelected, timeWindows]
     );
 
     const getTicksInRange: TimeSelector['getTicksInRange'] = useCallback(() => {
         let ticks = 0;
-        for (let i = 0; i < timeWindows.length; i++) {
-            if (selected[i]) {
-                ticks += timeWindowStatistics[timeWindows[i]].ticks;
+        for (const windowId of timeWindows) {
+            if (isTimeSelected(windowId)) {
+                ticks += timeWindowStatistics[windowId].ticks;
             }
         }
         return ticks;
-    }, [selected, timeWindowStatistics, timeWindows]);
+    }, [isTimeSelected, timeWindowStatistics, timeWindows]);
 
     const getMillisInRange: TimeSelector['getMillisInRange'] =
         useCallback(() => {
             let millis = 0;
-            for (let i = 0; i < timeWindows.length; i++) {
-                if (selected[i]) {
-                    millis += timeWindowStatistics[timeWindows[i]].duration;
+            for (const windowId of timeWindows) {
+                if (isTimeSelected(windowId)) {
+                    millis += timeWindowStatistics[windowId].duration;
                 }
             }
             return millis;
-        }, [selected, timeWindowStatistics, timeWindows]);
+        }, [isTimeSelected, timeWindowStatistics, timeWindows]);
 
     return {
         supported,
@@ -108,7 +86,6 @@ export default function useTimeSelector(
         isTimeSelected,
         setSelectedTimes,
         allTimesSelected,
-        filterTimes,
         getTime,
         getTicksInRange,
         getMillisInRange,
