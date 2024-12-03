@@ -69,7 +69,7 @@ export default function NodeInfo({
                 ? timeSelector.getTicksInRange()
                 : metadata.dataAggregator?.numberOfIncludedTicks ||
                   metadata.numberOfTicks;
-            timePerInterval = time / numberOfTicks;
+            timePerInterval = time / Math.max(numberOfTicks, 1);
         }
     }
 
