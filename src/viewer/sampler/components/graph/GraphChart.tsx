@@ -63,18 +63,18 @@ export default function GraphChart({
                         selectionCallback(domain.x);
                     }}
 
+                    mouseFollowTooltips
                     voronoiDimension="x"
                     labelComponent={<VictoryTooltip
                         flyoutStyle={{ fill: "black", opacity: 0.6 }}
                         flyoutWidth={140}
                         flyoutHeight={80}
                         centerOffset={{ x: 70, y: 40 }}
+                        cornerRadius={0}
                     />}
+                    voronoiBlacklist={[/.*\-line$/]} // use the built-in blacklist feature to disable line labels
                     labels={({ datum }: any) => {
-                        // to prevent from showing both line & scatter labels
-                        if (datum.childName.includes("line")) {
-                            return `${getAxisLabel(datum.unit)}: ${formatValue(datum.y, datum.unit)}`
-                        }
+                        return `${getAxisLabel(datum.unit)}: ${formatValue(datum.y, datum.unit)}`
                     }}
                 />
             }
@@ -88,11 +88,6 @@ export default function GraphChart({
                     style={{
                         data: {
                             stroke: getColor(wrapper.statisticName),
-                        },
-                        labels: {
-                            fill: getColor(wrapper.statisticName),
-                            fontFamily: "JetBrains Mono",
-                            fontSize: 10
                         }
                     }}
                 />
@@ -110,6 +105,11 @@ export default function GraphChart({
                             stroke: getColor(wrapper.statisticName),
                             strokeWidth: (data) => data.active ? 3 : 0,
                             strokeOpacity: 0.5,
+                        },
+                        labels: {
+                            fill: getColor(wrapper.statisticName),
+                            fontFamily: "JetBrains Mono",
+                            fontSize: 10
                         }
                     }}
                 />
