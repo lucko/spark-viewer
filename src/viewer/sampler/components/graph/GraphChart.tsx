@@ -2,11 +2,13 @@ import { useMemo } from 'react';
 import {
     createContainer,
     VictoryAxis,
+    VictoryBrushContainerProps,
     VictoryChart,
     VictoryLine,
     VictoryScatter,
     VictoryTheme,
     VictoryTooltip,
+    VictoryVoronoiContainerProps,
 } from 'victory';
 import { getAxisLabel, getColor } from './format';
 import { ChartDataWrapper } from './util';
@@ -38,7 +40,8 @@ export default function GraphChart({
         return value.toFixed();
     }
 
-    const VictoryBrushVoronoiContainer: any = createContainer("brush", "voronoi");
+    const VictoryBrushVoronoiContainer =
+        createContainer("brush", "voronoi") as React.ComponentType<VictoryBrushContainerProps & VictoryVoronoiContainerProps>;
 
     return (
         <VictoryChart
