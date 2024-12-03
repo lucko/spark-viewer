@@ -40,9 +40,6 @@ export default function GraphChart({
         return value.toFixed();
     }
 
-    const VictoryBrushVoronoiContainer =
-        createContainer("brush", "voronoi") as React.ComponentType<VictoryBrushContainerProps & VictoryVoronoiContainerProps>;
-
     return (
         <VictoryChart
             theme={theme}
@@ -123,6 +120,9 @@ export default function GraphChart({
         </VictoryChart>
     );
 }
+
+const VictoryBrushVoronoiContainer =
+    createContainer("brush", "voronoi") as React.ComponentType<VictoryBrushContainerProps & VictoryVoronoiContainerProps>;
 
 const getTheme = () => {
     const theme = VictoryTheme.material;
