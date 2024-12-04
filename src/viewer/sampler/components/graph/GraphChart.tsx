@@ -28,11 +28,8 @@ export default function GraphChart({
 }: GraphChartProps) {
     const theme = useMemo(() => getTheme(), []);
     const flyoutHeight = data.length / 7 * 80
-    const flyoutWidth = data.some((data) => { return data.statisticName.includes("cpu") }) ? 140 : 100
-
-    function getFlyoutOffset() {
-        return { x: flyoutWidth / 2, y: flyoutHeight / 2 }
-    }
+    const flyoutWidth = data.some((data) => { return data.statisticName.includes("cpu") }) ? 150 : 100
+    const flyoutOffset = { x: flyoutWidth / 2, y: flyoutHeight / 2 }
 
     function formatValue(
         value: number,
@@ -72,7 +69,8 @@ export default function GraphChart({
                         flyoutStyle={{ fill: "black", opacity: 0.6 }}
                         flyoutWidth={flyoutWidth}
                         flyoutHeight={flyoutHeight}
-                        centerOffset={getFlyoutOffset()}
+                        flyoutPadding={0}
+                        centerOffset={flyoutOffset}
                         cornerRadius={0}
                     />}
                     voronoiBlacklist={[/.*\-line$/]} // use the built-in blacklist feature to disable line labels
