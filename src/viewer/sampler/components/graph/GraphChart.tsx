@@ -4,6 +4,7 @@ import {
     VictoryAxis,
     VictoryBrushContainerProps,
     VictoryChart,
+    VictoryLabel,
     VictoryLine,
     VictoryScatter,
     VictoryTheme,
@@ -30,6 +31,18 @@ export default function GraphChart({
     const flyoutHeight = data.length / 7 * 80
     const flyoutWidth = data.some((data) => { return data.statisticName.includes("cpu") }) ? 150 : 100
     const flyoutOffset = { x: flyoutWidth / 2, y: flyoutHeight / 2 }
+
+    function formatAxisTicks(
+        value: number,
+        i: number,
+        wrapper: ChartDataWrapper
+    ) {
+        const scaled = value * maxima.slice(-2)[i]; // we only need the maxima of the last 2 toggled stats
+        if (['cpuProcess', 'cpuSystem'].includes(wrapper.statisticName)) {
+            return scaled * 100 + '%';
+        }
+        return scaled.toFixed();
+    }
 
     function formatValue(
         value: number,
@@ -112,6 +125,24 @@ export default function GraphChart({
                             fontFamily: "JetBrains Mono",
                             fontSize: 10
                         }
+                    }}
+                />
+            ))}
+            {data.slice(-2).map((wrapper, i) => (
+                <VictoryAxis
+                    key={i}
+                    orientation={i === 0 ? 'left' : 'right'}
+                    invertAxis={i !== 0}
+                    dependentAxis
+                    tickFormat={(value: any) =>
+                        formatAxisTicks(value, i, wrapper)
+                    }
+                    label={getAxisLabel(wrapper.statisticName)}
+                    axisLabelComponent={
+                        <VictoryLabel dy={i === 0 ? -35 : 35} />
+                    }
+                    style={{
+                        axisLabel: { fill: getColor(wrapper.statisticName) },
                     }}
                 />
             ))}
