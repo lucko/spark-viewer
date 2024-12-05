@@ -84,7 +84,7 @@ export default function GraphChart({
                         flyoutHeight={flyoutHeight}
                         flyoutPadding={0}
                         centerOffset={flyoutOffset}
-                        cornerRadius={0}
+                        cornerRadius={3}
                     />}
                     voronoiBlacklist={[/.*\-line$/]} // use the built-in blacklist feature to disable line labels
                     labels={({ datum }: any) => {
