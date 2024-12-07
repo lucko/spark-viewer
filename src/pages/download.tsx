@@ -244,7 +244,7 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Forge"
-                comment="MC 1.21.3"
+                comment="MC 1.21.4"
                 artifact="forge"
                 logo={forgeLogo}
             />
