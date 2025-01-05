@@ -251,7 +251,7 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Sponge"
-                comment="API 8+"
+                comment="API 12"
                 artifact="sponge"
                 logo={spongeLogo}
             />
