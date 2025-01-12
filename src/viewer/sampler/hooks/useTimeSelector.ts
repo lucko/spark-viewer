@@ -51,7 +51,9 @@ export default function useTimeSelector(
         node => {
             const times = node.getTimes();
             if (times && !allTimesSelected) {
-                const filteredTimes = times.filter((_, i) => isTimeSelected(timeWindows[i]));
+                const filteredTimes = times.filter((_, i) =>
+                    isTimeSelected(timeWindows[i])
+                );
                 return filteredTimes.reduce((a, b) => a + b, 0);
             }
             return node.getTime();

@@ -75,7 +75,7 @@ export type OnlineModeStatus =
 export function detectOnlineMode(
     onlineMode: PlatformStatistics_OnlineMode | undefined,
     parsedConfigurations: Record<string, any> | undefined
-): OnlineModeStatus {
+): OnlineModeStatus | undefined {
     if (onlineMode === PlatformStatistics_OnlineMode.ONLINE) {
         return 'online mode';
     }
@@ -126,5 +126,5 @@ export function detectOnlineMode(
         }
     }
 
-    return 'offline mode';
+    return undefined;
 }

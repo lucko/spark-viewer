@@ -1,4 +1,9 @@
-export type MappingsInfoType = 'bukkit-mojang' | 'bukkit' | 'mcp' | 'yarn';
+export type MappingsInfoType =
+    | 'bukkit-mojang'
+    | 'bukkit'
+    | 'mcp'
+    | 'yarn'
+    | 'vanilla';
 
 export interface MappingsMetadata {
     auto: Record<string, string>;

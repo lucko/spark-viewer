@@ -32,8 +32,10 @@ export default function PlatformStatistics({
     return (
         <>
             <p>
-                The platform is a <span>{platform.brand || platform.name}</span>{' '}
-                {platformType} running version &quot;
+                The {platformType === 'application' ? 'system' : 'platform'} is
+                a <span>{platform.brand || platform.name}</span> {platformType}{' '}
+                running {platformType === 'application' ? 'spark' : ''} version
+                &quot;
                 <span>{platform.version}</span>&quot;.
             </p>
             {platform.minecraftVersion && (
@@ -44,12 +46,12 @@ export default function PlatformStatistics({
             )}
             {onlineMode && (
                 <p>
-                    The server is running in <span>{onlineMode}</span>.
+                    The {platformType} is running in <span>{onlineMode}</span>.
                 </p>
             )}
             {platformStatistics?.playerCount > 0 && (
                 <p>
-                    The server had a player count of{' '}
+                    The {platformType} had a player count of{' '}
                     <span>{platformStatistics.playerCount}</span> when the
                     profile completed.
                 </p>

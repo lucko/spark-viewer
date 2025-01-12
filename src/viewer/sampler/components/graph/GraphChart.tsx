@@ -28,9 +28,13 @@ export default function GraphChart({
     selectionCallback,
 }: GraphChartProps) {
     const theme = useMemo(() => getTheme(), []);
-    const flyoutHeight = data.length / 7 * 80
-    const flyoutWidth = data.some((data) => { return data.statisticName.includes("cpu") }) ? 150 : 100
-    const flyoutOffset = { x: flyoutWidth / 2, y: flyoutHeight / 2 }
+    const flyoutHeight = (data.length / 7) * 80;
+    const flyoutWidth = data.some(data => {
+        return data.statisticName.includes('cpu');
+    })
+        ? 150
+        : 100;
+    const flyoutOffset = { x: flyoutWidth / 2, y: flyoutHeight / 2 };
 
     function formatAxisTicks(
         value: number,
@@ -44,10 +48,7 @@ export default function GraphChart({
         return scaled.toFixed();
     }
 
-    function formatValue(
-        value: number,
-        unit: string
-    ) {
+    function formatValue(value: number, unit: string) {
         if (['cpuProcess', 'cpuSystem'].includes(unit)) {
             return (value * 100).toFixed(2) + '%';
         } else if (['msptMedian', 'tps'].includes(unit)) {
@@ -75,20 +76,24 @@ export default function GraphChart({
                     onBrushDomainChangeEnd={(domain: any) => {
                         selectionCallback(domain.x);
                     }}
-
                     mouseFollowTooltips
                     voronoiDimension="x"
-                    labelComponent={<VictoryTooltip
-                        flyoutStyle={{ fill: "black", opacity: 0.6 }}
-                        flyoutWidth={flyoutWidth}
-                        flyoutHeight={flyoutHeight}
-                        flyoutPadding={0}
-                        centerOffset={flyoutOffset}
-                        cornerRadius={3}
-                    />}
+                    labelComponent={
+                        <VictoryTooltip
+                            flyoutStyle={{ fill: 'black', opacity: 0.6 }}
+                            flyoutWidth={flyoutWidth}
+                            flyoutHeight={flyoutHeight}
+                            flyoutPadding={0}
+                            centerOffset={flyoutOffset}
+                            cornerRadius={3}
+                        />
+                    }
                     voronoiBlacklist={[/.*\-line$/]} // use the built-in blacklist feature to disable line labels
                     labels={({ datum }: any) => {
-                        return `${getAxisLabel(datum.unit)}: ${formatValue(datum.y, datum.unit)}`
+                        return `${getAxisLabel(datum.unit)}: ${formatValue(
+                            datum.y,
+                            datum.unit
+                        )}`;
                     }}
                 />
             }
@@ -102,7 +107,7 @@ export default function GraphChart({
                     style={{
                         data: {
                             stroke: getColor(wrapper.statisticName),
-                        }
+                        },
                     }}
                 />
             ))}
@@ -112,19 +117,21 @@ export default function GraphChart({
                     name={`${wrapper.statisticName}-scatter`}
                     data={wrapper.data}
                     y={datum => datum.y / maxima[i]}
-                    size={({ datum, active }) => (datum.active || active ? 3 : 0)}
+                    size={({ datum, active }) =>
+                        datum.active || active ? 3 : 0
+                    }
                     style={{
                         data: {
                             fill: getColor(wrapper.statisticName),
                             stroke: getColor(wrapper.statisticName),
-                            strokeWidth: (data) => data.active ? 3 : 0,
+                            strokeWidth: data => (data.active ? 3 : 0),
                             strokeOpacity: 0.5,
                         },
                         labels: {
                             fill: getColor(wrapper.statisticName),
-                            fontFamily: "JetBrains Mono",
-                            fontSize: 10
-                        }
+                            fontFamily: 'JetBrains Mono',
+                            fontSize: 10,
+                        },
                     }}
                 />
             ))}
@@ -156,8 +163,12 @@ export default function GraphChart({
     );
 }
 
-const VictoryBrushVoronoiContainer =
-    createContainer("brush", "voronoi") as React.ComponentType<VictoryBrushContainerProps & VictoryVoronoiContainerProps>;
+const VictoryBrushVoronoiContainer = createContainer(
+    'brush',
+    'voronoi'
+) as React.ComponentType<
+    VictoryBrushContainerProps & VictoryVoronoiContainerProps
+>;
 
 const getTheme = () => {
     const theme = VictoryTheme.material;

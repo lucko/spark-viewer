@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Avatar from '../common/components/Avatar';
 import { formatDate } from '../common/util/format';
-import { HealthMetadata } from '../proto/spark_pb';
+import { HealthMetadata, PlatformMetadata_Type } from '../proto/spark_pb';
 
 export interface HealthTitleProps {
     metadata: HealthMetadata;
@@ -20,7 +20,12 @@ export default function HealthTitle({ metadata }: HealthTitleProps) {
                 </title>
             </Head>
             <span>
-                Health Report created by <Avatar user={user!} />
+                Health Report created by{' '}
+                {user &&
+                    metadata.platform?.type !==
+                        PlatformMetadata_Type.APPLICATION && (
+                        <Avatar user={user} />
+                    )}
                 {user?.name} @ {timeStr} {dateStr}
             </span>
         </div>
