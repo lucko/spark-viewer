@@ -1,5 +1,8 @@
+import { faPlug } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
+import { ReactNode } from 'react';
 import bukkitLogo from '../assets/logos/bukkit.png';
 import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
@@ -9,7 +12,6 @@ import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 import TextBox from '../components/TextBox';
 import useFetchResult, { Status } from '../hooks/useFetchResult';
-
 import changelogStyles from '../style/changelog.module.scss';
 import styles from '../style/downloads.module.scss';
 import { ChangelogData, ChangelogEntry, ChangelogList } from './changelog';
@@ -255,6 +257,13 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
                 artifact="sponge"
                 logo={spongeLogo}
             />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Standalone"
+                comment="Java Agent"
+                artifact="standalone"
+                icon={<FontAwesomeIcon fixedWidth={true} icon={faPlug} />}
+            />
         </div>
     );
 };
@@ -264,7 +273,8 @@ interface DownloadInfoProps {
     name: string;
     comment?: string;
     artifact: string;
-    logo: StaticImageData;
+    logo?: StaticImageData;
+    icon?: ReactNode;
 }
 
 const DownloadInfo = ({
@@ -273,6 +283,7 @@ const DownloadInfo = ({
     comment,
     artifact,
     logo,
+    icon,
 }: DownloadInfoProps) => {
     const { url } = Object.keys(artifacts).length
         ? artifacts[artifact]
@@ -280,13 +291,16 @@ const DownloadInfo = ({
 
     return (
         <a className="link" href={url}>
-            <Image
-                src={logo}
-                style={{ objectFit: 'contain' }}
-                width={50}
-                height={50}
-                alt={name + ' logo'}
-            />
+            {logo && (
+                <Image
+                    src={logo}
+                    style={{ objectFit: 'contain' }}
+                    width={50}
+                    height={50}
+                    alt={name + ' logo'}
+                />
+            )}
+            {icon}
             <div className="link-title">
                 <div className="link-name">
                     <h3>{name}</h3>

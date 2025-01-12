@@ -31,6 +31,10 @@
                 filter: saturate(20%);
             }
 
+            svg {
+                color: #888;
+            }
+
             &:hover {
                 img {
                     filter: none;
