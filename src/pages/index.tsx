@@ -17,7 +17,7 @@ import SparkLayout from '../components/SparkLayout';
 import { NextPageWithLayout, SelectedFileContext } from './_app';
 
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { env } from '../env.mjs';
+import { env } from '../env';
 import styles from '../style/homepage.module.scss';
 
 const Index: NextPageWithLayout = () => {
@@ -133,13 +133,13 @@ const ViewerSection = ({
                 <li>
                     Generate a{' '}
                     <a
-                        href={`${env.NEXT_PUBLIC_BASE_URL}/docs/Command-Usage#spark-profiler`}
+                        href={`${env.NEXT_PUBLIC_SPARK_BASE_URL}/docs/Command-Usage#spark-profiler`}
                     >
                         profile
                     </a>{' '}
                     or{' '}
                     <a
-                        href={`${env.NEXT_PUBLIC_BASE_URL}/docs/Command-Usage#spark-heapsummary`}
+                        href={`${env.NEXT_PUBLIC_SPARK_BASE_URL}/docs/Command-Usage#spark-heapsummary`}
                     >
                         heap summary
                     </a>{' '}

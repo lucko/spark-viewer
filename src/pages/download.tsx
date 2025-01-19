@@ -12,7 +12,7 @@ import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 import TextBox from '../components/TextBox';
 import useFetchResult, { Status } from '../hooks/useFetchResult';
-import { env } from '../env.mjs';
+import { env } from '../env';
 import changelogStyles from '../style/changelog.module.scss';
 import styles from '../style/downloads.module.scss';
 import { ChangelogData, ChangelogEntry, ChangelogList } from './changelog';
@@ -84,7 +84,7 @@ export default function Download() {
     );
 
     const [changelog] = useFetchResult<ChangelogData>(
-        `${env.NEXT_PUBLIC_API_URL}/changelog`
+        `${env.NEXT_PUBLIC_SPARK_API_URL}/changelog`
     );
 
     let content;
@@ -152,7 +152,9 @@ const DownloadPage = ({
             <br />
             <p>
                 Once you&apos;ve got spark installed, head over to the{' '}
-                <a href={`${env.NEXT_PUBLIC_BASE_URL}/docs`}>documentation</a>{' '}
+                <a href={`${env.NEXT_PUBLIC_SPARK_BASE_URL}/docs`}>
+                    documentation
+                </a>{' '}
                 to learn how to use it!
             </p>
             <p className="caveat">

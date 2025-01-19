@@ -1,5 +1,5 @@
 import { NextRouter } from 'next/router';
-import { env } from '../../../env.mjs';
+import { env } from '../../../env';
 import {
     getContentType,
     getContentTypes,
@@ -20,7 +20,7 @@ export async function fetchFromBytebin(
     router: NextRouter | null,
     thumbnail: boolean
 ) {
-    let bytebinUrl = env.NEXT_PUBLIC_BYTEBIN_URL;
+    let bytebinUrl = env.NEXT_PUBLIC_SPARK_BYTEBIN_URL;
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }

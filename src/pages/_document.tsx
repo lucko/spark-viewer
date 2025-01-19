@@ -1,7 +1,7 @@
 import { Head, Html, Main, NextScript } from 'next/document';
-import { env } from '../env.mjs';
+import { env } from '../env';
 
-const { host } = new URL(env.NEXT_PUBLIC_BASE_URL);
+const { host } = new URL(env.NEXT_PUBLIC_SPARK_BASE_URL);
 
 export default function Document() {
     return (

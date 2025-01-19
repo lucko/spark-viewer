@@ -30,7 +30,7 @@ The heap dump summary viewer renders a histogram of the classes occupying the mo
 To configure the URLs used by the application, you have to pass them as environment variables when building the application.
 In the special case of using Docker, you have to pass them as build arguments.
 
-For more information, see [`env.mjs`](src/env.mjs) and the [`Dockerfile`](Dockerfile).
+For more information, see [`env.ts`](src/env.ts) and the [`Dockerfile`](Dockerfile).
 
 ### Contributions
 

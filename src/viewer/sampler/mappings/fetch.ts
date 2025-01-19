@@ -1,4 +1,4 @@
-import { env } from '../../../env.mjs';
+import { env } from '../../../env';
 
 export type MappingsInfoType =
     | 'bukkit-mojang'
@@ -24,7 +24,7 @@ export interface MappingsMetadata {
     };
 }
 
-const MAPPING_DATA_URL = `${env.NEXT_PUBLIC_MAPPINGS_URL}/dist/`;
+const MAPPING_DATA_URL = `${env.NEXT_PUBLIC_SPARK_MAPPINGS_URL}/dist/`;
 
 /**
  * Gets metadata about the mappings that are available.
