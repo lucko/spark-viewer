@@ -1,8 +1,5 @@
-const { withSentryConfig } = require('@sentry/nextjs');
-const fs = require('fs');
-
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+module.exports = {
     output: 'standalone',
     webpack: config => {
         config.module.rules.push({
@@ -27,37 +24,3 @@ const nextConfig = {
         },
     ],
 };
-
-if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
-    console.log('Configuring Sentry...');
-
-    // dynamically create sentry config
-    for (const path of [
-        'sentry.client.config.ts',
-        'sentry.edge.config.ts',
-        'sentry.server.config.ts',
-    ]) {
-        fs.writeFileSync(
-            path,
-            `import * as Sentry from "@sentry/nextjs"; Sentry.init({ dsn: '${process.env.NEXT_PUBLIC_SENTRY_DSN}' }); `
-        );
-    }
-
-    module.exports = withSentryConfig(
-        nextConfig,
-        {
-            silent: false,
-            validate: true,
-            urlPrefix: 'app:///',
-        },
-        {
-            // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-            tunnelRoute: '/error',
-            hideSourceMaps: false,
-            autoInstrumentServerFunctions: false,
-            autoInstrumentMiddleware: false,
-        }
-    );
-} else {
-    module.exports = nextConfig;
-}
