@@ -83,7 +83,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
 
     function handleContextMenu(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        show(event, { props: { node } });
+        show({ event, props: { node } });
     }
 
     const time = bottomUp ? forcedTime || nodeTime : nodeTime;
@@ -113,8 +113,8 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         significance = forcedTime
             ? 0.5
             : nodeTime < parentTime
-            ? nodeTime / parentTime
-            : parentTime / nodeTime;
+              ? nodeTime / parentTime
+              : parentTime / nodeTime;
         importance = parentTime !== nodeTime ? significance : 0;
     }
 

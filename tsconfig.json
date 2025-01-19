@@ -17,7 +17,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",

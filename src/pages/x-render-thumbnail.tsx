@@ -11,10 +11,7 @@ import {
 import { NextPageWithLayout } from './_app';
 
 const Thumbnail = dynamic(
-    () => import('../viewer/common/components/Thumbnail'),
-    {
-        suspense: true,
-    }
+    () => import('../viewer/common/components/Thumbnail')
 );
 
 const RenderThumbnail: NextPageWithLayout = () => {

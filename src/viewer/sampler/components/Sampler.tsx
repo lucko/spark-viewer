@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import { Suspense, useEffect, useState } from 'react';
-import { Item, ItemParams, Menu, theme } from 'react-contexify';
+import { Item, ItemParams, Menu } from 'react-contexify';
 import styles from '../../../style/sampler.module.scss';
 import VersionWarning from '../../common/components/VersionWarning';
 import WidgetsAndMetadata from '../../common/components/WidgetsAndMetadata';
@@ -224,7 +224,7 @@ export default function Sampler({
                 <NoData isConnectedToSocket={!!socket.socket.socket} />
             )}
 
-            <Menu id={'sampler-cm'} theme={theme.dark}>
+            <Menu id={'sampler-cm'} theme="dark">
                 <Item onClick={handleFlame}>View as Flame Graph</Item>
                 <Item onClick={handleHighlight}>Toggle bookmark</Item>
                 <Item onClick={handleHighlightClear}>Clear all bookmarks</Item>

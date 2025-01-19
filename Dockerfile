@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:18-alpine AS deps
+FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
@@ -9,7 +9,7 @@ RUN yarn --frozen-lockfile
 
 
 # Rebuild the source code only when needed
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 RUN apk add --no-cache protoc
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -17,7 +17,7 @@ COPY . .
 RUN yarn build
 
 # Production image, copy all the files and run next
-FROM node:18-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs

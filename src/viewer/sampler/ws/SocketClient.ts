@@ -107,7 +107,11 @@ export class SocketClient {
             publicKey,
         });
 
-        this.socket.send(base64Encode(buf));
+        const arrayBuffer = buf.buffer.slice(
+            buf.byteOffset,
+            buf.byteLength + buf.byteOffset
+        );
+        this.socket.send(base64Encode(arrayBuffer as ArrayBuffer));
     }
 
     public readyState(): number {

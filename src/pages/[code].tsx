@@ -5,9 +5,7 @@ import { Suspense } from 'react';
 import SparkLayout from '../components/SparkLayout';
 import TextBox from '../components/TextBox';
 
-const SparkViewer = dynamic(() => import('../viewer/SparkViewer'), {
-    suspense: true,
-});
+const SparkViewer = dynamic(() => import('../viewer/SparkViewer'));
 
 interface ViewerPageProps {
     code: string;
