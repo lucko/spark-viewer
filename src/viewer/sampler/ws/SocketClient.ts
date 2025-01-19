@@ -3,6 +3,7 @@ import {
     encode as base64Encode,
 } from 'base64-arraybuffer';
 import { expose, transfer } from 'comlink';
+import { env } from '../../../env';
 import { RawPacket } from '../../proto/spark_pb';
 import { EventBus } from './EventBus';
 import { KeepaliveTask, PingCallback } from './KeepaliveTask';
@@ -22,7 +23,7 @@ export interface SocketKeys {
 
 export class SocketClient {
     static VERSION = 1;
-    static HOST = 'spark-usersockets.lucko.me';
+    static HOST = env.NEXT_PUBLIC_SPARK_BYTESOCKS_URL;
 
     private readonly remotePublicKey: CryptoKey;
     private readonly localPublicKey: Promise<Uint8Array>;
@@ -46,7 +47,7 @@ export class SocketClient {
         this.listeners = listeners;
 
         console.log('[WS] Creating websocket connection');
-        this.socket = new WebSocket(`wss://${SocketClient.HOST}/${channelId}`);
+        this.socket = new WebSocket(`${SocketClient.HOST}/${channelId}`);
         this.socket.onclose = this.onclose.bind(this);
         this.socket.onerror = this.onerror.bind(this);
         this.socket.onmessage = this.onmessage.bind(this);

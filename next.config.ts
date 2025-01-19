@@ -1,5 +1,7 @@
-/** @type {import('next').NextConfig} */
-module.exports = {
+import type { NextConfig } from 'next';
+import { env } from './src/env';
+
+const nextConfig: NextConfig = {
     output: 'standalone',
     webpack: config => {
         config.module.rules.push({
@@ -11,16 +13,18 @@ module.exports = {
     rewrites: async () => [
         {
             source: '/docs/:path*',
-            destination: 'https://spark-docs.vercel.app/:path*',
+            destination: env.SPARK_DOCS_URL + '/:path*',
         },
         {
             source: '/thumb/:slug',
-            destination: 'https://spark-thumbnail-service.lucko.me/:slug',
+            destination: env.SPARK_THUMBNAIL_SERVICE_URL + '/:slug',
         },
         {
             source: '/:slug',
             has: [{ type: 'query', key: 'raw' }],
-            destination: 'https://spark-json-service.lucko.me/:slug',
+            destination: env.SPARK_JSON_SERVICE_URL + '/:slug',
         },
     ],
 };
+
+export default nextConfig;

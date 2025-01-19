@@ -1,4 +1,7 @@
 import { Head, Html, Main, NextScript } from 'next/document';
+import { env } from '../env';
+
+const { host } = new URL(env.NEXT_PUBLIC_SPARK_BASE_URL);
 
 export default function Document() {
     return (
@@ -20,12 +23,15 @@ export default function Document() {
                     rel="apple-touch-icon"
                     href="/assets/logo-inverted-160.png"
                 />
-                <script
-                    async
-                    defer
-                    data-domain="spark.lucko.me"
-                    src="https://plausible.lucko.me/js/pl.js"
-                />
+
+                {host === 'spark.lucko.me' && (
+                    <script
+                        async
+                        defer
+                        data-domain="spark.lucko.me"
+                        src="https://plausible.lucko.me/js/pl.js"
+                    />
+                )}
             </Head>
             <body>
                 <Main />
