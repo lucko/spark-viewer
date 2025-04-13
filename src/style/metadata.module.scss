@@ -195,6 +195,16 @@
                     }
                 }
             }
+
+            .net-interface-widgets {
+                justify-content: flex-start;
+                margin-left: 30px;
+
+                .widget {
+                    max-width: 500px;
+                    background-color: #293134;
+                }
+            }
         }
     }
 }
