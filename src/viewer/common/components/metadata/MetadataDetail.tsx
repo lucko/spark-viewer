@@ -69,7 +69,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
         'Memory': () =>
             !!platformStatistics?.memory?.heap ||
             !!platformStatistics?.memory?.pools?.length,
-        'Network': () => !!systemStatistics?.net,
+        'Network': () => !!Object.keys(systemStatistics?.net ?? {}).length,
         'JVM Flags': () => !!systemStatistics?.java?.vmArgs,
         'Configurations': () => !!parsedConfigurations,
         'World': () =>
