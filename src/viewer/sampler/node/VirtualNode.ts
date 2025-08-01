@@ -14,4 +14,6 @@ export default interface VirtualNode {
     getParents(): VirtualNode[];
 
     getSource(): string | undefined;
+
+    setExpanded?(expanded: boolean): void;
 }

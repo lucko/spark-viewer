@@ -181,6 +181,9 @@ export default function Sampler({
                     mappings={mappings.mappingsResolver}
                     metadata={metadata}
                     timeSelector={timeSelector}
+                    onReturnToSampler={(node: VirtualNode) => {
+                        console.log("HELLO");
+                    }}
                 />
             )}
 

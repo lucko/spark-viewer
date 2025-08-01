@@ -52,6 +52,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         const count = nodes.filter(n => searchQuery.matches(n)).length;
         return count <= 1;
     });
+    node.setExpanded = setExpanded;
 
     const parentsForChildren = useMemo(
         () => parents.concat([node]),
