@@ -27,6 +27,7 @@ import AllView from './views/AllView';
 import FlatView from './views/FlatView';
 import SourcesView from './views/SourcesView';
 import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
+import useExpanded from '../hooks/useExpanded';
 
 const Graph = dynamic(() => import('./graph/Graph'));
 
@@ -53,6 +54,7 @@ export default function Sampler({
 }: SamplerProps) {
     const searchQuery = useSearchQuery(data);
     const highlighted = useHighlight();
+    const expanded = useExpanded(searchQuery, highlighted);
     const [labelMode, setLabelMode] = useState(false);
     const timeSelector = useTimeSelector(
         data.timeWindows,
@@ -182,7 +184,12 @@ export default function Sampler({
                     metadata={metadata}
                     timeSelector={timeSelector}
                     onReturnToSampler={(node: VirtualNode) => {
-                        console.log("HELLO");
+                        expanded.clearAll();
+                        while (node != null) {
+                            expanded.set(node, true);
+                            node = node.getParents()[0];
+                        }
+                        setFlameData(undefined);
                     }}
                 />
             )}
@@ -192,6 +199,7 @@ export default function Sampler({
                     mappings={mappings.mappingsResolver}
                     infoPoints={infoPoints}
                     highlighted={highlighted}
+                    expanded={expanded}
                     searchQuery={searchQuery}
                     labelMode={labelMode}
                     metadata={metadata}

@@ -1,9 +1,10 @@
 import classnames from 'classnames';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useMemo, useEffect } from 'react';
 import { useContextMenu } from 'react-contexify';
 import SourceThreadVirtualNode from '../../node/SourceThreadVirtualNode';
 import VirtualNode from '../../node/VirtualNode';
 import {
+    ExpandedContext,
     HighlightedContext,
     InfoPointsContext,
     MappingsContext,
@@ -31,28 +32,21 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
     const highlighted = useContext(HighlightedContext)!;
     const searchQuery = useContext(SearchQueryContext)!;
     const timeSelector = useContext(TimeSelectorContext)!;
+    const expanded = useContext(ExpandedContext)!;
 
     const bottomUp = useContext(BottomUpContext) && parents.length !== 0;
 
     const directParent =
         parents.length !== 0 ? parents[parents.length - 1] : null;
 
-    const [expanded, setExpanded] = useState(() => {
-        if (highlighted.check(node)) {
-            return true;
+    // Get expanded state and check default expansion logic
+    const isExpanded = expanded.getOrDefault(node, directParent, bottomUp);
+    // schedule automatic fold on unmount
+    useEffect(() => {
+        return () => {
+            expanded.set(node, undefined);
         }
-        if (directParent == null) {
-            return false;
-        }
-
-        const nodes = bottomUp
-            ? directParent.getParents()
-            : directParent.getChildren();
-
-        const count = nodes.filter(n => searchQuery.matches(n)).length;
-        return count <= 1;
-    });
-    node.setExpanded = setExpanded;
+    }, []);
 
     const parentsForChildren = useMemo(
         () => parents.concat([node]),
@@ -67,7 +61,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
 
     const classNames = classnames({
         node: true,
-        collapsed: !expanded,
+        collapsed: !isExpanded,
         parent: parents.length === 0,
     });
     const nodeInfoClassNames = classnames({
@@ -83,7 +77,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         if (e.altKey) {
             highlighted.toggle(node);
         } else {
-            setExpanded(!expanded);
+            expanded.toggle(node);
         }
     }
 
@@ -151,7 +145,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
                     <LineNumber node={node} parent={directParent} />
                 </NodeInfo>
             </div>
-            {expanded && (
+            {isExpanded && (
                 <ul className="children">
                     {(bottomUp ? node.getParents() : node.getChildren())
                         .sort(
