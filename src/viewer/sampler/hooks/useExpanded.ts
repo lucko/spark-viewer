@@ -40,14 +40,19 @@ export default function useExpanded(searchQuery: SearchQuery, highlighted: Highl
 
     // Get expanded state, or default (sometimes, nodes should be expanded by default)
     const getOrDefault: Expanded['getOrDefault'] = (node, directParent, bottomUp) => {
+        // Try to get value from map first
         const value = get(node);
         if (value !== undefined) return value;
-        // Inline auto-expand logic here
+
+        // auto-expand logic
+
         if (highlighted.check(node)) return true;
+
         if (directParent == null) return false;
         let nodes;
         if (bottomUp) nodes = directParent.getParents();
         else nodes = directParent.getChildren();
+
         nodes = nodes.filter(n => searchQuery.matches(n));
         return nodes.length <= 1;
     };

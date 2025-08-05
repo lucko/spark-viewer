@@ -19,7 +19,7 @@ export interface FlameProps {
     mappings: MappingsResolver;
     metadata: SamplerMetadata;
     timeSelector: TimeSelector;
-    onReturnToSampler?: (node: VirtualNode) => void;
+    onReturnToSampler: (node: VirtualNode) => void;
 }
 
 export default function Flame({
@@ -44,7 +44,6 @@ export default function Flame({
 
     const [selectedNode, setSelectedNode] = useState<VirtualNode | null>(null);
 
-    // Handler for context menu on the main div
     function handleDivContextMenu(event: React.MouseEvent) {
         event.preventDefault();
         if (selectedNode) {
@@ -52,7 +51,6 @@ export default function Flame({
         }
     }
 
-    // Handler for mouse over on FlameGraph
     function handleMouseOver(flameNode: any) {
         if (flameNode && flameNode.virtualNode) {
             setSelectedNode(flameNode.virtualNode);
@@ -79,7 +77,7 @@ export default function Flame({
                 )}
             </AutoSizer>
             <Menu id="flame-cm" theme="dark">
-                <Item onClick={({ props }: ItemParams<{ node: VirtualNode }>) => props?.node && onReturnToSampler && onReturnToSampler(props.node)}>
+                <Item onClick={({ props }: ItemParams<{ node: VirtualNode }>) => props?.node && onReturnToSampler(props.node)}>
                     View in sampler
                 </Item>
             </Menu>

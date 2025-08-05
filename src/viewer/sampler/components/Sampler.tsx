@@ -184,11 +184,13 @@ export default function Sampler({
                     metadata={metadata}
                     timeSelector={timeSelector}
                     onReturnToSampler={(node: VirtualNode) => {
-                        expanded.clearAll();
+                        expanded.clearAll(); // fold all nodes
+                        // Expand selected node and its parents
                         while (node != null) {
                             expanded.set(node, true);
                             node = node.getParents()[0];
                         }
+                        // Return to sampler view
                         setFlameData(undefined);
                     }}
                 />
