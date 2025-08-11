@@ -23,6 +23,15 @@ The profile viewer renders the data as an expandable call stack tree, with suppo
 
 The heap dump summary viewer renders a histogram of the classes occupying the most memory at the time when the data was collected.
 
+### Selfhosting
+
+#### Configuring URLs
+
+To configure the URLs used by the application, you have to pass them as environment variables when building the application.
+In the special case of using Docker, you have to pass them as build arguments.
+
+For more information, see [`env.ts`](src/env.ts) and the [`Dockerfile`](Dockerfile).
+
 ### Contributions
 
 Yes please! - but please open an issue or ping me on [Discord](https://discord.gg/PAGT2fu) (so we can discuss your idea) before working on a big change!

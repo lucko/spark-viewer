@@ -10,6 +10,7 @@ import ExtraPlatformMetadata from './ExtraPlatformMetadata';
 import GameRules from './GameRules';
 import JvmStartupArgs from './JvmStartupArgs';
 import MemoryStatistics from './MemoryStatistics';
+import NetworkStatistics from './NetworkStatistics';
 import PlatformStatistics from './PlatformStatistics';
 import PluginsModsList from './PluginsModsList';
 import ServerConfigurations from './ServerConfigurations';
@@ -63,20 +64,22 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
         unwrapSamplerMetadata(metadata);
 
     const [view, setView] = useState('Platform');
-    const views = {
+    const views: Record<string, () => boolean> = {
         'Platform': () => true,
         'Memory': () =>
-            platformStatistics?.memory?.heap ||
-            platformStatistics?.memory?.pools?.length,
-        'JVM Flags': () => systemStatistics?.java?.vmArgs,
-        'Configurations': () => parsedConfigurations,
+            !!platformStatistics?.memory?.heap ||
+            !!platformStatistics?.memory?.pools?.length,
+        'Network': () => !!Object.keys(systemStatistics?.net ?? {}).length,
+        'JVM Flags': () => !!systemStatistics?.java?.vmArgs,
+        'Configurations': () => !!parsedConfigurations,
         'World': () =>
-            platformStatistics?.world &&
-            platformStatistics?.world?.totalEntities,
+            !!platformStatistics?.world &&
+            !!platformStatistics?.world?.totalEntities,
         'Misc': () => !!parsedExtraMetadata,
         'Game Rules': () => !!platformStatistics?.world?.gameRules.length,
         'Plugins/Mods': () =>
-            !!platformStatistics?.world?.dataPacks.length || metadata.sources,
+            !!platformStatistics?.world?.dataPacks.length ||
+            !!Object.keys(metadata.sources).length,
     };
 
     return (
@@ -117,6 +120,8 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                         memory={platformStatistics?.memory!}
                         gc={platformStatistics?.gc!}
                     />
+                ) : view === 'Network' ? (
+                    <NetworkStatistics systemStatistics={systemStatistics!} />
                 ) : view === 'JVM Flags' ? (
                     <JvmStartupArgs systemStatistics={systemStatistics!} />
                 ) : view === 'Configurations' ? (

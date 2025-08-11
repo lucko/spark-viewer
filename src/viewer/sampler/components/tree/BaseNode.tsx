@@ -41,11 +41,16 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         if (highlighted.check(node)) {
             return true;
         }
-        if (bottomUp) {
-            return directParent && directParent.getParents().length === 1;
-        } else {
-            return directParent && directParent.getChildren().length === 1;
+        if (directParent == null) {
+            return false;
         }
+
+        const nodes = bottomUp
+            ? directParent.getParents()
+            : directParent.getChildren();
+
+        const count = nodes.filter(n => searchQuery.matches(n)).length;
+        return count <= 1;
     });
 
     const parentsForChildren = useMemo(
@@ -83,7 +88,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
 
     function handleContextMenu(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        show(event, { props: { node } });
+        show({ event, props: { node } });
     }
 
     const time = bottomUp ? forcedTime || nodeTime : nodeTime;
@@ -113,8 +118,8 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         significance = forcedTime
             ? 0.5
             : nodeTime < parentTime
-            ? nodeTime / parentTime
-            : parentTime / nodeTime;
+              ? nodeTime / parentTime
+              : parentTime / nodeTime;
         importance = parentTime !== nodeTime ? significance : 0;
     }
 

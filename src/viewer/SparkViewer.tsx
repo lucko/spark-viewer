@@ -36,12 +36,8 @@ import {
 } from './proto/spark_pb';
 import SamplerData from './sampler/SamplerData';
 
-const Heap = dynamic(() => import('./heap/Heap'), {
-    suspense: true,
-});
-const Sampler = dynamic(() => import('./sampler/components/Sampler'), {
-    suspense: true,
-});
+const Heap = dynamic(() => import('./heap/Heap'));
+const Sampler = dynamic(() => import('./sampler/components/Sampler'));
 
 export default function SparkViewer() {
     const router = useRouter();

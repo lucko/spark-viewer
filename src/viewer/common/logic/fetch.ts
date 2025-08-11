@@ -1,4 +1,5 @@
 import { NextRouter } from 'next/router';
+import { env } from '../../../env';
 import {
     getContentType,
     getContentTypes,
@@ -19,12 +20,12 @@ export async function fetchFromBytebin(
     router: NextRouter | null,
     thumbnail: boolean
 ) {
-    let bytebinUrl = 'https://usercontents.spark.1l1.icu/';
+    let bytebinUrl = env.NEXT_PUBLIC_SPARK_BYTEBIN_URL;
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }
 
-    const req = await fetch(bytebinUrl + code, {
+    const req = await fetch(`${bytebinUrl}/${code}`, {
         headers: {
             Accept: `${getContentTypes().join(',')}`,
         },
