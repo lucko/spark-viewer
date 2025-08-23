@@ -21,13 +21,18 @@ export async function fetchFromBytebin(
     thumbnail: boolean
 ) {
     let bytebinUrl = env.NEXT_PUBLIC_SPARK_BYTEBIN_URL;
+    let bytebinApiKey = null;
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
+    }
+    if (thumbnail && router && router.query['x-bytebin-api-key']) {
+        bytebinApiKey = router.query['x-bytebin-api-key'] as string;
     }
 
     const req = await fetch(`${bytebinUrl}/${code}`, {
         headers: {
             Accept: `${getContentTypes().join(',')}`,
+            ...(bytebinApiKey ? { 'Bytebin-Api-Key': bytebinApiKey } : {}),
         },
     });
     if (!req.ok) {
