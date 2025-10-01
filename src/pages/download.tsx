@@ -235,14 +235,14 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             <DownloadInfo
                 artifacts={artifacts}
                 name="Fabric"
-                comment="MC 1.21.8"
+                comment="MC 1.21.9"
                 artifact="fabric"
                 logo={fabricLogo}
             />
             <DownloadInfo
                 artifacts={artifacts}
                 name="NeoForge"
-                comment="MC 1.21.8"
+                comment="MC 1.21.9"
                 artifact="neoforge"
                 logo={neoForgeLogo}
             />
