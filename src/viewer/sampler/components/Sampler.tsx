@@ -139,10 +139,10 @@ export default function Sampler({
                 metadata?.platformStatistics?.tps?.last15M || 
                 null,
         memory: {
-            used: metadata?.systemStatistics?.memory?.heap?.used || metadata?.systemStatistics?.memory?.used || 0,
-            total: metadata?.systemStatistics?.memory?.heap?.total || metadata?.systemStatistics?.memory?.total || 0,
+            used: metadata?.platformStatistics?.memory?.heap?.used || metadata?.systemStatistics?.memory?.physical?.used || 0,
+            total: metadata?.platformStatistics?.memory?.heap?.committed || metadata?.systemStatistics?.memory?.physical?.total || 0,
         },
-        cpu: metadata?.systemStatistics?.cpu?.processUsage?.last1m || metadata?.systemStatistics?.cpu?.systemUsage?.last1m || 0,
+        cpu: metadata?.systemStatistics?.cpu?.processUsage?.last1M || metadata?.systemStatistics?.cpu?.systemUsage?.last1M || 0,
         // Platform info
         platform: {
             name: metadata?.platform?.name || 'Unknown',
