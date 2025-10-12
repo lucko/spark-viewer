@@ -1,15 +1,18 @@
+import { faPlug } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
+import { ReactNode } from 'react';
 import bukkitLogo from '../assets/logos/bukkit.png';
 import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
 import forgeLogo from '../assets/logos/forge.png';
-import nukkitLogo from '../assets/logos/nukkit.png';
+import neoForgeLogo from '../assets/logos/neoforge.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 import TextBox from '../components/TextBox';
+import { env } from '../env';
 import useFetchResult, { Status } from '../hooks/useFetchResult';
-
 import changelogStyles from '../style/changelog.module.scss';
 import styles from '../style/downloads.module.scss';
 import { ChangelogData, ChangelogEntry, ChangelogList } from './changelog';
@@ -34,16 +37,44 @@ interface OldVersion {
 
 const OLD_VERSIONS: OldVersion[] = [
     {
-        modloader: 'Forge',
-        curseGameVersionTypeId: 1,
-        logo: forgeLogo,
-        versions: ['1.20.1', '1.19.4', '1.18.2', '1.17.1', '1.16.5', '1.12.2'],
-    },
-    {
         modloader: 'Fabric',
         curseGameVersionTypeId: 4,
         logo: fabricLogo,
-        versions: ['1.20.1', '1.19.4', '1.18.2', '1.17.1', '1.16.5'],
+        versions: [
+            '1.21.1',
+            '1.21',
+            '1.20.6',
+            '1.20.4',
+            '1.19.4',
+            '1.18.2',
+            '1.17.1',
+            '1.16.5',
+            '1.15.2',
+        ],
+    },
+    {
+        modloader: 'Forge',
+        curseGameVersionTypeId: 1,
+        logo: forgeLogo,
+        versions: [
+            '1.21.1',
+            '1.21',
+            '1.20.6',
+            '1.20.4',
+            '1.19.4',
+            '1.18.2',
+            '1.17.1',
+            '1.16.5',
+            '1.15.2',
+            '1.12.2',
+            '1.7.10',
+        ],
+    },
+    {
+        modloader: 'NeoForge',
+        curseGameVersionTypeId: 6,
+        logo: neoForgeLogo,
+        versions: ['1.21.1', '1.21', '1.20.6', '1.20.4'],
     },
 ];
 
@@ -53,7 +84,7 @@ export default function Download() {
     );
 
     const [changelog] = useFetchResult<ChangelogData>(
-        'https://sparkapi.lucko.me/changelog'
+        `${env.NEXT_PUBLIC_SPARK_API_URL}/changelog`
     );
 
     let content;
@@ -121,12 +152,36 @@ const DownloadPage = ({
             <br />
             <p>
                 Once you&apos;ve got spark installed, head over to the{' '}
-                <a href="https://spark.lucko.me/docs">documentation</a> to learn
-                how to use it!
+                <a href={`${env.NEXT_PUBLIC_SPARK_BASE_URL}/docs`}>
+                    documentation
+                </a>{' '}
+                to learn how to use it!
+            </p>
+            <p className="caveat">
+                Note: spark is pre-bundled with Paper 1.21+, so you don&apos;t
+                need to install the plugin!
             </p>
 
             <h2>Recent Changes</h2>
             <RecentChangelog changelog={changelogSlice} />
+
+            <h2>Other Platforms</h2>
+            <p>
+                spark is also available for other platforms, including Folia,
+                Geyser, Minestom, and Nukkit. These releases are provided as-is
+                and are supported by the community.
+            </p>
+            <p>
+                For more info, please see{' '}
+                <a href="https://github.com/lucko/spark-extra-platforms">
+                    spark-extra-platforms
+                </a>{' '}
+                on GitHub. Downloads are available from{' '}
+                <a href="https://ci.lucko.me/job/spark-extra-platforms/">
+                    Jenkins
+                </a>
+                .
+            </p>
 
             <h2>Older Versions</h2>
             <p>
@@ -167,40 +222,6 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             />
             <DownloadInfo
                 artifacts={artifacts}
-                name="Fabric"
-                comment="MC 1.20.4"
-                artifact="fabric"
-                logo={fabricLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Forge"
-                comment="MC 1.20.4"
-                artifact="forge"
-                logo={forgeLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Sponge"
-                comment="API 6/7"
-                artifact="sponge7"
-                logo={spongeLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Sponge"
-                comment="API 8"
-                artifact="sponge8"
-                logo={spongeLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
-                name="Nukkit"
-                artifact="nukkit"
-                logo={nukkitLogo}
-            />
-            <DownloadInfo
-                artifacts={artifacts}
                 name="BungeeCord"
                 artifact="bungeecord"
                 logo={bungeeCordLogo}
@@ -211,6 +232,41 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
                 artifact="velocity"
                 logo={velocityLogo}
             />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Fabric"
+                comment="MC 1.21.10"
+                artifact="fabric"
+                logo={fabricLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="NeoForge"
+                comment="MC 1.21.10"
+                artifact="neoforge"
+                logo={neoForgeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Forge"
+                comment="MC 1.21.10"
+                artifact="forge"
+                logo={forgeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Sponge"
+                comment="API 12"
+                artifact="sponge"
+                logo={spongeLogo}
+            />
+            <DownloadInfo
+                artifacts={artifacts}
+                name="Standalone"
+                comment="Java Agent"
+                artifact="standalone"
+                icon={<FontAwesomeIcon fixedWidth={true} icon={faPlug} />}
+            />
         </div>
     );
 };
@@ -220,7 +276,8 @@ interface DownloadInfoProps {
     name: string;
     comment?: string;
     artifact: string;
-    logo: StaticImageData;
+    logo?: StaticImageData;
+    icon?: ReactNode;
 }
 
 const DownloadInfo = ({
@@ -229,6 +286,7 @@ const DownloadInfo = ({
     comment,
     artifact,
     logo,
+    icon,
 }: DownloadInfoProps) => {
     const { url } = Object.keys(artifacts).length
         ? artifacts[artifact]
@@ -236,13 +294,16 @@ const DownloadInfo = ({
 
     return (
         <a className="link" href={url}>
-            <Image
-                src={logo}
-                style={{ objectFit: 'contain' }}
-                width={50}
-                height={50}
-                alt={name + ' logo'}
-            />
+            {logo && (
+                <Image
+                    src={logo}
+                    style={{ objectFit: 'contain' }}
+                    width={50}
+                    height={50}
+                    alt={name + ' logo'}
+                />
+            )}
+            {icon}
             <div className="link-title">
                 <div className="link-name">
                     <h3>{name}</h3>
@@ -258,7 +319,7 @@ const OlderVersionsList = ({ versions }: { versions: OldVersion[] }) => {
         <div className="older-versions">
             {versions.map(oldVersion => {
                 const getUrl = (version: string) => {
-                    return `https://www.curseforge.com/minecraft/mc-mods/spark/files?gameVersionTypeId=${oldVersion.curseGameVersionTypeId}&version=${version}`;
+                    return `https://www.curseforge.com/minecraft/mc-mods/spark/files?gameVersionTypeId=${oldVersion.curseGameVersionTypeId}&version=${version}&showAlphaFiles=show`;
                 };
 
                 return (

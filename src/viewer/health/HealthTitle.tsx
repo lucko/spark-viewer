@@ -1,37 +1,32 @@
 import Head from 'next/head';
 import Avatar from '../common/components/Avatar';
 import { formatDate } from '../common/util/format';
-import { HeapMetadata, PlatformMetadata_Type } from '../proto/spark_pb';
+import { HealthMetadata, PlatformMetadata_Type } from '../proto/spark_pb';
 
-export interface HeapTitleProps {
-    metadata: HeapMetadata;
+export interface HealthTitleProps {
+    metadata: HealthMetadata;
 }
 
-export default function HeapTitle({ metadata }: HeapTitleProps) {
+export default function HealthTitle({ metadata }: HealthTitleProps) {
     const { user, generatedTime } = metadata;
 
-    let time;
-    if (generatedTime) {
-        const [timeStr, dateStr] = formatDate(generatedTime);
-        time = ` @ ${timeStr} ${dateStr}`;
-    } else {
-        time = '';
-    }
+    const [timeStr, dateStr] = formatDate(generatedTime);
 
     return (
         <div className="textbox title">
             <Head>
-                <title>Heap Summary{time} | spark</title>
+                <title>
+                    Health Report @ {timeStr} {dateStr} | spark
+                </title>
             </Head>
             <span>
-                Heap Summary created by{' '}
+                Health Report created by{' '}
                 {user &&
                     metadata.platform?.type !==
                         PlatformMetadata_Type.APPLICATION && (
                         <Avatar user={user} />
                     )}
-                {user?.name}
-                {time}
+                {user?.name} @ {timeStr} {dateStr}
             </span>
         </div>
     );

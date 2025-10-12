@@ -1,4 +1,5 @@
 import { NextRouter } from 'next/router';
+import { env } from '../../../env';
 import {
     getContentType,
     getContentTypes,
@@ -23,10 +24,14 @@ export async function fetchFromBytebin(
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }
+    if (thumbnail && router && router.query['x-bytebin-api-key']) {
+        bytebinApiKey = router.query['x-bytebin-api-key'] as string;
+    }
 
-    const req = await fetch(bytebinUrl + code, {
+    const req = await fetch(`${bytebinUrl}/${code}`, {
         headers: {
             Accept: `${getContentTypes().join(',')}`,
+            ...(bytebinApiKey ? { 'Bytebin-Api-Key': bytebinApiKey } : {}),
         },
     });
     if (!req.ok) {

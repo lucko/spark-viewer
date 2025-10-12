@@ -1,4 +1,4 @@
-![](https://i.imgur.com/ykHn9vx.png)
+![](https://spark.lucko.me/assets/banner.png)
 
 # spark-viewer
 
@@ -22,6 +22,15 @@ The viewer component of the website reads data from [bytebin](https://github.com
 The profile viewer renders the data as an expandable call stack tree, with support for applying deobfuscation mappings, searching, bookmarks and viewing as a flame graph.
 
 The heap dump summary viewer renders a histogram of the classes occupying the most memory at the time when the data was collected.
+
+### Selfhosting
+
+#### Configuring URLs
+
+To configure the URLs used by the application, you have to pass them as environment variables when building the application.
+In the special case of using Docker, you have to pass them as build arguments.
+
+For more information, see [`env.ts`](src/env.ts) and the [`Dockerfile`](Dockerfile).
 
 ### Contributions
 

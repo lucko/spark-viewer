@@ -1,11 +1,15 @@
 import { createContext, ReactNode } from 'react';
 import { SamplerMetadata } from '../../proto/spark_pb';
 import { Highlight } from '../hooks/useHighlight';
+import { InfoPointsHook } from '../hooks/useInfoPoints';
 import { SearchQuery } from '../hooks/useSearchQuery';
 import { TimeSelector } from '../hooks/useTimeSelector';
 import { MappingsResolver } from '../mappings/resolver';
 
 export const MappingsContext = createContext<MappingsResolver | undefined>(
+    undefined
+);
+export const InfoPointsContext = createContext<InfoPointsHook | undefined>(
     undefined
 );
 export const HighlightedContext = createContext<Highlight | undefined>(
@@ -24,6 +28,7 @@ export const TimeSelectorContext = createContext<TimeSelector | undefined>(
 
 export default function SamplerContext({
     mappings,
+    infoPoints,
     highlighted,
     searchQuery,
     labelMode,
@@ -32,6 +37,7 @@ export default function SamplerContext({
     children,
 }: {
     mappings: MappingsResolver;
+    infoPoints: InfoPointsHook;
     highlighted: Highlight;
     searchQuery: SearchQuery;
     labelMode: boolean;
@@ -42,17 +48,21 @@ export default function SamplerContext({
     // :]
     return (
         <MappingsContext.Provider value={mappings}>
-            <HighlightedContext.Provider value={highlighted}>
-                <SearchQueryContext.Provider value={searchQuery}>
-                    <LabelModeContext.Provider value={labelMode}>
-                        <MetadataContext.Provider value={metadata}>
-                            <TimeSelectorContext.Provider value={timeSelector}>
-                                {children}
-                            </TimeSelectorContext.Provider>
-                        </MetadataContext.Provider>
-                    </LabelModeContext.Provider>
-                </SearchQueryContext.Provider>
-            </HighlightedContext.Provider>
+            <InfoPointsContext.Provider value={infoPoints}>
+                <HighlightedContext.Provider value={highlighted}>
+                    <SearchQueryContext.Provider value={searchQuery}>
+                        <LabelModeContext.Provider value={labelMode}>
+                            <MetadataContext.Provider value={metadata}>
+                                <TimeSelectorContext.Provider
+                                    value={timeSelector}
+                                >
+                                    {children}
+                                </TimeSelectorContext.Provider>
+                            </MetadataContext.Provider>
+                        </LabelModeContext.Provider>
+                    </SearchQueryContext.Provider>
+                </HighlightedContext.Provider>
+            </InfoPointsContext.Provider>
         </MappingsContext.Provider>
     );
 }

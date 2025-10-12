@@ -1,35 +1,33 @@
 import { useMemo, useState } from 'react';
-import { isSamplerMetadata } from '../../../proto/guards';
-import {
-    HeapMetadata,
-    PlatformMetadata_Type,
-    SamplerMetadata,
-} from '../../../proto/spark_pb';
+import { SparkMetadata } from '../../../proto/guards';
+import { PlatformMetadata_Type } from '../../../proto/spark_pb';
 import {
     detectOnlineMode,
     objectMap,
     unwrapSamplerMetadata,
 } from '../../util/metadata';
 import ExtraPlatformMetadata from './ExtraPlatformMetadata';
+import GameRules from './GameRules';
 import JvmStartupArgs from './JvmStartupArgs';
+import MemoryStatistics from './MemoryStatistics';
+import NetworkStatistics from './NetworkStatistics';
 import PlatformStatistics from './PlatformStatistics';
+import PluginsModsList from './PluginsModsList';
 import ServerConfigurations from './ServerConfigurations';
 import WorldStatistics from './WorldStatistics';
 
 interface MetadataDetailProps {
-    metadata: SamplerMetadata | HeapMetadata;
+    metadata: SparkMetadata;
 }
 
 export default function MetadataDetail({ metadata }: MetadataDetailProps) {
-    const { platform, platformStatistics, systemStatistics } = metadata;
-
-    let serverConfigurations: Record<string, string> | undefined;
-    let extraPlatformMetadata: Record<string, string> | undefined;
-    if (isSamplerMetadata(metadata)) {
-        serverConfigurations = metadata.serverConfigurations;
-        extraPlatformMetadata = metadata.extraPlatformMetadata;
-    }
-
+    const {
+        platform,
+        platformStatistics,
+        systemStatistics,
+        serverConfigurations,
+        extraPlatformMetadata,
+    } = metadata;
     const platformType = PlatformMetadata_Type[platform!.type].toLowerCase();
 
     const { parsedConfigurations, onlineMode } = useMemo(() => {
@@ -40,14 +38,18 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
             parsedConfigurations = objectMap(serverConfigurations, v =>
                 JSON.parse(v)
             );
-            try {
-                onlineMode = detectOnlineMode(parsedConfigurations);
-            } catch (e) {
-                // ignore
-            }
+        }
+
+        try {
+            onlineMode = detectOnlineMode(
+                platformStatistics?.onlineMode,
+                parsedConfigurations
+            );
+        } catch (e) {
+            // ignore
         }
         return { parsedConfigurations, onlineMode };
-    }, [serverConfigurations]);
+    }, [serverConfigurations, platformStatistics]);
 
     const parsedExtraMetadata = useMemo(() => {
         if (
@@ -58,39 +60,47 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
         }
     }, [extraPlatformMetadata]);
 
-    const { runningTime, numberOfTicks, numberOfIncludedTicks } =
+    const { runningTime, numberOfTicks, numberOfIncludedTicks, samplerEngine } =
         unwrapSamplerMetadata(metadata);
 
     const [view, setView] = useState('Platform');
-    const views = {
+    const views: Record<string, () => boolean> = {
         'Platform': () => true,
-        'JVM Flags': () => systemStatistics?.java?.vmArgs,
-        'Configurations': () => parsedConfigurations,
+        'Memory': () =>
+            !!platformStatistics?.memory?.heap ||
+            !!platformStatistics?.memory?.pools?.length,
+        'Network': () => !!Object.keys(systemStatistics?.net ?? {}).length,
+        'JVM Flags': () => !!systemStatistics?.java?.vmArgs,
+        'Configurations': () => !!parsedConfigurations,
         'World': () =>
-            platformStatistics?.world &&
-            platformStatistics?.world?.totalEntities,
+            !!platformStatistics?.world &&
+            !!platformStatistics?.world?.totalEntities,
         'Misc': () => !!parsedExtraMetadata,
+        'Game Rules': () => !!platformStatistics?.world?.gameRules.length,
+        'Plugins/Mods': () =>
+            !!platformStatistics?.world?.dataPacks.length ||
+            !!Object.keys(metadata.sources).length,
     };
 
     return (
         <div className="textbox metadata-detail">
-            <ul className="metadata-detail-controls">
+            <div className="metadata-detail-controls">
                 {Object.entries(views).map(([name, func]) => {
                     return (
                         !!func() && (
-                            <li
+                            <div
                                 key={name}
                                 onClick={() => setView(name)}
                                 className={
-                                    view === name ? 'selected' : undefined
+                                    view === name ? 'toggled' : undefined
                                 }
                             >
                                 {name}
-                            </li>
+                            </div>
                         )
                     );
                 })}
-            </ul>
+            </div>
 
             <div className="metadata-detail-content">
                 {view === 'Platform' ? (
@@ -103,7 +113,15 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                         runningTime={runningTime}
                         numberOfTicks={numberOfTicks}
                         numberOfIncludedTicks={numberOfIncludedTicks}
+                        engine={samplerEngine}
                     />
+                ) : view === 'Memory' ? (
+                    <MemoryStatistics
+                        memory={platformStatistics?.memory!}
+                        gc={platformStatistics?.gc!}
+                    />
+                ) : view === 'Network' ? (
+                    <NetworkStatistics systemStatistics={systemStatistics!} />
                 ) : view === 'JVM Flags' ? (
                     <JvmStartupArgs systemStatistics={systemStatistics!} />
                 ) : view === 'Configurations' ? (
@@ -113,6 +131,15 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                 ) : view === 'World' ? (
                     <WorldStatistics
                         worldStatistics={platformStatistics!.world!}
+                    />
+                ) : view === 'Game Rules' ? (
+                    <GameRules
+                        gameRules={platformStatistics?.world?.gameRules!}
+                    />
+                ) : view === 'Plugins/Mods' ? (
+                    <PluginsModsList
+                        plugins={Object.values(metadata.sources || {})}
+                        dataPacks={platformStatistics?.world?.dataPacks || []}
                     />
                 ) : view === 'Misc' ? (
                     <ExtraPlatformMetadata data={parsedExtraMetadata!} />

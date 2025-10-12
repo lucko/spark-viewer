@@ -32,3 +32,12 @@ export default function useMetadataToggle(): MetadataToggle {
 
     return { showWidgets, showInfo, toggleWidgets, toggleInfo };
 }
+
+export function useAlwaysOpenMetadataToggle(): MetadataToggle {
+    return {
+        showWidgets: true,
+        showInfo: true,
+        toggleWidgets: () => {},
+        toggleInfo: () => {},
+    };
+}

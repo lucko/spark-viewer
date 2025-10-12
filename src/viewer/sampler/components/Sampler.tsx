@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import { Suspense, useEffect, useState } from 'react';
-import { Item, ItemParams, Menu, theme } from 'react-contexify';
+import { Item, ItemParams, Menu } from 'react-contexify';
 import styles from '../../../style/sampler.module.scss';
 import VersionWarning from '../../common/components/VersionWarning';
 import WidgetsAndMetadata from '../../common/components/WidgetsAndMetadata';
@@ -31,6 +31,8 @@ import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
 const Graph = dynamic(() => import('./graph/Graph'));
 
 import 'react-contexify/dist/ReactContexify.css';
+import { Tooltip } from 'react-tooltip';
+import useInfoPoints from '../hooks/useInfoPoints';
 import useMappings from '../hooks/useMappings';
 import SettingsMenu from './settings/SettingsMenu';
 
@@ -57,6 +59,7 @@ export default function Sampler({
         data.timeWindowStatistics
     );
     const mappings = useMappings(metadata);
+    const infoPoints = useInfoPoints();
     const [flameData, setFlameData] = useState<VirtualNode>();
     const [view, setView] = useState<View>(VIEW_ALL);
     const [showGraph, setShowGraph] = useToggle('prefShowGraph', true);
@@ -146,6 +149,8 @@ export default function Sampler({
                     mappingsMetadata={mappings.mappingsMetadata}
                     mappings={mappings.mappingsType}
                     setMappings={mappings.requestMappings}
+                    infoPoints={infoPoints.enabled}
+                    toggleInfoPoints={infoPoints.toggleEnabled}
                 />
             )}
 
@@ -182,6 +187,7 @@ export default function Sampler({
             <div style={{ display: flameData ? 'none' : undefined }}>
                 <SamplerContext
                     mappings={mappings.mappingsResolver}
+                    infoPoints={infoPoints}
                     highlighted={highlighted}
                     searchQuery={searchQuery}
                     labelMode={labelMode}
@@ -203,6 +209,14 @@ export default function Sampler({
                             setLabelMode={setLabelMode}
                         />
                     )}
+                    {infoPoints.enabled && (
+                        <Tooltip
+                            id="infopoint-tooltip"
+                            place="right"
+                            className="infopoint-tooltip"
+                            clickable
+                        />
+                    )}
                 </SamplerContext>
             </div>
 
@@ -210,7 +224,7 @@ export default function Sampler({
                 <NoData isConnectedToSocket={!!socket.socket.socket} />
             )}
 
-            <Menu id={'sampler-cm'} theme={theme.dark}>
+            <Menu id={'sampler-cm'} theme="dark">
                 <Item onClick={handleFlame}>View as Flame Graph</Item>
                 <Item onClick={handleHighlight}>Toggle bookmark</Item>
                 <Item onClick={handleHighlightClear}>Clear all bookmarks</Item>

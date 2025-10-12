@@ -36,7 +36,7 @@ export default function ToggleViewButton({
                 } else if (v === VIEW_FLAT) {
                     label = 'flat';
                 } else {
-                    label = ['Fabric', 'Forge'].includes(
+                    label = ['Fabric', 'Forge', 'NeoForge'].includes(
                         metadata?.platform?.name || ''
                     )
                         ? 'mods'

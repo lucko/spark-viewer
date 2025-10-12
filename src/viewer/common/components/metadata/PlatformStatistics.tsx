@@ -1,6 +1,7 @@
 import {
     PlatformMetadata,
     PlatformStatistics as PlatformStatisticsProto,
+    SamplerMetadata_SamplerEngine,
     SystemStatistics as SystemStatisticsProto,
 } from '../../../proto/spark_pb';
 import { formatDuration } from '../../util/format';
@@ -14,6 +15,7 @@ export interface PlatformStatisticsProps {
     runningTime?: number;
     numberOfTicks?: number;
     numberOfIncludedTicks?: number;
+    engine?: SamplerMetadata_SamplerEngine;
 }
 
 export default function PlatformStatistics({
@@ -25,12 +27,15 @@ export default function PlatformStatistics({
     runningTime,
     numberOfTicks,
     numberOfIncludedTicks,
+    engine,
 }: PlatformStatisticsProps) {
     return (
         <>
             <p>
-                The platform is a <span>{platform.name}</span> {platformType}{' '}
-                running version &quot;
+                The {platformType === 'application' ? 'system' : 'platform'} is
+                a <span>{platform.brand || platform.name}</span> {platformType}{' '}
+                running {platformType === 'application' ? 'spark' : ''} version
+                &quot;
                 <span>{platform.version}</span>&quot;.
             </p>
             {platform.minecraftVersion && (
@@ -41,12 +46,12 @@ export default function PlatformStatistics({
             )}
             {onlineMode && (
                 <p>
-                    The server is running in <span>{onlineMode}</span>.
+                    The {platformType} is running in <span>{onlineMode}</span>.
                 </p>
             )}
             {platformStatistics?.playerCount > 0 && (
                 <p>
-                    The server had a player count of{' '}
+                    The {platformType} had a player count of{' '}
                     <span>{platformStatistics.playerCount}</span> when the
                     profile completed.
                 </p>
@@ -56,8 +61,21 @@ export default function PlatformStatistics({
             )}
             {runningTime && (
                 <p>
-                    The profiler was running for{' '}
-                    <span>{formatDuration(runningTime)}</span>
+                    The profiler{' '}
+                    {engine ? (
+                        <>
+                            (engine{' '}
+                            <span>
+                                {engine == SamplerMetadata_SamplerEngine.ASYNC
+                                    ? 'async'
+                                    : 'java'}
+                            </span>
+                            ){' '}
+                        </>
+                    ) : (
+                        ''
+                    )}
+                    was running for <span>{formatDuration(runningTime)}</span>
                     {!!numberOfTicks && (
                         <>
                             {' '}
@@ -103,6 +121,12 @@ const SystemStatistics = ({ systemStatistics }: SystemStatisticsProps) => {
                 <span>{systemStatistics.java!.version}</span> (
                 <span>{systemStatistics.java!.vendorVersion}</span> from{' '}
                 <span>{systemStatistics.java!.vendor}</span>).
+                {systemStatistics.jvm?.name && (
+                    <>
+                        {' '}
+                        The JVM is a <span>{systemStatistics.jvm?.name}</span>.
+                    </>
+                )}
             </p>
             <p>
                 The current process uptime is{' '}

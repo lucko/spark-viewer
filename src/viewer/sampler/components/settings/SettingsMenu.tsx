@@ -4,6 +4,7 @@ import TextBox from '../../../../components/TextBox';
 
 import { ReactNode } from 'react';
 import styles from '../../../../style/sampler.module.scss';
+import Switch from '../../../common/components/Switch';
 import { MappingsMetadata } from '../../mappings/fetch';
 import MappingsSelector from './MappingsSelector';
 
@@ -11,12 +12,16 @@ export interface SettingsMenuProps {
     mappingsMetadata?: MappingsMetadata;
     mappings: string;
     setMappings: (type: string) => void;
+    infoPoints: boolean;
+    toggleInfoPoints: () => void;
 }
 
 export default function SettingsMenu({
     mappingsMetadata,
     mappings,
     setMappings,
+    infoPoints,
+    toggleInfoPoints,
 }: SettingsMenuProps) {
     return (
         <TextBox extraClassName={styles['settings-menu']}>
@@ -33,6 +38,12 @@ export default function SettingsMenu({
                     />
                 </Setting>
             )}
+            <Setting
+                name="Info Points"
+                desc="Select whether info points should be shown."
+            >
+                <Switch value={infoPoints} toggle={toggleInfoPoints} />
+            </Setting>
         </TextBox>
     );
 }

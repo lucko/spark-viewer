@@ -1,6 +1,6 @@
 import { AutoSizer, Column, Table } from 'react-virtualized';
 import { formatBytes } from '../common/util/format';
-import { HeapData } from '../proto/spark_pb';
+import HeapData from './HeapData';
 
 export interface HeapTableProps {
     data: HeapData;

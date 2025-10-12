@@ -17,27 +17,70 @@
             }
 
             .metadata-detail-controls {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
                 padding: 0;
-                margin: 10px 0 30px 0;
+                margin-bottom: 30px;
 
-                li {
-                    list-style-type: none;
-                    display: inline;
+                > div {
                     cursor: pointer;
-                    margin: 0 3px;
                     background-color: #293134;
-                    padding: 7px 15px;
+
+                    padding: 10px;
                     border-radius: 5px;
 
-                    &.selected {
+                    &.toggled {
                         color: #fff;
+                        box-shadow: inset 0 -3px 0 #3c3f41;
                     }
                 }
             }
 
             .metadata-detail-content > p,
-            .metadata-detail-content > .configurations > p {
+            .metadata-detail-content > .configurations > p,
+            .metadata-detail-content > .gamerules > p {
                 margin: 0 5px;
+            }
+
+            .memory {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+
+                .memory-pool {
+                    background-color: #293134;
+                    padding: 5px;
+                    border-radius: 5px;
+                }
+
+                .header {
+                    text-align: center;
+                    margin-bottom: 10px;
+                    color: #fff;
+                }
+
+                .usage-bar {
+                    height: 20px;
+                    width: 500px;
+                    border: 3px solid #252b2d;
+                    display: flex;
+                    background-color: #252b2d;
+
+                    > div {
+                        background-color: #b5b5b5;
+                    }
+                }
+
+                ul {
+                    li {
+                        list-style: none;
+
+                        span {
+                            color: #fff;
+                        }
+                    }
+                }
             }
 
             .configurations {
@@ -60,6 +103,46 @@
                 }
                 .type-number {
                     color: #9bffa2;
+                }
+            }
+
+            .gamerules {
+                h2 {
+                    margin-bottom: 2px;
+                }
+                span {
+                    color: #888;
+                }
+                button {
+                    background-color: #293134;
+                    margin: 15px 0;
+                }
+                .value-true {
+                    color: #9bffa2;
+                }
+                .value-false {
+                    color: #fa7f95;
+                }
+                .value-number {
+                    color: #78e6ff;
+                }
+                .value-string {
+                    color: #f7df97;
+                }
+            }
+
+            .plugins-mods-list {
+                h2 {
+                    margin-bottom: 2px;
+                }
+                li {
+                    margin: 10px 0;
+                }
+                .darker {
+                    color: #888;
+                }
+                .title {
+                    color: #fff;
                 }
             }
 
@@ -110,6 +193,16 @@
                     span {
                         color: #fff;
                     }
+                }
+            }
+
+            .net-interface-widgets {
+                justify-content: flex-start;
+                margin-left: 30px;
+
+                .widget {
+                    max-width: 500px;
+                    background-color: #293134;
                 }
             }
         }

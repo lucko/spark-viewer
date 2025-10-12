@@ -11,7 +11,8 @@
             font-size: larger;
         }
 
-        .less-important {
+        .less-important,
+        .caveat {
             color: #888;
         }
 
@@ -28,6 +29,10 @@
             img {
                 height: 50px;
                 filter: saturate(20%);
+            }
+
+            svg {
+                color: #888;
             }
 
             &:hover {

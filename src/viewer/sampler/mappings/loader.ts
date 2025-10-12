@@ -10,6 +10,7 @@ import { fetchMappings, MappingsMetadata } from './fetch';
 import BukkitMappingFunction from './functions/bukkit';
 import McpMappingFunction from './functions/mcp';
 import NoOpMappingFunction from './functions/noop';
+import VanillaMappingFunction from './functions/vanilla';
 import YarnMappingFunction from './functions/yarn';
 import { MappingFunction } from './types';
 
@@ -84,6 +85,13 @@ export default async function loadMappings(
             YarnMappings.fromBinary(arr)
         );
         return new YarnMappingFunction(yarnMappings);
+    } else if (type.startsWith('vanilla')) {
+        const version = type.substring('vanilla-'.length);
+
+        const mojangMappings = await fetchMappings(version, 'mojang', arr =>
+            MojangMappings.fromBinary(arr)
+        );
+        return new VanillaMappingFunction(mojangMappings);
     } else {
         return NoOpMappingFunction.INSTANCE;
     }

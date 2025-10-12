@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Link from 'next/link';
 import TextBox from '../components/TextBox';
+import { env } from '../env';
 import useFetchResult, { Status } from '../hooks/useFetchResult';
 import styles from '../style/changelog.module.scss';
 
@@ -20,7 +21,7 @@ export interface ChangelogEntry {
 
 export default function Changelog() {
     const [info, status] = useFetchResult<ChangelogData>(
-        'https://sparkapi.lucko.me/changelog'
+        `${env.NEXT_PUBLIC_SPARK_API_URL}/changelog`
     );
 
     let content;

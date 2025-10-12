@@ -12,6 +12,7 @@ message PlatformMetadata {
   string version = 3;
   string minecraftVersion = 4; // optional
   int32 sparkVersion = 7;
+  string brand = 8;
 
   // replaced
   reserved 5, 6;
@@ -20,6 +21,7 @@ message PlatformMetadata {
     SERVER = 0;
     CLIENT = 1;
     PROXY = 2;
+    APPLICATION = 3;
   }
 }
 
@@ -32,6 +34,7 @@ message SystemStatistics {
   Java java = 6;
   int64 uptime = 7;
   map<string, NetInterface> net = 8;
+  Jvm jvm = 9;
 
   message Cpu {
     int32 threads = 1;
@@ -79,6 +82,12 @@ message SystemStatistics {
     string vmArgs = 4;
   }
 
+  message Jvm {
+    string name = 1;
+    string vendor = 2;
+    string version = 3;
+  }
+
   message NetInterface {
     RollingAverageValues rxBytesPerSecond = 1;
     RollingAverageValues txBytesPerSecond = 2;
@@ -96,13 +105,24 @@ message PlatformStatistics {
   Ping ping = 6; // optional
   int64 playerCount = 7; // optional
   WorldStatistics world = 8; // optional
+  OnlineMode onlineMode = 9; // optional
 
   message Memory {
-    MemoryPool heap = 1;
+    MemoryUsage heap = 1;
+    MemoryUsage nonHeap = 2;
+    repeated MemoryPool pools = 3;
 
     message MemoryPool {
+      string name = 1;
+      MemoryUsage usage = 2;
+      MemoryUsage collectionUsage = 3;
+    }
+
+    message MemoryUsage {
       int64 used = 1;
-      int64 total = 2;
+      int64 committed = 2;
+      int64 init = 3; // optional
+      int64 max = 4; // optional
     }
   }
 
@@ -125,6 +145,12 @@ message PlatformStatistics {
 
   message Ping {
     RollingAverageValues last15m = 1;
+  }
+
+  enum OnlineMode {
+    UNKNOWN = 0;
+    OFFLINE = 1;
+    ONLINE = 2;
   }
 }
 
@@ -160,6 +186,8 @@ message WorldStatistics {
   int32 totalEntities = 1;
   map<string, int32> entityCounts = 2;
   repeated World worlds = 3;
+  repeated GameRule gameRules = 4;
+  repeated DataPack dataPacks = 5;
 
   message World {
     string name = 1;
@@ -178,6 +206,18 @@ message WorldStatistics {
     int32 totalEntities = 3;
     map<string, int32> entityCounts = 4;
   }
+
+  message GameRule {
+    string name = 1;
+    string defaultValue = 2;
+    map<string, string> worldValues = 3;
+  }
+
+  message DataPack {
+    string name = 1;
+    string description = 2;
+    string source = 3;
+  }
 }
 
 message CommandSenderMetadata {
@@ -189,6 +229,33 @@ message CommandSenderMetadata {
     OTHER = 0;
     PLAYER = 1;
   }
+}
+
+message PluginOrModMetadata {
+  string name = 1;
+  string version = 2;
+  string author = 3;
+  string description = 4;
+}
+
+message HealthData {
+  HealthMetadata metadata = 1;
+  map<int32, WindowStatistics> timeWindowStatistics = 2;
+}
+
+message HealthDataLite {
+  HealthMetadata metadata = 1;
+}
+
+message HealthMetadata {
+  CommandSenderMetadata user = 1;
+  PlatformMetadata platform = 2;
+  PlatformStatistics platformStatistics = 3;
+  SystemStatistics systemStatistics = 4;
+  int64 generatedTime = 5;
+  map<string, string> serverConfigurations = 6;
+  map<string, PluginOrModMetadata> sources = 7;
+  map<string, string> extraPlatformMetadata = 8;
 }
 
 // -----------------------------------------------------------------------------------------------------
@@ -209,6 +276,10 @@ message HeapMetadata {
   PlatformMetadata platform = 2;
   PlatformStatistics platformStatistics = 3;
   SystemStatistics systemStatistics = 4;
+  int64 generatedTime = 5;
+  map<string, string> serverConfigurations = 6;
+  map<string, PluginOrModMetadata> sources = 7;
+  map<string, string> extraPlatformMetadata = 8;
 }
 
 message HeapEntry {
@@ -250,9 +321,10 @@ message SamplerMetadata {
   map<string, string> serverConfigurations = 10;
   int64 endTime = 11;
   int32 numberOfTicks = 12;
-  map<string, SourceMetadata> sources = 13;
+  map<string, PluginOrModMetadata> sources = 13;
   map<string, string> extraPlatformMetadata = 14;
   SamplerMode samplerMode = 15;
+  SamplerEngine samplerEngine = 16;
 
   message ThreadDumper {
     Type type = 1;
@@ -284,14 +356,14 @@ message SamplerMetadata {
     }
   }
 
-  message SourceMetadata {
-    string name = 1;
-    string version = 2;
-  }
-
   enum SamplerMode {
     EXECUTION = 0;
     ALLOCATION = 1;
+  }
+
+  enum SamplerEngine {
+    JAVA = 0;
+    ASYNC = 1;
   }
 }
 
@@ -408,7 +480,6 @@ message McpMappings {
 
 message MojangMappings {
   map<string, ClassMapping> classes = 1;
-  map<string, string> methods = 2;
 }
 
 message YarnMappings {
@@ -426,5 +497,5 @@ message MethodMapping {
   string mapped = 1;
   string obfuscated = 2;
   string description = 3;
-  string searge = 4; // optional - MCP only
+  string intermediate = 4; // optional - MCP only
 }

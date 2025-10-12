@@ -18,15 +18,9 @@ export default function GraphLegend({
         if (statisticKeys.includes(key)) {
             setStatisticKeys(prev => prev.filter(i => i !== key));
         } else {
-            if (statisticKeys.length <= 1) {
-                setStatisticKeys(prev => {
-                    return [...prev, key];
-                });
-            } else {
-                setStatisticKeys(prev => {
-                    return [...prev.slice(1), key];
-                });
-            }
+            setStatisticKeys(prev => {
+                return [...prev, key];
+            });
         }
     }
 

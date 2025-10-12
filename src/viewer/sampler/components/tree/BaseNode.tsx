@@ -5,6 +5,7 @@ import SourceThreadVirtualNode from '../../node/SourceThreadVirtualNode';
 import VirtualNode from '../../node/VirtualNode';
 import {
     HighlightedContext,
+    InfoPointsContext,
     MappingsContext,
     SearchQueryContext,
     TimeSelectorContext,
@@ -15,6 +16,7 @@ import Name from './Name';
 import NodeInfo from './NodeInfo';
 
 import 'react-contexify/dist/ReactContexify.css';
+import InfoPoint from './InfoPoint';
 
 export interface BaseNodeProps {
     parents: VirtualNode[];
@@ -25,6 +27,7 @@ export interface BaseNodeProps {
 // We use React.memo to avoid re-renders. This is because the trees we work with are really deep.
 const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
     const mappings = useContext(MappingsContext)!;
+    const infoPoints = useContext(InfoPointsContext)!;
     const highlighted = useContext(HighlightedContext)!;
     const searchQuery = useContext(SearchQueryContext)!;
     const timeSelector = useContext(TimeSelectorContext)!;
@@ -38,11 +41,16 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         if (highlighted.check(node)) {
             return true;
         }
-        if (bottomUp) {
-            return directParent && directParent.getParents().length === 1;
-        } else {
-            return directParent && directParent.getChildren().length === 1;
+        if (directParent == null) {
+            return false;
         }
+
+        const nodes = bottomUp
+            ? directParent.getParents()
+            : directParent.getChildren();
+
+        const count = nodes.filter(n => searchQuery.matches(n)).length;
+        return count <= 1;
     });
 
     const parentsForChildren = useMemo(
@@ -80,7 +88,7 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
 
     function handleContextMenu(event: React.MouseEvent<HTMLElement>) {
         event.preventDefault();
-        show(event, { props: { node } });
+        show({ event, props: { node } });
     }
 
     const time = bottomUp ? forcedTime || nodeTime : nodeTime;
@@ -110,8 +118,8 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
         significance = forcedTime
             ? 0.5
             : nodeTime < parentTime
-            ? nodeTime / parentTime
-            : parentTime / nodeTime;
+              ? nodeTime / parentTime
+              : parentTime / nodeTime;
         importance = parentTime !== nodeTime ? significance : 0;
     }
 
@@ -129,6 +137,13 @@ const BaseNode = React.memo(({ parents, node, forcedTime }: BaseNodeProps) => {
                     importance={importance}
                     significance={significance}
                     source={node.getSource()}
+                    infoPoint={
+                        <InfoPoint
+                            node={node}
+                            mappings={mappings}
+                            lookup={infoPoints}
+                        />
+                    }
                     isSourceRoot={node instanceof SourceThreadVirtualNode}
                 >
                     <Name details={node.getDetails()} mappings={mappings} />

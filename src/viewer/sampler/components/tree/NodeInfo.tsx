@@ -19,6 +19,7 @@ export interface NodeInfoProps {
     importance: number;
     significance: number;
     source?: string;
+    infoPoint: ReactNode;
     isSourceRoot?: boolean;
 }
 
@@ -30,6 +31,7 @@ export default function NodeInfo({
     importance,
     significance,
     source,
+    infoPoint,
     isSourceRoot,
 }: NodeInfoProps) {
     const metadata = useContext(MetadataContext)!;
@@ -68,7 +70,7 @@ export default function NodeInfo({
                 ? timeSelector.getTicksInRange()
                 : metadata.dataAggregator?.numberOfIncludedTicks ||
                   metadata.numberOfTicks;
-            timePerInterval = time / numberOfTicks;
+            timePerInterval = time / Math.max(numberOfTicks, 1);
         }
     }
 
@@ -90,6 +92,7 @@ export default function NodeInfo({
                         ? `${formatValue(timePerInterval!)}`
                         : humanFriendlyPercentage(time / threadTime)}
                 </span>
+                {infoPoint}
                 <span className="time">
                     {formatValue(time)}
                     {Math.floor(selfTime) > 0 && !isSourceRoot && (
