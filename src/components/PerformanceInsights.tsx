@@ -6,7 +6,7 @@ import {
     faTimesCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styles from '../style/performance-insights.module.scss';
 
 interface Insight {
@@ -25,13 +25,7 @@ export default function PerformanceInsights({ profileData }: PerformanceInsights
     const [insights, setInsights] = useState<Insight[]>([]);
     const [isExpanded, setIsExpanded] = useState(true);
     
-    useEffect(() => {
-        if (profileData) {
-            generateInsights(profileData);
-        }
-    }, [profileData]);
-    
-    const generateInsights = (data: any) => {
+    const generateInsights = useCallback((data: any) => {
         const newInsights: Insight[] = [];
         
         // Check TPS - handle different data structures
@@ -289,7 +283,13 @@ export default function PerformanceInsights({ profileData }: PerformanceInsights
         }
         
         setInsights(newInsights);
-    };
+    }, []);
+    
+    useEffect(() => {
+        if (profileData) {
+            generateInsights(profileData);
+        }
+    }, [profileData, generateInsights]);
     
     const calculatePerformanceScore = (data: any): number => {
         let score = 100;
