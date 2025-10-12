@@ -21,6 +21,7 @@ export async function fetchFromBytebin(
     thumbnail: boolean
 ) {
     let bytebinUrl = 'https://bytebin.playcdu.co/';
+    let bytebinApiKey: string | undefined;
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
     }
