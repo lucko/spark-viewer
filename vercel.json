@@ -1,5 +1,11 @@
 {
     "github": {
         "silent": true
-    }
+    },
+    "functions": {
+        "src/pages/api/**/*.ts": {
+            "runtime": "nodejs22.x"
+        }
+    },
+    "buildCommand": "yarn proto && next build"
 }

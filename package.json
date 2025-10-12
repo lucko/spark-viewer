@@ -2,6 +2,9 @@
   "name": "spark-cdu",
   "version": "1.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "proto": "protoc --ts_out src/viewer/proto --proto_path proto proto/spark.proto --ts_opt long_type_number --ts_opt add_pb_suffix",
     "compile": "tsc",
