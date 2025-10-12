@@ -1,9 +1,42 @@
+@import './themes.scss';
+
 .homepage {
     section {
-        background-color: var(--clr-card-pri);
-        border-radius: 5px;
-        margin: 25px 0;
-        padding: 0.1px 15px;
+        @include glass-card;
+        border-radius: var(--radius-lg);
+        margin: var(--space-xl) 0;
+        padding: var(--space-lg);
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.05), transparent);
+            animation: rotate-slow 30s linear infinite;
+        }
+        
+        h2 {
+            position: relative;
+            z-index: 1;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            @include cosmic-gradient-text;
+            font-size: 1.8rem;
+            margin-bottom: var(--space-lg);
+            text-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
+        }
+        
+        p {
+            position: relative;
+            z-index: 1;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
     }
 
     :global {
@@ -14,8 +47,11 @@
             }
 
             .link-title h3 {
-                color: #e0e2e4;
-                font-size: 2rem;
+                @include cosmic-gradient-text;
+                font-family: 'Orbitron', monospace;
+                font-weight: 700;
+                font-size: 1.8rem;
+                text-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
             }
 
             @media (max-width: 640px) {
@@ -34,22 +70,44 @@
 
         .feature {
             display: flex;
-            gap: 20px;
-            padding-left: 20px;
-            margin: 30px 0;
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            @include glass-card;
+            border-radius: var(--radius-md);
+            position: relative;
+            transition: var(--transition-medium);
+            
+            &:hover {
+                transform: translateX(10px);
+                background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(3, 69, 112, 0.08));
+                
+                > svg {
+                    transform: scale(1.05);
+                    color: var(--cdu-primary-light);
+                }
+            }
 
-            > svg {
-                font-size: 70px;
+                > svg {
+                font-size: 60px;
                 margin: auto 0;
-                color: #7e7e7e;
+                color: var(--cdu-primary);
+                transition: var(--transition-medium);
             }
 
             > div {
                 max-width: 70%;
 
                 h3 {
+                    margin: 0 0 var(--space-sm) 0;
+                    @include cosmic-gradient-text;
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                }
+                
+                p, div {
+                    color: var(--text-secondary);
                     margin: 0;
-                    color: #60a5fa;
                 }
             }
         }

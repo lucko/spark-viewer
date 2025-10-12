@@ -27,6 +27,8 @@ import AllView from './views/AllView';
 import FlatView from './views/FlatView';
 import SourcesView from './views/SourcesView';
 import { View, VIEW_ALL, VIEW_FLAT } from './views/types';
+import PerformanceInsights from '../../../components/PerformanceInsights';
+import ProfileQuickStats from '../../../components/ProfileQuickStats';
 
 const Graph = dynamic(() => import('./graph/Graph'));
 
@@ -120,9 +122,50 @@ export default function Sampler({
 
     const supported =
         metadata?.platform?.sparkVersion && metadata.platform.sparkVersion >= 2;
+    
+    // No enterprise view - just one powerful interface
+
+    // Extract real data from the spark profile
+    const profileData = {
+        metadata: metadata,
+        data: data,
+        // Platform statistics - use 1m average as primary, fallback to 5m, then 15m
+        tps: metadata?.platformStatistics?.tps?.last1M || 
+             metadata?.platformStatistics?.tps?.last5M || 
+             metadata?.platformStatistics?.tps?.last15M || 
+             null,  // Don't default to 20 - use null if no data
+        avgTps: metadata?.platformStatistics?.tps?.last1M || 
+                metadata?.platformStatistics?.tps?.last5M || 
+                metadata?.platformStatistics?.tps?.last15M || 
+                null,
+        memory: {
+            used: metadata?.systemStatistics?.memory?.heap?.used || metadata?.systemStatistics?.memory?.used || 0,
+            total: metadata?.systemStatistics?.memory?.heap?.total || metadata?.systemStatistics?.memory?.total || 0,
+        },
+        cpu: metadata?.systemStatistics?.cpu?.processUsage?.last1m || metadata?.systemStatistics?.cpu?.systemUsage?.last1m || 0,
+        // Platform info
+        platform: {
+            name: metadata?.platform?.name || 'Unknown',
+            version: metadata?.platform?.version || 'Unknown',
+            minecraftVersion: metadata?.platform?.minecraftVersion || 'Unknown',
+        },
+        // Sampler info
+        duration: metadata?.samplerMetadata?.endTime - metadata?.samplerMetadata?.startTime || 0,
+        ticks: metadata?.samplerMetadata?.ticks || 0,
+        // Additional data
+        threads: data.threads?.length || 0,
+        plugins: metadata?.platform?.mods || metadata?.platform?.plugins || [],
+        issues: [],
+    };
+
+    // Single unified interface
 
     return (
         <div className={styles.sampler}>
+
+            <ProfileQuickStats profileData={profileData} />
+            <PerformanceInsights profileData={profileData} />
+
             <Controls
                 data={data}
                 metadata={metadata}

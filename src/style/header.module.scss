@@ -1,75 +1,232 @@
+@import './themes.scss';
+
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    background: var(--clr-bg-sec);
-    color: #ccc;
-    padding: 5px 20px;
+    gap: var(--space-md);
+    @include glass-card;
+    backdrop-filter: var(--glass-blur-heavy);
+    color: var(--text-primary);
+    padding: var(--space-sm) var(--space-lg);
     margin: 0;
     font-weight: normal;
-    box-shadow: 0 0 4px #130b00;
-    z-index: 20;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    position: sticky;
+    top: 0;
+    z-index: 50;
     line-height: 100%;
+}
 
-    > a {
-        display: flex;
-        align-items: center;
-        background-color: var(--clr-card-pri);
-        border-radius: 5px;
-        padding: 3px 5px 3px 3px;
-        margin: 3px 0;
-        border: 0;
-
-        > h1 {
-            padding: 0 3px;
-            font-size: 14pt;
-            margin: 0;
-            font-weight: normal;
-            color: #fff;
-        }
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+    
+    &:hover {
+        background: var(--glass-bg-hover);
+        border-color: var(--glass-border);
+        border-bottom-color: var(--glass-border);
+        transform: scale(1.02);
+        
+    .logoIcon {
+        transform: rotate(360deg);
+        color: var(--cdu-primary-light);
     }
-
-    svg {
-        filter: invert(0%);
-        padding-right: 5px;
+        
+        h1 {
+            color: var(--cdu-primary-light);
+        }
     }
 }
 
+.logoIcon {
+    transition: transform 0.6s ease;
+}
+
+.logoText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    
+    h1 {
+        padding: 0;
+        font-size: 1.2rem;
+        margin: 0;
+        font-weight: 700;
+        @include cosmic-gradient-text;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .tagline {
+        font-size: 0.7rem;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.8;
+    }
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
 .homepage-header {
-    background: var(--clr-bg-sec);
+    position: relative;
+    @include glass-card;
+    backdrop-filter: var(--glass-blur-heavy);
     display: flex;
     justify-content: center;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    overflow: hidden;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at center, rgba(167, 139, 250, 0.1), transparent);
+        animation: pulse-glow 4s ease-in-out infinite;
+    }
+}
 
-    > div {
-        display: flex;
-        justify-content: space-around;
-        flex-grow: 1;
-        max-width: 900px;
-        padding: 50px 0;
+.header-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-grow: 1;
+    max-width: 1200px;
+    padding: 80px 20px;
+    position: relative;
+    z-index: 1;
+}
 
-        > svg {
-            width: 25%;
-        }
+.logo-container {
+    position: relative;
+    width: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .homepage-logo {
+        width: 100%;
+        height: auto;
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    .logo-gradient {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.15), transparent);
+        filter: blur(30px);
+    }
+}
 
-        > div {
-            width: 60%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
+.text-container {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+}
 
-            > h1 {
-                font-size: min(15vw, 150px);
-                line-height: 1em;
-                margin: 0;
-                margin-bottom: 15px;
-            }
+.main-title {
+    font-size: min(15vw, 150px);
+    line-height: 1em;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    @include cosmic-gradient-text;
+    position: relative;
+    animation: gradient-shift 5s ease infinite;
+    background-size: 200% 200%;
+    
+}
 
-            > div {
-                font-size: min(2vw, 20px);
-                line-height: 1.1;
-            }
-        }
+.subtitle {
+    margin-top: -10px;
+}
+
+.playcdu-badge {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-md);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(96, 165, 250, 0.15));
+    border: 1px solid var(--cdu-primary);
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--cdu-primary);
+}
+
+.description {
+    font-size: min(2vw, 20px);
+    line-height: 1.4;
+    color: var(--text-secondary);
+    margin-top: var(--space-md);
+}
+
+.server-info {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    font-size: 0.9em;
+    color: var(--text-tertiary);
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.header-controls {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: 2;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        padding: 60px 20px;
+    }
+    
+    .logo-container {
+        width: 50%;
+        margin-bottom: var(--space-xl);
+    }
+    
+    .text-container {
+        width: 100%;
+    }
+    
+    .main-title {
+        font-size: min(20vw, 80px);
     }
 }

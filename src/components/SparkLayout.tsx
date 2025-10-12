@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import Footer from './Footer';
 import Header from './Header';
+import CosmicBackground from './CosmicBackground';
 
 export interface SparkLayoutProps {
     children: ReactNode;
@@ -13,6 +14,7 @@ export default function SparkLayout({
 }: SparkLayoutProps) {
     return (
         <>
+            <CosmicBackground />
             {header}
             <main>{children}</main>
             <Footer />
