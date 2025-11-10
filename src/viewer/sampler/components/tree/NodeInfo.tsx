@@ -47,6 +47,7 @@ export default function NodeInfo({
         ' ' +
         `saturate(${1 + 13 * importance})`;
 
+
     const opacity =
         significance < 0.01 ? 0.5 + (significance * 100) / 2 : undefined;
 
@@ -80,6 +81,7 @@ export default function NodeInfo({
             return formatTime(value) + 'ms';
         }
     }
+
 
     return (
         <>

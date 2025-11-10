@@ -47,9 +47,9 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     const router = useRouter();
     const title =
         {
-            '/download': 'spark | downloads',
-            '/changelog': 'spark | changelog',
-        }[router.pathname] || 'spark';
+            '/download': 'spark  @ CDU | downloads',
+            '/changelog': 'spark  @ CDU | changelog',
+        }[router.pathname] || 'spark @ CDU';
 
     return (
         <>
@@ -63,7 +63,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     content="summary"
                     key="twitter-card"
                 />
-                <meta name="twitter:title" content="spark" />
+                <meta name="twitter:title" content="spark @ CDU" />
                 <meta
                     name="twitter:description"
                     content="spark is a performance profiler for Minecraft clients, servers, and proxies."
@@ -74,7 +74,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     key="twitter-image"
                 />
 
-                <meta property="og:title" content="spark" />
+                <meta property="og:title" content="spark @ CDU" />
                 <meta
                     property="og:description"
                     content="spark is a performance profiler for Minecraft clients, servers, and proxies."

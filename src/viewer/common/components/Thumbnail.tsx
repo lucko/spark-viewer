@@ -7,7 +7,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
-import SparkLogo from '../../../assets/spark-logo.svg';
+import CDULogo from '../../../assets/cdu-logo.svg';
 import styles from '../../../style/thumbnail.module.scss';
 import { SparkMetadata } from '../../proto/guards';
 import {
@@ -129,7 +129,7 @@ export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
                         </>
                     )}
                 </p>
-                <SparkLogo alt="" width="65px" height="65px" />
+                <CDULogo alt="" width="65px" height="65px" />
             </div>
         </div>
     );

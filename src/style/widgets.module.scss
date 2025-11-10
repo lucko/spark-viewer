@@ -30,7 +30,7 @@
     :global {
         .widget {
             color: #b5b5b5;
-            background: #252b2d;
+            background: var(--clr-card-pri);
             padding: 2px 5px;
             border-radius: 5px;
             width: 260px;

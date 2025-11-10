@@ -1,0 +1,109 @@
+// PlayCDU Cosmic Theme System
+// Dark, cosmic glassmorphism theme with customizable variables
+// This file contains only mixins and classes, no global selectors
+// CSS variables are defined in base.scss
+
+
+// Glassmorphism mixins
+@mixin glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transition: var(--transition-medium);
+    
+    &:hover {
+        background: var(--glass-bg-hover);
+        box-shadow: var(--glass-shadow-hover);
+        border-color: rgba(167, 139, 250, 0.2);
+        transform: translateY(-2px);
+    }
+}
+
+@mixin glass-button {
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glow-subtle);
+    transition: var(--transition-fast);
+    
+    &:hover {
+        background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(244, 114, 182, 0.2) 100%);
+        box-shadow: var(--glow-primary);
+        transform: scale(1.02);
+    }
+    
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+@mixin neon-text {
+    text-shadow: 
+        0 0 4px currentColor,
+        0 0 8px currentColor,
+        0 0 12px currentColor,
+        0 0 16px rgba(167, 139, 250, 0.8);
+}
+
+@mixin cosmic-gradient-text {
+    background: var(--cosmic-gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+// Animation keyframes
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes glow-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+// Utility classes
+.glass-card {
+    @include glass-card;
+}
+
+.glass-button {
+    @include glass-button;
+}
+
+.neon-text {
+    @include neon-text;
+}
+
+.cosmic-text {
+    @include cosmic-gradient-text;
+}
+
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+.glow-animation {
+    animation: glow-pulse 2s ease-in-out infinite;
+}
+
+.gradient-animation {
+    background-size: 200% 200%;
+    animation: gradient-shift 5s ease infinite;
+}

@@ -1,8 +1,117 @@
+@import './themes.scss';
+
 .footer {
-    color: #888;
-    margin-top: 30px;
-    padding: 0 20px 20px 20px;
-    font-size: 10pt;
+    @include glass-card;
+    margin-top: var(--space-2xl);
+    padding: var(--space-xl) var(--space-lg);
+    font-size: 0.9rem;
     font-weight: normal;
-    text-align: right;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    backdrop-filter: var(--glass-blur-heavy);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.footer-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.playcdu-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 1.1rem;
+    
+    .brand-name {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        @include cosmic-gradient-text;
+        font-size: 1.3rem;
+    }
+    
+    .separator {
+        color: var(--text-tertiary);
+        opacity: 0.5;
+    }
+    
+    .server-name {
+        color: var(--text-secondary);
+        font-weight: 400;
+    }
+}
+
+.server-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    
+    .link {
+        color: var(--text-link);
+        transition: var(--transition-fast);
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        
+            &:hover {
+                background: var(--glass-bg-hover);
+                transform: translateY(-2px);
+                color: var(--cdu-primary-light);
+            }
+    }
+    
+    .dot {
+        color: var(--text-tertiary);
+        opacity: 0.3;
+    }
+}
+
+.footer-credits {
+    text-align: center;
+    color: var(--text-tertiary);
+    
+    .spark-info {
+        margin-bottom: var(--space-sm);
+        
+        a {
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+            
+            &:hover {
+                color: var(--text-link-hover);
+            }
+        }
+    }
+    
+    .copyright {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: var(--space-lg) var(--space-md);
+    }
+    
+    .server-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        
+        .dot {
+            display: none;
+        }
+    }
 }

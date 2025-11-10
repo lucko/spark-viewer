@@ -7,14 +7,14 @@
             margin-top: 20px;
 
             .ReactVirtualized__Table__headerRow {
-                background-color: #252b2d;
+                background-color: var(--clr-card-pri);
                 padding-right: 0 !important;
                 color: #fff;
                 border-radius: 5px 5px 0 0;
             }
 
             .ReactVirtualized__Table__Grid {
-                background-color: #252b2d;
+                background-color: var(--clr-card-pri);
             }
 
             .ReactVirtualized__Table__row {

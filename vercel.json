@@ -1,5 +1,6 @@
 {
     "github": {
         "silent": true
-    }
+    },
+    "buildCommand": "yarn proto && next build"
 }
