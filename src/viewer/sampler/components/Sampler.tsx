@@ -149,12 +149,12 @@ export default function Sampler({
             version: metadata?.platform?.version || 'Unknown',
             minecraftVersion: metadata?.platform?.minecraftVersion || 'Unknown',
         },
-        // Sampler info
-        duration: metadata?.samplerMetadata?.endTime - metadata?.samplerMetadata?.startTime || 0,
-        ticks: metadata?.samplerMetadata?.ticks || 0,
+        // Sampler info - endTime and startTime are directly on metadata, not nested
+        duration: (metadata?.endTime && metadata?.startTime) ? (metadata.endTime - metadata.startTime) : 0,
+        ticks: 0, // ticks is part of WindowStatistics, not directly available here
         // Additional data
         threads: data.threads?.length || 0,
-        plugins: metadata?.platform?.mods || metadata?.platform?.plugins || [],
+        plugins: metadata?.sources ? Object.values(metadata.sources) : [],
         issues: [],
     };
 
