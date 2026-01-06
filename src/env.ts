@@ -28,7 +28,7 @@ export const env = createEnv({
         ),
         NEXT_PUBLIC_SPARK_BYTEBIN_URL: z.preprocess(
             stringOrUndefined,
-            z.string().url().default('https://spark-usercontent.lucko.me')
+            z.string().url().default('https://api.pastes.dev')
         ),
         NEXT_PUBLIC_SPARK_BYTESOCKS_URL: z.preprocess(
             stringOrUndefined,
