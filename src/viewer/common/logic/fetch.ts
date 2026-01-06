@@ -20,7 +20,7 @@ export async function fetchFromBytebin(
     router: NextRouter | null,
     thumbnail: boolean
 ) {
-    let bytebinUrl = 'https://bytebin.playcdu.co/';
+    let bytebinUrl = env.NEXT_PUBLIC_SPARK_BYTEBIN_URL;
     let bytebinApiKey: string | undefined;
     if (thumbnail && router && router.query['x-bytebin-url']) {
         bytebinUrl = router.query['x-bytebin-url'] as string;
