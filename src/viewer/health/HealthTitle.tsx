@@ -11,6 +11,10 @@ export default function HealthTitle({ metadata }: HealthTitleProps) {
     const { user, generatedTime } = metadata;
 
     const [timeStr, dateStr] = formatDate(generatedTime);
+    const showAvatar =
+        user &&
+        metadata.platform?.name !== 'Hytale' &&
+        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
 
     return (
         <div className="textbox title">
@@ -20,12 +24,7 @@ export default function HealthTitle({ metadata }: HealthTitleProps) {
                 </title>
             </Head>
             <span>
-                Health Report created by{' '}
-                {user &&
-                    metadata.platform?.type !==
-                        PlatformMetadata_Type.APPLICATION && (
-                        <Avatar user={user} />
-                    )}
+                Health Report created by {showAvatar && <Avatar user={user} />}
                 {user?.name} @ {timeStr} {dateStr}
             </span>
         </div>

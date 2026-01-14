@@ -1,4 +1,5 @@
 import { PlatformStatistics_Ping } from '../../../../proto/spark_pb';
+import { formatNumber } from '../../../util/format';
 import { Formatter, WidgetFormat } from '../format';
 import Widget from '../Widget';
 import WidgetValue from '../WidgetValue';
@@ -19,10 +20,7 @@ export default function PingWidget({ ping }: PingWidgetProps) {
             }
         },
         format: value => {
-            return value.toLocaleString('en-US', {
-                maximumSignificantDigits: 3,
-                useGrouping: false,
-            });
+            return formatNumber(value);
         },
     };
 

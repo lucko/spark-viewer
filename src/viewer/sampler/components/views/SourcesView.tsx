@@ -100,9 +100,9 @@ const OtherSourcesSection = ({ alreadyShown }: { alreadyShown: string[] }) => {
         return null;
     }
 
-    const otherSources = Object.values(metadata.sources).filter(
-        source => !alreadyShown.includes(source.name)
-    );
+    const otherSources = Object.values(metadata.sources)
+        .filter(source => !alreadyShown.includes(source.name))
+        .filter(p => !p.builtIn);
 
     if (!otherSources.length) {
         return null;

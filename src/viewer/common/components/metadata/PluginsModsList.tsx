@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
     PluginOrModMetadata,
     WorldStatistics_DataPack,
@@ -12,13 +13,37 @@ export default function PluginsModsList({
     plugins,
     dataPacks,
 }: PluginsModsListProps) {
+    const [showBuiltinPlugins, setShowBuiltinPlugins] =
+        useState<boolean>(false);
+    const hasBuiltinPlugins = plugins.some(plugin => plugin.builtIn);
+    const filteredPlugins = showBuiltinPlugins
+        ? plugins
+        : plugins.filter(p => !p.builtIn);
+
+    const [showBuiltinDataPacks, setShowBuiltinDataPacks] =
+        useState<boolean>(false);
+    const hasBuiltinDataPacks = dataPacks.some(pack => pack.builtIn);
+    const filteredDataPacks = showBuiltinDataPacks
+        ? dataPacks
+        : dataPacks.filter(p => !p.builtIn);
+
     return (
         <div className="plugins-mods-list">
             {!!plugins.length && (
                 <>
                     <h2>Plugins/Mods</h2>
+                    {hasBuiltinPlugins && (
+                        <button
+                            onClick={() =>
+                                setShowBuiltinPlugins(value => !value)
+                            }
+                        >
+                            {showBuiltinPlugins ? 'Hide' : 'Show'} built-in
+                            plugins
+                        </button>
+                    )}
                     <ul>
-                        {plugins.map(plugin => (
+                        {filteredPlugins.map(plugin => (
                             <li key={plugin.name}>
                                 <PluginMod {...plugin} />
                             </li>
@@ -29,8 +54,18 @@ export default function PluginsModsList({
             {!!dataPacks.length && (
                 <>
                     <h2>Data Packs</h2>
+                    {hasBuiltinDataPacks && (
+                        <button
+                            onClick={() =>
+                                setShowBuiltinDataPacks(value => !value)
+                            }
+                        >
+                            {showBuiltinDataPacks ? 'Hide' : 'Show'} built-in
+                            Data Packs
+                        </button>
+                    )}
                     <ul>
-                        {dataPacks.map(pack => (
+                        {filteredDataPacks.map(pack => (
                             <li key={pack.name}>
                                 <Datapack {...pack} />
                             </li>

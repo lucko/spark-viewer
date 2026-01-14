@@ -8,11 +8,20 @@ export interface TpsWidgetProps {
 }
 
 export default function TpsWidget({ tps }: TpsWidgetProps) {
+    const thresholds = {
+        green: 18,
+        yellow: 16,
+    };
+    if (tps.gameTargetTps > 0) {
+        thresholds.green = tps.gameTargetTps * 0.9;
+        thresholds.yellow = tps.gameTargetTps * 0.8;
+    }
+
     const formatter: Formatter = {
         color: value => {
-            if (value > 18) {
+            if (value > thresholds.green) {
                 return WidgetFormat.colors.green;
-            } else if (value > 16) {
+            } else if (value > thresholds.yellow) {
                 return WidgetFormat.colors.yellow;
             } else {
                 return WidgetFormat.colors.red;

@@ -34,6 +34,11 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
         ? formatBytesShort(interval)
         : `${interval / 1000}ms`;
 
+    const showAvatar =
+        user &&
+        metadata.platform?.name !== 'Hytale' &&
+        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
+
     return (
         <div className="textbox title">
             <Head>
@@ -43,11 +48,7 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
             </Head>
             <span>
                 {comment}
-                {user &&
-                    metadata.platform?.type !==
-                        PlatformMetadata_Type.APPLICATION && (
-                        <Avatar user={user} />
-                    )}
+                {showAvatar && <Avatar user={user} />}
                 {user?.name} @ {startTimeStr} {startDateStr}, interval{' '}
                 {formattedInterval}
                 {ticksOver}

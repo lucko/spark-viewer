@@ -30,11 +30,7 @@ export default function ChunkCountsList({ chunks }: ChunkCountsListProps) {
                     </li>
                 )}
             </ul>
-            <Tooltip
-                id="chunk-tp-tooltip"
-                place="left"
-                clickable
-            />
+            <Tooltip id="chunk-tp-tooltip" place="left" clickable />
         </>
     );
 }

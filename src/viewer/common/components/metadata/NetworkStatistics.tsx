@@ -5,7 +5,7 @@ import {
     SystemStatistics as SystemStatisticsProto,
     SystemStatistics_NetInterface,
 } from '../../../proto/spark_pb';
-import { formatBytes } from '../../util/format';
+import { formatBytes, formatNumber } from '../../util/format';
 import { Formatter, WidgetFormat } from '../widgets/format';
 import Widget from '../widgets/Widget';
 import WidgetValue from '../widgets/WidgetValue';
@@ -110,10 +110,7 @@ const NetworkInterfaceWidget = ({
             if (format === 'bytes/sec') {
                 return formatBytes(value);
             } else {
-                return value.toLocaleString('en-US', {
-                    maximumSignificantDigits: 3,
-                    useGrouping: false,
-                });
+                return formatNumber(value);
             }
         },
     };

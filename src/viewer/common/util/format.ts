@@ -63,3 +63,10 @@ export function formatDate(startTime: number | string | Date) {
     const date = start.toLocaleDateString();
     return [time, date];
 }
+
+export function formatNumber(value: number) {
+    return value.toLocaleString('en-US', {
+        maximumSignificantDigits: value > 1 ? 3 : value > 0.1 ? 2 : 1,
+        useGrouping: false,
+    });
+}

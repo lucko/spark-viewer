@@ -18,18 +18,18 @@ export default function HeapTitle({ metadata }: HeapTitleProps) {
         time = '';
     }
 
+    const showAvatar =
+        user &&
+        metadata.platform?.name !== 'Hytale' &&
+        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
+
     return (
         <div className="textbox title">
             <Head>
                 <title>Heap Summary{time} | spark</title>
             </Head>
             <span>
-                Heap Summary created by{' '}
-                {user &&
-                    metadata.platform?.type !==
-                        PlatformMetadata_Type.APPLICATION && (
-                        <Avatar user={user} />
-                    )}
+                Heap Summary created by {showAvatar && <Avatar user={user} />}
                 {user?.name}
                 {time}
             </span>

@@ -64,6 +64,11 @@ export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
 
     const { time, date } = unwrapDateMetadata(metadata);
 
+    const showAvatar =
+        metadata.user &&
+        metadata.platform?.name !== 'Hytale' &&
+        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
+
     return (
         <div ref={ref} className={classNames('thumbnail', styles.thumbnail)}>
             <div>
@@ -120,7 +125,7 @@ export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
 
             <div className="footer">
                 <p>
-                    Uploaded by <Avatar user={metadata.user!} />
+                    Uploaded by {showAvatar && <Avatar user={metadata.user!} />}
                     {metadata.user?.name}
                     {time && (
                         <>

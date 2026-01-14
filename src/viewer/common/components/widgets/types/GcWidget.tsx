@@ -1,4 +1,5 @@
 import { PlatformStatistics_Gc } from '../../../../proto/spark_pb';
+import { formatNumber } from '../../../util/format';
 import { Formatter, WidgetFormat } from '../format';
 import Widget from '../Widget';
 import WidgetValue from '../WidgetValue';
@@ -78,12 +79,7 @@ export default function GcWidget({ gc, title, label }: GcWidgetProps) {
             }
         },
         format: value => {
-            return (
-                value.toLocaleString('en-US', {
-                    maximumSignificantDigits: 2,
-                    useGrouping: false,
-                }) + 'ms'
-            );
+            return formatNumber(value) + 'ms';
         },
     };
 
