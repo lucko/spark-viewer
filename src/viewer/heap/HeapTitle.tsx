@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Avatar from '../common/components/Avatar';
 import { formatDate } from '../common/util/format';
-import { HeapMetadata, PlatformMetadata_Type } from '../proto/spark_pb';
+import { HeapMetadata } from '../proto/spark_pb';
 
 export interface HeapTitleProps {
     metadata: HeapMetadata;
@@ -18,18 +18,14 @@ export default function HeapTitle({ metadata }: HeapTitleProps) {
         time = '';
     }
 
-    const showAvatar =
-        user &&
-        metadata.platform?.name !== 'Hytale' &&
-        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
-
     return (
         <div className="textbox title">
             <Head>
                 <title>Heap Summary{time} | spark</title>
             </Head>
             <span>
-                Heap Summary created by {showAvatar && <Avatar user={user} />}
+                Heap Summary created by{' '}
+                <Avatar user={user} platform={metadata.platform} />
                 {user?.name}
                 {time}
             </span>

@@ -2,7 +2,6 @@ import Head from 'next/head';
 import Avatar from '../../common/components/Avatar';
 import { formatBytesShort, formatDate } from '../../common/util/format';
 import {
-    PlatformMetadata_Type,
     SamplerMetadata,
     SamplerMetadata_DataAggregator_Type,
     SamplerMetadata_SamplerMode,
@@ -34,11 +33,6 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
         ? formatBytesShort(interval)
         : `${interval / 1000}ms`;
 
-    const showAvatar =
-        user &&
-        metadata.platform?.name !== 'Hytale' &&
-        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
-
     return (
         <div className="textbox title">
             <Head>
@@ -48,7 +42,7 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
             </Head>
             <span>
                 {comment}
-                {showAvatar && <Avatar user={user} />}
+                <Avatar user={user} platform={metadata.platform} />
                 {user?.name} @ {startTimeStr} {startDateStr}, interval{' '}
                 {formattedInterval}
                 {ticksOver}

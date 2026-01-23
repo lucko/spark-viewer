@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Avatar from '../common/components/Avatar';
 import { formatDate } from '../common/util/format';
-import { HealthMetadata, PlatformMetadata_Type } from '../proto/spark_pb';
+import { HealthMetadata } from '../proto/spark_pb';
 
 export interface HealthTitleProps {
     metadata: HealthMetadata;
@@ -11,10 +11,6 @@ export default function HealthTitle({ metadata }: HealthTitleProps) {
     const { user, generatedTime } = metadata;
 
     const [timeStr, dateStr] = formatDate(generatedTime);
-    const showAvatar =
-        user &&
-        metadata.platform?.name !== 'Hytale' &&
-        metadata.platform?.type !== PlatformMetadata_Type.APPLICATION;
 
     return (
         <div className="textbox title">
@@ -24,7 +20,8 @@ export default function HealthTitle({ metadata }: HealthTitleProps) {
                 </title>
             </Head>
             <span>
-                Health Report created by {showAvatar && <Avatar user={user} />}
+                Health Report created by{' '}
+                <Avatar user={user} platform={metadata.platform} />
                 {user?.name} @ {timeStr} {dateStr}
             </span>
         </div>
