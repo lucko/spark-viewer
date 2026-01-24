@@ -6,8 +6,13 @@ import { ReactNode } from 'react';
 import bukkitLogo from '../assets/logos/bukkit.png';
 import bungeeCordLogo from '../assets/logos/bungeecord.png';
 import fabricLogo from '../assets/logos/fabric.png';
+import foliaLogo from '../assets/logos/folia.png';
 import forgeLogo from '../assets/logos/forge.png';
+import geyserLogo from '../assets/logos/geyser.png';
+import hytaleLogo from '../assets/logos/hytale.png';
+import minestomLogo from '../assets/logos/minestom.png';
 import neoForgeLogo from '../assets/logos/neoforge.png';
+import nukkitLogo from '../assets/logos/nukkit.png';
 import spongeLogo from '../assets/logos/sponge.png';
 import velocityLogo from '../assets/logos/velocity.png';
 import TextBox from '../components/TextBox';
@@ -162,26 +167,20 @@ const DownloadPage = ({
                 need to install the plugin!
             </p>
 
-            <h2>Recent Changes</h2>
-            <RecentChangelog changelog={changelogSlice} />
-
             <h2>Other Platforms</h2>
             <p>
-                spark is also available for other platforms, including Folia,
-                Geyser, Minestom, and Nukkit. These releases are provided as-is
-                and are supported by the community.
-            </p>
-            <p>
-                For more info, please see{' '}
+                spark is also available for some other platforms. These releases
+                are provided as-is and are supported by the community. For more
+                info, please see{' '}
                 <a href="https://github.com/lucko/spark-extra-platforms">
                     spark-extra-platforms
                 </a>{' '}
-                on GitHub. Downloads are available from{' '}
-                <a href="https://ci.lucko.me/job/spark-extra-platforms/">
-                    Jenkins
-                </a>
-                .
+                on GitHub.{' '}
             </p>
+            <ExtraDownloadButtons />
+
+            <h2>Recent Changes</h2>
+            <RecentChangelog changelog={changelogSlice} />
 
             <h2>Older Versions</h2>
             <p>
@@ -211,94 +210,123 @@ const RecentChangelog = ({ changelog }: { changelog: ChangelogEntry[] }) => {
 };
 
 const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
+    function getUrl(artifact: string) {
+        const { url } = Object.keys(artifacts).length
+            ? artifacts[artifact]
+            : { url: '#' };
+        return url;
+    }
+
     return (
         <div className="download-buttons">
             <DownloadInfo
-                artifacts={artifacts}
                 name="Bukkit"
                 comment="Paper/Spigot"
-                artifact="bukkit"
+                url={getUrl('bukkit')}
                 logo={bukkitLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="BungeeCord"
-                artifact="bungeecord"
+                url={getUrl('bungeecord')}
                 logo={bungeeCordLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="Velocity"
-                artifact="velocity"
+                url={getUrl("velocity")}
                 logo={velocityLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="Fabric"
                 comment="MC 1.21.11"
-                artifact="fabric"
+                url={getUrl("fabric")}
                 logo={fabricLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="NeoForge"
                 comment="MC 1.21.11"
-                artifact="neoforge"
+                url={getUrl("neoforge")}
                 logo={neoForgeLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="Forge"
                 comment="MC 1.21.11"
-                artifact="forge"
+                url={getUrl("forge")}
                 logo={forgeLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="Sponge"
                 comment="API 12"
-                artifact="sponge"
+                url={getUrl("sponge")}
                 logo={spongeLogo}
             />
             <DownloadInfo
-                artifacts={artifacts}
                 name="Standalone"
                 comment="Java Agent"
-                artifact="standalone"
+                url={getUrl('standalone')}
                 icon={<FontAwesomeIcon fixedWidth={true} icon={faPlug} />}
             />
         </div>
     );
 };
 
+const ExtraDownloadButtons = () => {
+    return (
+        <div className="download-buttons extra-download-buttons">
+            <DownloadInfo
+                name="Hytale"
+                url="https://www.curseforge.com/hytale/mods/spark"
+                logo={hytaleLogo}
+            />
+            <DownloadInfo
+                name="Folia"
+                url="https://ci.lucko.me/job/spark-extra-platforms/"
+                logo={foliaLogo}
+                width={100}
+            />
+            <DownloadInfo
+                name="Geyser"
+                url="https://ci.lucko.me/job/spark-extra-platforms/"
+                logo={geyserLogo}
+                width={70}
+            />
+            <DownloadInfo
+                name="Minestom"
+                url="https://ci.lucko.me/job/spark-extra-platforms/"
+                logo={minestomLogo}
+            />
+            <DownloadInfo
+                name="Nukkit"
+                url="https://ci.lucko.me/job/spark-extra-platforms/"
+                logo={nukkitLogo}
+            />
+        </div>
+    );
+}
+
 interface DownloadInfoProps {
-    artifacts: ArtifactsMap;
     name: string;
     comment?: string;
-    artifact: string;
+    url: string;
     logo?: StaticImageData;
     icon?: ReactNode;
+    width?: number;
 }
 
 const DownloadInfo = ({
-    artifacts,
     name,
     comment,
-    artifact,
+    url,
     logo,
     icon,
+    width
 }: DownloadInfoProps) => {
-    const { url } = Object.keys(artifacts).length
-        ? artifacts[artifact]
-        : { url: '#' };
-
     return (
         <a className="link" href={url}>
             {logo && (
                 <Image
                     src={logo}
                     style={{ objectFit: 'contain' }}
-                    width={50}
+                    width={width ?? 50}
                     height={50}
                     alt={name + ' logo'}
                 />
