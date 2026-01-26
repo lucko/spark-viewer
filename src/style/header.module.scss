@@ -73,3 +73,55 @@
         }
     }
 }
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.remote-button {
+    background: linear-gradient(135deg, #1a1f2e 0%, #16213e 100%);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.1);
+    
+    .button-icon {
+        font-size: 16px;
+        filter: hue-rotate(180deg) brightness(1.2);
+    }
+    
+    .button-text {
+        white-space: nowrap;
+    }
+    
+    &:hover {
+        background: linear-gradient(135deg, #1e2433 0%, #1a2845 100%);
+        border-color: rgba(0, 212, 255, 0.6);
+        box-shadow: 
+            0 4px 16px rgba(0, 212, 255, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 212, 255, 0.15);
+    }
+    
+    @media (max-width: 640px) {
+        .button-text {
+            display: none;
+        }
+        padding: 8px 12px;
+    }
+}
