@@ -10,7 +10,7 @@ import {
 } from 'react';
 import TextBox from '../components/TextBox';
 import { SelectedFileContext } from '../pages/_app';
-import { ExportCallback } from './common/logic/export';
+import { createExportCallback, ExportCallback } from './common/logic/export';
 import {
     fetchFromBytebin,
     fetchFromFile,
@@ -77,7 +77,35 @@ export default function SparkViewer() {
         (async () => {
             try {
                 let result: FetchResult;
-                if (code !== '_') {
+                
+                // Check if this is a remote load from sessionStorage
+                const isRemote = router.query.remote === 'true';
+                const remoteDataKey = `remote_${code}`;
+                
+                if (isRemote && typeof window !== 'undefined') {
+                    const sessionData = sessionStorage.getItem(remoteDataKey);
+                    if (sessionData) {
+                        try {
+                            const { data: arrayData, type, metadata } = JSON.parse(sessionData);
+                            const buf = new Uint8Array(arrayData).buffer;
+                            
+                            // Clean up session storage
+                            sessionStorage.removeItem(remoteDataKey);
+                            
+                            // Create result object
+                            result = {
+                                type,
+                                buf,
+                                exportCallback: createExportCallback(code, buf, type),
+                            };
+                        } catch (parseError) {
+                            console.error('Failed to parse remote session data:', parseError);
+                            throw new Error('Invalid remote session data');
+                        }
+                    } else {
+                        throw new Error('Remote session data not found');
+                    }
+                } else if (code !== '_') {
                     result = await fetchFromBytebin(code, router, false);
                 } else {
                     result = await fetchFromFile(selectedFile);

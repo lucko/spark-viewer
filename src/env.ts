@@ -42,6 +42,10 @@ export const env = createEnv({
             stringOrUndefined,
             z.string().url().default('https://sparkapi.lucko.me')
         ),
+        NEXT_PUBLIC_SPARK_MONITOR_URL: z.preprocess(
+            stringOrUndefined,
+            z.string().url().default('https://as-spark-monitor.arminosi.workers.dev')
+        ),
     },
     runtimeEnv: {
         SPARK_DOCS_URL: process.env.SPARK_DOCS_URL,
@@ -55,5 +59,6 @@ export const env = createEnv({
         NEXT_PUBLIC_SPARK_MAPPINGS_URL:
             process.env.NEXT_PUBLIC_SPARK_MAPPINGS_URL,
         NEXT_PUBLIC_SPARK_API_URL: process.env.NEXT_PUBLIC_SPARK_API_URL,
+        NEXT_PUBLIC_SPARK_MONITOR_URL: process.env.NEXT_PUBLIC_SPARK_MONITOR_URL,
     },
 });

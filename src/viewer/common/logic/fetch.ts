@@ -68,3 +68,47 @@ export function readFileAsync(file: Blob): Promise<ArrayBuffer> {
         reader.readAsArrayBuffer(file);
     });
 }
+
+export async function fetchFromRemote(downloadPath: string): Promise<FetchResult> {
+    const fullUrl = `${env.NEXT_PUBLIC_SPARK_MONITOR_URL}${downloadPath}`;
+    
+    const response = await fetch(fullUrl);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch remote file: ${response.status}`);
+    }
+
+    // Determine content type primarily from file extension
+    let type: SparkContentType;
+    const pathParts = downloadPath.split('.');
+    const extension = pathParts[pathParts.length - 1];
+    
+    if (extension === 'sparkprofile') {
+        type = 'application/x-spark-sampler';
+    } else if (extension === 'sparkheap') {
+        type = 'application/x-spark-heap';
+    } else if (extension === 'sparkhealth') {
+        type = 'application/x-spark-health';
+    } else {
+        // Try to determine from headers as fallback
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType !== 'application/octet-stream') {
+            try {
+                type = parseContentType(contentType);
+            } catch {
+                // Default to sampler if we can't determine
+                type = 'application/x-spark-sampler';
+            }
+        } else {
+            // Default to sampler if we can't determine
+            type = 'application/x-spark-sampler';
+        }
+    }
+
+    const buf = await response.arrayBuffer();
+    
+    // Extract filename for export
+    const filename = downloadPath.split('/').pop() || 'remote-report';
+    const exportCallback = createExportCallback(filename.replace(/\.[^/.]+$/, ''), buf, type);
+    
+    return { type, buf, exportCallback };
+}

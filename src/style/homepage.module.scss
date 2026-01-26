@@ -65,3 +65,59 @@
         font-size: 60%;
     }
 }
+
+.remote-reports-section {
+    background-color: #1e2327;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 30px 0;
+
+    h3 {
+        margin: 0 0 10px 0;
+        color: #ffc93a;
+        font-size: 1.2rem;
+    }
+
+    p {
+        margin: 0 0 15px 0;
+        color: #ccc;
+        font-size: 0.9rem;
+    }
+}
+
+.remote-selector-container {
+    .remote-select {
+        background: #2d2d2d;
+        color: #ccc;
+        border: 1px solid #555;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 500px;
+
+        &:focus {
+            outline: none;
+            border-color: #ffc93a;
+            background: #333;
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        option {
+            background: #2d2d2d;
+            color: #ccc;
+        }
+    }
+
+    .remote-hint {
+        margin: 10px 0 0 0 !important;
+        font-size: 0.8rem !important;
+        color: #999 !important;
+        font-style: italic;
+    }
+}
