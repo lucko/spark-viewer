@@ -53,8 +53,7 @@ const ScalarValue = ({ name, value }: { name: string; value: any }) => {
     }
     return (
         <li>
-            {name}:{' '}
-            <span className={`type-${type}`}>{String(value)}</span>
+            {name}: <span className={`type-${type}`}>{String(value)}</span>
         </li>
     );
 };

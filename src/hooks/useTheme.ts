@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 export type Theme = 'dark' | 'light';
-export type ThemeHook = [Theme, Dispatch<SetStateAction<Theme>>]
+export type ThemeHook = [Theme, Dispatch<SetStateAction<Theme>>];
 
 export default function useTheme(): ThemeHook {
     const [theme, setTheme] = useState<Theme>('dark');

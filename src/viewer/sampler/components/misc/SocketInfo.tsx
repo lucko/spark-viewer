@@ -15,8 +15,8 @@ export default function SocketInfo({ socket }: SocketInfoProps) {
     return (
         <TextBox extraClassName={styles['socket-info']}>
             <h2>
-                <FontAwesomeIcon icon={faCloud} />{' '}
-                <b>Connected</b> via WebSocket
+                <FontAwesomeIcon icon={faCloud} /> <b>Connected</b> via
+                WebSocket
             </h2>
             <p>
                 spark viewer is connected to the spark profiler using a socket

@@ -1,6 +1,6 @@
+@use 'node_modules/@fortawesome/fontawesome-svg-core/styles';
+@use './theme.scss';
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
-@import 'node_modules/@fortawesome/fontawesome-svg-core/styles';
-@import './theme.scss';
 
 html {
     background-color: var(--bg-primary);

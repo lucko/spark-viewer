@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import SparkLogo from '../assets/spark-logo.svg';
+import { useContext } from 'react';
 import SparkLogoInverted from '../assets/spark-logo-inverted.svg';
+import SparkLogo from '../assets/spark-logo.svg';
+import { ThemeContext } from '../pages/_app';
 import styles from '../style/header.module.scss';
 import ThemeToggle from './ThemeToggle';
-import { useContext } from 'react';
-import { ThemeContext } from '../pages/_app';
 
 export interface HeaderProps {
     title?: string;

@@ -232,31 +232,31 @@ const DownloadButtons = ({ artifacts }: { artifacts: ArtifactsMap }) => {
             />
             <DownloadInfo
                 name="Velocity"
-                url={getUrl("velocity")}
+                url={getUrl('velocity')}
                 logo={velocityLogo}
             />
             <DownloadInfo
                 name="Fabric"
                 comment="MC 1.21.11"
-                url={getUrl("fabric")}
+                url={getUrl('fabric')}
                 logo={fabricLogo}
             />
             <DownloadInfo
                 name="NeoForge"
                 comment="MC 1.21.11"
-                url={getUrl("neoforge")}
+                url={getUrl('neoforge')}
                 logo={neoForgeLogo}
             />
             <DownloadInfo
                 name="Forge"
                 comment="MC 1.21.11"
-                url={getUrl("forge")}
+                url={getUrl('forge')}
                 logo={forgeLogo}
             />
             <DownloadInfo
                 name="Sponge"
                 comment="API 12"
-                url={getUrl("sponge")}
+                url={getUrl('sponge')}
                 logo={spongeLogo}
             />
             <DownloadInfo
@@ -301,7 +301,7 @@ const ExtraDownloadButtons = () => {
             />
         </div>
     );
-}
+};
 
 interface DownloadInfoProps {
     name: string;
@@ -318,7 +318,7 @@ const DownloadInfo = ({
     url,
     logo,
     icon,
-    width
+    width,
 }: DownloadInfoProps) => {
     return (
         <a className="link" href={url}>

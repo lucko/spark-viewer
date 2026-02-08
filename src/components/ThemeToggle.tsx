@@ -1,8 +1,8 @@
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import styles from '../style/header.module.scss';
 import { useContext } from 'react';
 import { ThemeContext } from '../pages/_app';
+import styles from '../style/header.module.scss';
 
 export default function ThemeToggle() {
     const [theme, setTheme] = useContext(ThemeContext);
