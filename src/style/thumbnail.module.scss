@@ -1,6 +1,6 @@
 .thumbnail {
     height: 100%;
-    background-color: #1e2527;
+    background-color: var(--bg-primary);
     overflow: hidden;
     padding: 60px;
 
@@ -21,7 +21,7 @@
     h2 {
         font-size: 22px;
         font-weight: normal;
-        color: #a1a1a1;
+        color: var(--text-secondary);
         margin-top: 10px;
     }
 
@@ -52,18 +52,18 @@
             font-size: 26px;
             margin: 10px 0;
 
-            color: #a1a1a1;
+            color: var(--text-secondary);
 
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
 
             svg {
-                color: #f77669;
+                color: var(--accent-primary);
             }
 
             span {
-                color: #fff;
+                color: var(--text-white);
             }
         }
 

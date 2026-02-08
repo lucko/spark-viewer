@@ -22,6 +22,6 @@ export function getColor(statisticName: WindowStatisticsKey) {
         players: '#b72c7d',
         entities: '#fc704f',
         tileEntities: '#addcff',
-        chunks: '#d9dee3',
+        chunks: '#a1a1a1',
     }[statisticName];
 }

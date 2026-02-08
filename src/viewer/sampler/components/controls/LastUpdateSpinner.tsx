@@ -36,8 +36,8 @@ export default function LastUpdateSpinner({
                     size={26}
                     strokeWidth={4}
                     duration={socket.socket.settings?.samplerInterval ?? 60}
-                    colors={'#b5b5b5'}
-                    trailColor={'#3c3f41'}
+                    colors={'var(--text-secondary)' as any}
+                    trailColor={'var(--border-light)' as any}
                 >
                     {() => {
                         return (
@@ -50,8 +50,8 @@ export default function LastUpdateSpinner({
                                     socket.socket.settings
                                         ?.statisticsInterval ?? 10
                                 }
-                                colors={'#b5b5b5'}
-                                trailColor={'#3c3f41'}
+                                colors={'var(--text-secondary)' as any}
+                                trailColor={'var(--border-light)' as any}
                             />
                         );
                     }}

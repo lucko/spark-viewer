@@ -7,18 +7,18 @@
             margin-top: 20px;
 
             .ReactVirtualized__Table__headerRow {
-                background-color: #252b2d;
+                background-color: var(--bg-secondary);
                 padding-right: 0 !important;
-                color: #fff;
+                color: var(--text-white);
                 border-radius: 5px 5px 0 0;
             }
 
             .ReactVirtualized__Table__Grid {
-                background-color: #252b2d;
+                background-color: var(--bg-secondary);
             }
 
             .ReactVirtualized__Table__row {
-                color: #b5b5b5;
+                color: var(--text-secondary);
             }
         }
 

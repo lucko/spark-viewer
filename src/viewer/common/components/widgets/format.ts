@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type Color = `#${string}`;
+export type Color = `#${string}` | `var(--${string})`;
 
 export interface Formatter {
     color: (value: number, total: number) => Color;
@@ -9,14 +9,14 @@ export interface Formatter {
 
 export class WidgetFormat {
     static defaultFormatter: Formatter = {
-        color: _ => '#fff',
+        color: _ => 'var(--text-white)',
         format: value => value,
     };
 
     static colors: { green: Color; yellow: Color; red: Color } = {
-        green: '#30E52C',
-        yellow: '#FFB802',
-        red: '#F61515',
+        green: 'var(--accent-green)',
+        yellow: 'var(--accent-yellow)',
+        red: 'var(--accent-red)',
     };
 }
 

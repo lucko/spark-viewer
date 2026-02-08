@@ -33,8 +33,8 @@
             }
 
             &.toggled {
-                color: #fff;
-                box-shadow: inset 0 -3px 0 #3c3f41;
+                color: var(--text-white);
+                box-shadow: inset 0 -3px 0 var(--border-light);
             }
         }
 

@@ -18,9 +18,10 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #252b2d;
+        background-color: var(--bg-secondary);
         transition: 0.4s;
         border-radius: 5px;
+        border: 1px solid var(--border-color);
 
         &:before {
             position: absolute;
@@ -29,7 +30,7 @@
             width: 22px;
             left: 3px;
             bottom: 3px;
-            background-color: #b5b5b5;
+            background-color: var(--text-secondary);
             transition: 0.4s;
             border-radius: 3px;
         }
@@ -45,6 +46,6 @@
 
     input:checked + .slider:before {
         transform: translateX(22px);
-        background-color: #ffc93a;
+        background-color: var(--accent-yellow);
     }
 }

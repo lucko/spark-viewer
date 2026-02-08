@@ -18,6 +18,7 @@ import {
 } from 'react';
 import SparkLayout from '../components/SparkLayout';
 import { env } from '../env';
+import useTheme, { ThemeHook } from '../hooks/useTheme';
 
 export interface SelectedFile {
     selectedFile?: File;
@@ -28,6 +29,8 @@ export const SelectedFileContext = createContext<SelectedFile>({
     selectedFile: undefined,
     setSelectedFile: value => {},
 });
+
+export const ThemeContext = createContext<ThemeHook>([ 'dark', () => {} ]);
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
     getLayout?: (page: ReactElement) => ReactNode;
@@ -43,6 +46,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         Component.getLayout || (page => <SparkLayout>{page}</SparkLayout>);
 
     const [selectedFile, setSelectedFile] = useState<File>();
+    const themeHook = useTheme();
 
     const router = useRouter();
     const title =
@@ -91,11 +95,13 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 />
                 <title>{title}</title>
             </Head>
-            <SelectedFileContext.Provider
-                value={{ selectedFile, setSelectedFile }}
-            >
-                {getLayout(<Component {...pageProps} />)}
-            </SelectedFileContext.Provider>
+            <ThemeContext.Provider value={themeHook}>
+                <SelectedFileContext.Provider
+                    value={{ selectedFile, setSelectedFile }}
+                >
+                    {getLayout(<Component {...pageProps} />)}
+                </SelectedFileContext.Provider>
+            </ThemeContext.Provider>
         </>
     );
 }

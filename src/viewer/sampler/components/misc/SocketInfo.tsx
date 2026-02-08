@@ -15,7 +15,7 @@ export default function SocketInfo({ socket }: SocketInfoProps) {
     return (
         <TextBox extraClassName={styles['socket-info']}>
             <h2>
-                <FontAwesomeIcon icon={faCloud} color="#89d753" />{' '}
+                <FontAwesomeIcon icon={faCloud} />{' '}
                 <b>Connected</b> via WebSocket
             </h2>
             <p>

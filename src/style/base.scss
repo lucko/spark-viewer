@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
 @import 'node_modules/@fortawesome/fontawesome-svg-core/styles';
+@import './theme.scss';
 
 html {
-    background-color: #1e2527;
-    color-scheme: dark;
+    background-color: var(--bg-primary);
 }
 
 body {
@@ -11,7 +11,7 @@ body {
     font-size: 10pt;
     line-height: 150%;
     margin: 0;
-    color: #e0e2e4;
+    color: var(--text-primary);
 }
 
 html,
@@ -39,24 +39,24 @@ main {
 
 a:link,
 a:visited {
-    color: #f77669;
+    color: var(--link-color);
     text-decoration: none;
 }
 
 a:hover,
 a:active {
-    color: #f77669;
+    color: var(--link-color);
     text-decoration: none;
-    border-bottom: 1px solid #f77669;
+    border-bottom: 1px solid var(--link-color);
 }
 
 select,
 input,
 button {
     font-family: 'JetBrains Mono', monospace;
-    background-color: #252b2d;
+    background-color: var(--bg-secondary);
     border-style: none;
-    color: #ccc;
+    color: var(--text-tertiary);
     border-radius: 5px;
     padding: 5px;
 
@@ -78,7 +78,7 @@ button {
 }
 
 hr {
-    border: 2px solid #252b2d;
+    border: 2px solid var(--border-color);
 }
 
 article {
@@ -89,7 +89,7 @@ article {
     h1::before,
     h2::before {
         content: '# ';
-        color: #ffc93a;
+        color: var(--accent-yellow);
     }
 
     h1 {
@@ -103,15 +103,15 @@ article {
 .textbox {
     font-size: 130%;
     letter-spacing: -1px;
-    color: #b5b5b5;
-    background: #252b2d;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
     padding: 8px;
     margin: 12px 0;
     border-radius: 5px;
 }
 
 .link {
-    background-color: #252b2d;
+    background-color: var(--bg-secondary);
     border-radius: 5px;
 
     display: flex;
@@ -126,15 +126,15 @@ article {
     &:link,
     &:visited {
         border-bottom: none;
-        color: #ccc;
+        color: var(--text-tertiary);
     }
 
     &:hover {
-        background-color: rgba(155, 155, 155, 0.1);
+        background-color: var(--bg-hover);
     }
 
     svg {
-        color: #f77669;
+        color: var(--accent-primary);
         font-size: 40px;
     }
 
@@ -148,10 +148,10 @@ article {
     }
 
     .link-description {
-        color: #7e7e7e;
+        color: var(--text-dark);
 
         code {
-            color: #ccc;
+            color: var(--text-tertiary);
         }
     }
 }

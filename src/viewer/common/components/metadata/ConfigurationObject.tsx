@@ -47,10 +47,14 @@ const ObjectValue = ({
 };
 
 const ScalarValue = ({ name, value }: { name: string; value: any }) => {
+    const type = typeof value;
+    if (type === 'boolean') {
+        value = value ? 'true' : 'false';
+    }
     return (
         <li>
             {name}:{' '}
-            <span className={'type-' + typeof value}>{String(value)}</span>
+            <span className={`type-${type}`}>{String(value)}</span>
         </li>
     );
 };

@@ -6,14 +6,14 @@
 
     :global {
         .version-number {
-            color: #f77669;
+            color: var(--accent-primary);
             font-weight: bold;
             font-size: larger;
         }
 
         .less-important,
         .caveat {
-            color: #888;
+            color: var(--text-muted);
         }
 
         .download-buttons {
@@ -32,7 +32,7 @@
             }
 
             svg {
-                color: #888;
+                color: var(--text-muted);
             }
 
             &:hover {
@@ -49,7 +49,7 @@
                 }
 
                 span {
-                    color: #888;
+                    color: var(--text-muted);
                     font-size: 75%;
                 }
             }
