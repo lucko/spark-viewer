@@ -96,6 +96,8 @@
                 font-size: 90%;
                 border-radius: 3px;
                 padding: 0 6px;
+                margin: 0 5px;
+                background-color: rgba(255, 159, 67, .1);
             }
 
             .bar {
@@ -106,11 +108,13 @@
                 margin-left: 20px;
                 border: 1px solid var(--border-dark);
                 background: var(--bg-tertiary);
+                border-radius: 8px;
 
                 .inner {
                     display: inline-block;
                     height: 15px;
                     background: var(--sampler-bar-color);
+                    border-radius: 8px;
                 }
 
                 @media screen and (max-width: 880px) {
@@ -232,12 +236,17 @@
             color: var(--accent-primary);
         }
 
-        .react-contexify {
-            background-color: var(--bg-header) !important;
+        .contexify {
+            background-color: var(--bg-tertiary) !important;
+
+            .contexify_itemContent {
+                color: var(--text-primary) !important;
+            }
         }
 
         .infopoint-tooltip {
             max-width: 500px;
+            background-color: var(--bg-tertiary) !important;
         }
     }
 }

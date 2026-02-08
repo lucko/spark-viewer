@@ -1,10 +1,10 @@
 // Dark theme (default)
 :root {
-    --bg-primary: #1e2527;
-    --bg-secondary: #252b2d;
-    --bg-header: #181d1f;
-    --bg-tertiary: #293134;
-    --bg-hover: rgba(155, 155, 155, 0.1);
+    --bg-primary: #0f1419;
+    --bg-secondary: #1a1f29;
+    --bg-header: #0a0e14;
+    --bg-tertiary: #242b38;
+    --bg-hover: rgba(99, 179, 237, 0.08);
 
     --text-primary: #e0e2e4;
     --text-secondary: #b5b5b5;
@@ -16,18 +16,18 @@
 
     --accent-primary: #f77669;
     --accent-yellow: #ffc93a;
-    --accent-orange: #ffcd22;
-    --accent-green: #30e52c;
-    --accent-red: #f61515;
+    --accent-orange: #ff9f43;
+    --accent-green: #6bcf7f;
+    --accent-red: #ff5252;
 
-    --border-color: #252b2d;
-    --border-dark: #484848;
-    --border-light: #3c3f41;
+    --border-color: #30363d;
+    --border-dark: #21262d;
+    --border-light: #484f58;
 
     --shadow-color: #130b00;
 
     --link-color: #f77669;
-    --sampler-bar-color: #e2b671;
+    --sampler-bar-color: linear-gradient(90deg, #ffd93d, #ff9f43);
     --value-true: #9bffa2;
     --value-false: #fa7f95;
     --value-number: #78e6ff;
@@ -39,9 +39,9 @@
 // Light theme
 :root[data-theme='light'] {
     --bg-primary: #ffffff;
-    --bg-secondary: #f5f5f5;
-    --bg-header: #f0f0f0;
-    --bg-tertiary: #e8e8e8;
+    --bg-secondary: #f8f9fa;
+    --bg-header: #fafbfc;
+    --bg-tertiary: #e9ecef;
     --bg-hover: rgba(0, 0, 0, 0.05);
 
     --text-primary: #1a1a1a;
@@ -54,18 +54,18 @@
 
     --accent-primary: #d84539;
     --accent-yellow: #ffbc00;
-    --accent-orange: #ffcd22;
-    --accent-green: #30ca2c;
-    --accent-red: #f61515;
+    --accent-orange: #fd7e14;
+    --accent-green: #51cf66;
+    --accent-red: #fa5252;
 
-    --border-color: #d0d0d0;
-    --border-dark: #b0b0b0;
-    --border-light: #c5c5c5;
+    --border-color: #dee2e6;
+    --border-dark: #adb5bd;
+    --border-light: #ced4da;
 
     --shadow-color: rgba(0, 0, 0, 0.1);
 
     --link-color: #d84539;
-    --sampler-bar-color: #ffe6be;
+    --sampler-bar-color: linear-gradient(90deg, #fdde5c, #fba252);
     --value-true: #00ff07;
     --value-false: #ff5c79;
     --value-number: #26d8ff;

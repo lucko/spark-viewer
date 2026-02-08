@@ -76,6 +76,10 @@
                 flex-direction: column;
                 justify-content: space-evenly;
             }
+
+            > svg {
+                filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .3));
+            }
         }
     }
 }

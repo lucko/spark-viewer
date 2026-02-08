@@ -50,6 +50,7 @@
 
         > svg {
             width: 25%;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .3));
         }
 
         > div {
@@ -62,8 +63,10 @@
             > h1 {
                 font-size: min(15vw, 150px);
                 line-height: 1em;
-                margin: 0;
-                margin-bottom: 15px;
+                margin: 0 0 15px;
+                background: linear-gradient(135deg, var(--accent-yellow) 0, var(--accent-primary) 100%);
+                background-clip: text;
+                -webkit-text-fill-color: rgba(0, 0, 0, 0);
             }
 
             > div {
