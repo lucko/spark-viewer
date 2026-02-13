@@ -29,7 +29,7 @@ export default function Document() {
                         async
                         defer
                         data-domain="spark.lucko.me"
-                        src="https://plausible.lucko.me/js/pl.js"
+                        src="https://pl.lucko.me/js/pl.js"
                     />
                 )}
             </Head>
