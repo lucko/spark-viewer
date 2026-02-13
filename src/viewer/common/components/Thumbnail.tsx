@@ -12,6 +12,7 @@ import styles from '../../../style/thumbnail.module.scss';
 import { SparkMetadata } from '../../proto/guards';
 import {
     PlatformMetadata_Type,
+    PlatformStatistics_OnlineMode,
     SamplerMetadata_SamplerMode,
 } from '../../proto/spark_pb';
 import { SparkContentType } from '../logic/contentType';
@@ -58,6 +59,7 @@ export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
     }
 
     const platformType = PlatformMetadata_Type[platform.type].toLowerCase();
+    const onlineMode = platformStatistics ? ` (${PlatformStatistics_OnlineMode[platformStatistics?.onlineMode].toLowerCase()})` : "";
 
     const { runningTime, numberOfTicks, samplerMode } =
         unwrapSamplerMetadata(metadata);
@@ -96,6 +98,7 @@ export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
                     <span>{platform.brand || platform.name}</span>{' '}
                     {platformType} &quot;
                     <span>{platform.version}</span>&quot;
+                    {onlineMode}
                 </p>
                 {!!platformStatistics?.playerCount && (
                     <p>
