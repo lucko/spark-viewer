@@ -1,6 +1,6 @@
 // @ts-ignore
 import { FlameGraph } from '@lucko/react-flame-graph';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { formatBytesShort } from '../../../common/util/format';
 import {
@@ -10,12 +10,16 @@ import {
 import { TimeSelector } from '../../hooks/useTimeSelector';
 import { MappingsResolver } from '../../mappings/resolver';
 import VirtualNode from '../../node/VirtualNode';
+import { Menu, Item, ItemParams } from 'react-contexify';
+import { useContextMenu } from 'react-contexify';
+import 'react-contexify/dist/ReactContexify.css';
 
 export interface FlameProps {
     flameData: VirtualNode;
     mappings: MappingsResolver;
     metadata: SamplerMetadata;
     timeSelector: TimeSelector;
+    onReturnToSampler: (node: VirtualNode) => void;
 }
 
 export default function Flame({
@@ -23,8 +27,11 @@ export default function Flame({
     mappings,
     metadata,
     timeSelector,
+    onReturnToSampler,
 }: FlameProps) {
     const getTimeFunction = timeSelector.getTime;
+    const flameRef = useRef<HTMLDivElement>(null);
+    const { show } = useContextMenu({ id: 'flame-cm' });
 
     const isAlloc =
         metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION;
@@ -35,13 +42,45 @@ export default function Flame({
     );
     const calcHeight = Math.min(depth * 20, 5000);
 
+    const [selectedNode, setSelectedNode] = useState<VirtualNode | null>(null);
+
+    function handleDivContextMenu(event: React.MouseEvent) {
+        event.preventDefault();
+        if (selectedNode) {
+            show({ event, props: { node: selectedNode } });
+        }
+    }
+
+    function handleMouseOver(flameNode: any) {
+        if (flameNode && flameNode.virtualNode) {
+            setSelectedNode(flameNode.virtualNode);
+        } else {
+            setSelectedNode(null);
+        }
+    }
+
     return (
-        <div className="flame" style={{ height: `${calcHeight}px` }}>
+        <div
+            className="flame"
+            style={{ height: `${calcHeight}px` }}
+            ref={flameRef}
+            onContextMenu={handleDivContextMenu}
+        >
             <AutoSizer>
-                {({ width }) => (
-                    <FlameGraph data={data} height={calcHeight} width={width} />
+                {({ width }: { width: number }) => (
+                    <FlameGraph
+                        data={data}
+                        height={calcHeight}
+                        width={width}
+                        onMouseOver={(_e: any, node: any) => handleMouseOver(node)}
+                    />
                 )}
             </AutoSizer>
+            <Menu id="flame-cm" theme="dark">
+                <Item onClick={({ props }: ItemParams<{ node: VirtualNode }>) => props?.node && onReturnToSampler(props.node)}>
+                    View in sampler
+                </Item>
+            </Menu>
         </div>
     );
 }
@@ -51,6 +90,7 @@ interface FlameNode {
     tooltip?: string;
     value: number;
     children: FlameNode[];
+    virtualNode: VirtualNode;
 }
 
 function toFlameNode(
@@ -114,7 +154,7 @@ function toFlameNode(
         children.push(childData);
     }
 
-    return [{ name, tooltip, value, children }, depth];
+    return [{ name, tooltip, value, children, virtualNode: node }, depth];
 }
 
 function simplifyPackageName(
