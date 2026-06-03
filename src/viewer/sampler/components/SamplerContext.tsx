@@ -5,6 +5,7 @@ import { InfoPointsHook } from '../hooks/useInfoPoints';
 import { SearchQuery } from '../hooks/useSearchQuery';
 import { TimeSelector } from '../hooks/useTimeSelector';
 import { MappingsResolver } from '../mappings/resolver';
+import { Expanded } from '../hooks/useExpanded';
 
 export const MappingsContext = createContext<MappingsResolver | undefined>(
     undefined
@@ -25,11 +26,13 @@ export const LabelModeContext = createContext<boolean>(false);
 export const TimeSelectorContext = createContext<TimeSelector | undefined>(
     undefined
 );
+export const ExpandedContext = createContext<Expanded | undefined>(undefined);
 
 export default function SamplerContext({
     mappings,
     infoPoints,
     highlighted,
+    expanded,
     searchQuery,
     labelMode,
     metadata,
@@ -39,6 +42,7 @@ export default function SamplerContext({
     mappings: MappingsResolver;
     infoPoints: InfoPointsHook;
     highlighted: Highlight;
+    expanded: Expanded;
     searchQuery: SearchQuery;
     labelMode: boolean;
     metadata: SamplerMetadata;
@@ -51,15 +55,15 @@ export default function SamplerContext({
             <InfoPointsContext.Provider value={infoPoints}>
                 <HighlightedContext.Provider value={highlighted}>
                     <SearchQueryContext.Provider value={searchQuery}>
-                        <LabelModeContext.Provider value={labelMode}>
-                            <MetadataContext.Provider value={metadata}>
-                                <TimeSelectorContext.Provider
-                                    value={timeSelector}
-                                >
-                                    {children}
-                                </TimeSelectorContext.Provider>
-                            </MetadataContext.Provider>
-                        </LabelModeContext.Provider>
+                        <ExpandedContext.Provider value={expanded}>
+                            <LabelModeContext.Provider value={labelMode}>
+                                <MetadataContext.Provider value={metadata}>
+                                    <TimeSelectorContext.Provider value={timeSelector}>
+                                        {children}
+                                    </TimeSelectorContext.Provider>
+                                </MetadataContext.Provider>
+                            </LabelModeContext.Provider>
+                        </ExpandedContext.Provider>
                     </SearchQueryContext.Provider>
                 </HighlightedContext.Provider>
             </InfoPointsContext.Provider>
