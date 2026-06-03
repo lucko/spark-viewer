@@ -7,6 +7,7 @@
     "compile": "tsc",
     "dev": "next dev",
     "build": "yarn proto && next build",
+    "cf-build": "opennextjs-cloudflare build",
     "start": "next start",
     "format": "prettier --write '**/*.ts' '**/*.tsx' '**/*.scss'",
     "lint": "next lint"
@@ -39,6 +40,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.19.11",
     "@svgr/webpack": "^8.1.0",
     "@types/node": "^22.0.0",
     "@types/react": "^18.2.0",
@@ -48,7 +50,8 @@
     "eslint-config-next": "^15.1.5",
     "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "wrangler": "^4.97.0"
   },
   "resolutions": {
     "react": "^18.2.0",

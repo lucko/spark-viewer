@@ -29,4 +29,6 @@ yarn-error.log*
 .next
 next-env.d.ts
 
+.open-next
+
 tsconfig.tsbuildinfo
