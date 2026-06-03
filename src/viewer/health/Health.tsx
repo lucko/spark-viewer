@@ -3,8 +3,6 @@ import { useAlwaysOpenMetadataToggle } from '../common/hooks/useMetadataToggle';
 import { ExportCallback } from '../common/logic/export';
 import { HealthMetadata } from '../proto/spark_pb';
 import Controls from './controls/Controls';
-
-import 'react-virtualized/styles.css';
 import HealthData from './HealthData';
 
 export interface HealthProps {

@@ -5,20 +5,49 @@
         .heap-table {
             font-size: 1.1em;
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
 
-            .ReactVirtualized__Table__headerRow {
+            .heap-table-header,
+            .heap-table-row {
+                display: flex;
+                align-items: center;
+                padding: 0 8px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .heap-table-header {
                 background-color: var(--bg-secondary);
-                padding-right: 0 !important;
                 color: var(--text-white);
                 border-radius: 5px 5px 0 0;
+                font-weight: bold;
+                flex-shrink: 0;
             }
 
-            .ReactVirtualized__Table__Grid {
+            .heap-table-row {
+                color: var(--text-secondary);
                 background-color: var(--bg-secondary);
             }
 
-            .ReactVirtualized__Table__row {
-                color: var(--text-secondary);
+            .col-rank {
+                width: 70px;
+                flex-shrink: 0;
+            }
+            .col-instances {
+                width: 100px;
+                flex-shrink: 0;
+            }
+            .col-size {
+                width: 100px;
+                flex-shrink: 0;
+            }
+            .col-type {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
 

@@ -1,79 +1,79 @@
 {
-  "name": "spark",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "proto": "protoc --ts_out src/viewer/proto --proto_path proto proto/spark.proto --ts_opt long_type_number --ts_opt add_pb_suffix",
-    "compile": "tsc",
-    "dev": "next dev",
-    "build": "yarn proto && next build",
-    "start": "next start",
-    "format": "prettier --write '**/*.ts' '**/*.tsx' '**/*.scss'",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/react-fontawesome": "^0.2.2",
-    "@lucko/react-flame-graph": "1.4.1",
-    "@protobuf-ts/plugin": "^2.9.4",
-    "@t3-oss/env-nextjs": "^0.11.1",
-    "base64-arraybuffer": "^1.0.2",
-    "bowser": "^2.11.0",
-    "classnames": "^2.5.1",
-    "comlink": "^4.4.2",
-    "dayjs": "^1.11.13",
-    "history": "^5.3.0",
-    "local-storage": "^2.0.0",
-    "next": "^15.1.9",
-    "react": "^18.2.0",
-    "react-contexify": "^6.0.0",
-    "react-countdown-circle-timer": "^3.2.1",
-    "react-dom": "^18.2.0",
-    "react-dropzone": "^14.3.5",
-    "react-tooltip": "^5.28.0",
-    "react-virtualized": "^9.22.5",
-    "sass": "^1.83.4",
-    "sharp": "^0.33.5",
-    "victory": "^37.3.6",
-    "zod": "^3.24.1"
-  },
-  "devDependencies": {
-    "@svgr/webpack": "^8.1.0",
-    "@types/node": "^22.0.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@types/react-virtualized": "^9.22.0",
-    "eslint": "^9.18.0",
-    "eslint-config-next": "^15.1.5",
-    "prettier": "^3.4.2",
-    "prettier-plugin-organize-imports": "^4.1.0",
-    "typescript": "^5.7.3"
-  },
-  "resolutions": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "next/core-web-vitals"
-    ],
-    "rules": {
-      "@next/next/no-img-element": "off"
+    "name": "spark-viewer",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "proto": "protoc --ts_out src/viewer/proto --proto_path proto proto/spark.proto --ts_opt long_type_number --ts_opt add_pb_suffix",
+        "compile": "tsc",
+        "dev": "next dev",
+        "build": "yarn proto && next build",
+        "start": "next start",
+        "format": "prettier --write '**/*.ts' '**/*.tsx' '**/*.scss'",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.7.2",
+        "@fortawesome/free-solid-svg-icons": "^6.7.2",
+        "@fortawesome/react-fontawesome": "^0.2.2",
+        "@lucko/react-flame-graph": "1.4.1",
+        "@protobuf-ts/plugin": "^2.9.4",
+        "@t3-oss/env-nextjs": "^0.11.1",
+        "base64-arraybuffer": "^1.0.2",
+        "bowser": "^2.11.0",
+        "classnames": "^2.5.1",
+        "comlink": "^4.4.2",
+        "dayjs": "^1.11.13",
+        "history": "^5.3.0",
+        "local-storage": "^2.0.0",
+        "next": "^15.5.18",
+        "react": "^19.2.7",
+        "react-contexify": "^6.0.0",
+        "react-countdown-circle-timer": "^3.2.1",
+        "react-dom": "^19.2.7",
+        "react-dropzone": "^14.3.5",
+        "react-tooltip": "^5.28.0",
+        "react-window": "^2.2.7",
+        "sass": "^1.83.4",
+        "sharp": "^0.33.5",
+        "victory": "^37.3.6",
+        "zod": "^3.24.1"
+    },
+    "devDependencies": {
+        "@svgr/webpack": "^8.1.0",
+        "@types/node": "^22.0.0",
+        "@types/react": "^18.2.0",
+        "@types/react-dom": "^18.2.0",
+        "@types/react-window": "^2.0.0",
+        "eslint": "^9.18.0",
+        "eslint-config-next": "^15.5.18",
+        "prettier": "^3.4.2",
+        "prettier-plugin-organize-imports": "^4.1.0",
+        "typescript": "^5.7.3"
+    },
+    "resolutions": {
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "@types/react": "^19.2.0",
+        "@types/react-dom": "^19.2.0"
+    },
+    "eslintConfig": {
+        "extends": [
+            "next/core-web-vitals"
+        ],
+        "rules": {
+            "@next/next/no-img-element": "off"
+        }
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
     }
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
 }

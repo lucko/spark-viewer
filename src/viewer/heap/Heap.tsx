@@ -5,10 +5,8 @@ import useMetadataToggle from '../common/hooks/useMetadataToggle';
 import { ExportCallback } from '../common/logic/export';
 import { HeapMetadata } from '../proto/spark_pb';
 import Controls from './controls/Controls';
-import HeapTable from './HeapTable';
-
-import 'react-virtualized/styles.css';
 import HeapData from './HeapData';
+import HeapTable from './HeapTable';
 
 export interface HeapProps {
     data: HeapData;

@@ -1,7 +1,7 @@
 // @ts-ignore
 import { FlameGraph } from '@lucko/react-flame-graph';
-import { useMemo } from 'react';
-import { AutoSizer } from 'react-virtualized';
+import { useMemo, useRef } from 'react';
+import useContainerWidth from '../../../common/hooks/useContainerWidth';
 import { formatBytesShort } from '../../../common/util/format';
 import {
     SamplerMetadata,
@@ -25,6 +25,8 @@ export default function Flame({
     timeSelector,
 }: FlameProps) {
     const getTimeFunction = timeSelector.getTime;
+    const containerRef = useRef<HTMLDivElement>(null);
+    const width = useContainerWidth(containerRef);
 
     const isAlloc =
         metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION;
@@ -36,12 +38,14 @@ export default function Flame({
     const calcHeight = Math.min(depth * 20, 5000);
 
     return (
-        <div className="flame" style={{ height: `${calcHeight}px` }}>
-            <AutoSizer>
-                {({ width }) => (
-                    <FlameGraph data={data} height={calcHeight} width={width} />
-                )}
-            </AutoSizer>
+        <div
+            className="flame"
+            style={{ height: `${calcHeight}px` }}
+            ref={containerRef}
+        >
+            {width != null && (
+                <FlameGraph data={data} height={calcHeight} width={width} />
+            )}
         </div>
     );
 }
