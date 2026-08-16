@@ -1,10 +1,10 @@
 import {
+    MemoryUsage,
     PlatformStatistics_Gc,
     PlatformStatistics_Memory,
-    PlatformStatistics_Memory_MemoryUsage,
-} from '../../../proto/spark_pb';
-import { formatBytes } from '../../util/format';
-import { WidgetFormat } from '../widgets/format';
+} from '../../../../proto/spark_pb';
+import { formatBytes } from '../../../util/format';
+import { WidgetFormat } from '../../widgets/format';
 
 export interface MemoryStatisticsProps {
     memory: PlatformStatistics_Memory;
@@ -17,7 +17,6 @@ export default function MemoryStatistics({
 }: MemoryStatisticsProps) {
     return (
         <>
-            <h2>Memory Areas</h2>
             <div className="memory">
                 {memory.heap && <MemoryPool name="Heap" usage={memory.heap} />}
                 {memory.nonHeap && (
@@ -42,8 +41,8 @@ export default function MemoryStatistics({
 
 interface MemoryPoolProps {
     name: string;
-    usage: PlatformStatistics_Memory_MemoryUsage;
-    collectionUsage?: PlatformStatistics_Memory_MemoryUsage;
+    usage: MemoryUsage;
+    collectionUsage?: MemoryUsage;
 }
 
 const MemoryPool = ({ name, usage, collectionUsage }: MemoryPoolProps) => {
@@ -62,11 +61,7 @@ const MemoryPool = ({ name, usage, collectionUsage }: MemoryPoolProps) => {
     );
 };
 
-const MemoryUsageBar = ({
-    used,
-    committed,
-    max,
-}: PlatformStatistics_Memory_MemoryUsage) => {
+const MemoryUsageBar = ({ used, committed, max }: MemoryUsage) => {
     let percent;
     if (max && max > 0) {
         percent = used / max;

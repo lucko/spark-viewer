@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
     PluginOrModMetadata,
     WorldStatistics_DataPack,
-} from '../../../proto/spark_pb';
+} from '../../../../proto/spark_pb';
 
 export interface PluginsModsListProps {
     plugins: PluginOrModMetadata[];

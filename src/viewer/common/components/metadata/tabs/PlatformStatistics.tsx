@@ -3,8 +3,8 @@ import {
     PlatformStatistics as PlatformStatisticsProto,
     SamplerMetadata_SamplerEngine,
     SystemStatistics as SystemStatisticsProto,
-} from '../../../proto/spark_pb';
-import { formatDuration } from '../../util/format';
+} from '../../../../proto/spark_pb';
+import { formatDuration } from '../../../util/format';
 
 export interface PlatformStatisticsProps {
     platform: PlatformMetadata;

@@ -1,4 +1,8 @@
-import { faGauge, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+    faChartLine,
+    faGauge,
+    faInfoCircle,
+} from '@fortawesome/free-solid-svg-icons';
 import FaButton from '../../../../components/FaButton';
 import { SparkMetadata } from '../../../proto/guards';
 import { MetadataToggle } from '../../hooks/useMetadataToggle';
@@ -32,6 +36,16 @@ export default function ShowInfoButton({
                 title="Click to toggle the detailed metadata display"
                 extraClassName={metadataToggle.showInfo ? 'toggled' : undefined}
             />
+            {!!metadata.metrics && (
+                <FaButton
+                    icon={faChartLine}
+                    onClick={metadataToggle.toggleMetrics}
+                    title="Click to toggle the metrics dashboard"
+                    extraClassName={
+                        metadataToggle.showMetrics ? 'toggled' : undefined
+                    }
+                />
+            )}
         </>
     );
 }

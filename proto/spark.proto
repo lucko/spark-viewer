@@ -111,18 +111,14 @@ message PlatformStatistics {
     MemoryUsage heap = 1;
     MemoryUsage nonHeap = 2;
     repeated MemoryPool pools = 3;
+    RollingAverageValues allocBpsLast1m = 4;
+    RollingAverageValues allocBpsLast5m = 5;
+    RollingAverageValues allocBpsLast15m = 6;
 
     message MemoryPool {
       string name = 1;
       MemoryUsage usage = 2;
       MemoryUsage collectionUsage = 3;
-    }
-
-    message MemoryUsage {
-      int64 used = 1;
-      int64 committed = 2;
-      int64 init = 3; // optional
-      int64 max = 4; // optional
     }
   }
 
@@ -182,6 +178,56 @@ message RollingAverageValues {
   double min = 3;
   double median = 4;
   double percentile95 = 5;
+}
+
+message MemoryUsage {
+  int64 used = 1;
+  int64 committed = 2;
+  int64 init = 3;
+  int64 max = 4;
+}
+
+message DoubleMetricSeries {
+  int64 startTimestampMs = 1;
+  repeated uint32 timestampDeltasMs = 2;
+  repeated double values = 3;
+}
+
+message AveragesMetricSeries {
+  int64 startTimestampMs = 1;
+  repeated uint32 timestampDeltasMs = 2;
+  repeated RollingAverageValues values = 3;
+}
+
+message MemoryUsageMetricSeries {
+  int64 startTimestampMs = 1;
+  repeated uint32 timestampDeltasMs = 2;
+  repeated MemoryUsage values = 3;
+}
+
+message WorldInfoMetricSeries {
+  int64 startTimestampMs = 1;
+  repeated uint32 timestampDeltasMs = 2;
+  repeated Values values = 3;
+
+  message Values {
+    int32 players = 1;
+    int32 entities = 2;
+    int32 tileEntities = 3;
+    int32 chunks = 4;
+  }
+}
+
+message Metrics {
+  DoubleMetricSeries tps = 1;
+  AveragesMetricSeries tickDuration = 2;
+  DoubleMetricSeries cpuUsageProcess = 3;
+  DoubleMetricSeries cpuUsageSystem = 4;
+  MemoryUsageMetricSeries memoryUsageHeap = 5;
+  MemoryUsageMetricSeries memoryUsageNonHeap = 6;
+  DoubleMetricSeries memoryAllocation = 7;
+  WorldInfoMetricSeries worldInfo = 8;
+  AveragesMetricSeries playerPing = 9;
 }
 
 message WorldStatistics {
@@ -245,6 +291,7 @@ message PluginOrModMetadata {
 message HealthData {
   HealthMetadata metadata = 1;
   map<int32, WindowStatistics> timeWindowStatistics = 2;
+  SocketChannelInfo channelInfo = 3; // optional
 }
 
 message HealthDataLite {
@@ -260,6 +307,12 @@ message HealthMetadata {
   map<string, string> serverConfigurations = 6;
   map<string, PluginOrModMetadata> sources = 7;
   map<string, string> extraPlatformMetadata = 8;
+  Metrics metrics = 9;
+}
+
+message SocketChannelInfo {
+  string channelId = 1;
+  bytes publicKey = 2;
 }
 
 // -----------------------------------------------------------------------------------------------------
@@ -284,6 +337,7 @@ message HeapMetadata {
   map<string, string> serverConfigurations = 6;
   map<string, PluginOrModMetadata> sources = 7;
   map<string, string> extraPlatformMetadata = 8;
+  Metrics metrics = 9;
 }
 
 message HeapEntry {
@@ -329,6 +383,8 @@ message SamplerMetadata {
   map<string, string> extraPlatformMetadata = 14;
   SamplerMode samplerMode = 15;
   SamplerEngine samplerEngine = 16;
+  string samplerEngineVersion = 17;
+  Metrics metrics = 18;
 
   message ThreadDumper {
     Type type = 1;
@@ -391,11 +447,6 @@ message StackTraceNode {
   repeated int32 childrenRefs = 9;
 }
 
-message SocketChannelInfo {
-  string channelId = 1;
-  bytes publicKey = 2;
-}
-
 // -----------------------------------------------------------------------------------------------------
 // spark_ws
 // -----------------------------------------------------------------------------------------------------
@@ -455,6 +506,7 @@ message ServerUpdateSamplerData {
 message ServerUpdateStatistics {
   PlatformStatistics platform = 1;
   SystemStatistics system = 2;
+  Metrics metrics = 3;
 }
 
 // (unsigned) Sent from the client -> server on initial connection

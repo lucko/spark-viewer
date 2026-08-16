@@ -2,19 +2,18 @@ import { useCallback, useState } from 'react';
 import { SocketClientHook } from '../../common/hooks/useSocketClient';
 import useSocketListener from '../../common/hooks/useSocketListener';
 import { ListenerResult } from '../../common/ws/Listener';
-import { PlatformStatistics, SamplerMetadata } from '../../proto/spark_pb';
+import { HealthMetadata, PlatformStatistics } from '../../proto/spark_pb';
 
 export interface SocketBindingsProps {
     socket: SocketClientHook;
     fetchUpdatedData: (payloadId: string) => void;
-    metadata: SamplerMetadata;
-    setMetadata: (metadata: SamplerMetadata) => void;
+    metadata: HealthMetadata;
+    setMetadata: (metadata: HealthMetadata) => void;
 }
 
 export interface SocketBinding {
     socket: SocketClientHook;
     lastStatsUpdate?: number;
-    lastSamplerUpdate?: number;
 }
 
 export default function useSocketBindings({
@@ -24,7 +23,6 @@ export default function useSocketBindings({
     setMetadata,
 }: SocketBindingsProps): SocketBinding {
     const [lastStatsUpdate, setLastStatsUpdate] = useState<number>();
-    const [lastSamplerUpdate, setLastSamplerUpdate] = useState<number>();
 
     useSocketListener(
         socket.socket,
@@ -39,7 +37,7 @@ export default function useSocketBindings({
                         world: metadata.platformStatistics?.world,
                     } as PlatformStatistics;
 
-                    const newMetadata: SamplerMetadata = {
+                    const newMetadata: HealthMetadata = {
                         ...metadata,
                         platformStatistics: platformWithWorld,
                         systemStatistics: system,
@@ -47,12 +45,6 @@ export default function useSocketBindings({
                     };
                     setMetadata(newMetadata);
                     setLastStatsUpdate(Date.now());
-                }
-
-                if (packet.oneofKind === 'serverUpdateSampler') {
-                    const payloadId = packet.serverUpdateSampler.payloadId;
-                    fetchUpdatedData(payloadId);
-                    setLastSamplerUpdate(Date.now());
                 }
 
                 return ListenerResult.KEEP_LISTENING;
@@ -64,6 +56,5 @@ export default function useSocketBindings({
     return {
         socket,
         lastStatsUpdate,
-        lastSamplerUpdate,
     };
 }

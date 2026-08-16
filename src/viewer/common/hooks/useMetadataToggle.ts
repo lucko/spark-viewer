@@ -4,8 +4,10 @@ import useToggle from './useToggle';
 export interface MetadataToggle {
     showWidgets: boolean;
     showInfo: boolean;
+    showMetrics: boolean;
     toggleWidgets: () => void;
     toggleInfo: () => void;
+    toggleMetrics: () => void;
 }
 
 export default function useMetadataToggle(): MetadataToggle {
@@ -15,6 +17,10 @@ export default function useMetadataToggle(): MetadataToggle {
     );
     const [showInfo, setShowInfo, toggleInfo] = useToggle(
         'prefShowInfo',
+        false
+    );
+    const [showMetrics, setShowMetrics, toggleMetrics] = useToggle(
+        'prefShowMetrics',
         false
     );
 
@@ -30,14 +36,23 @@ export default function useMetadataToggle(): MetadataToggle {
         }
     }, [showInfo, setShowWidgets]);
 
-    return { showWidgets, showInfo, toggleWidgets, toggleInfo };
+    return {
+        showWidgets,
+        showInfo,
+        showMetrics,
+        toggleWidgets,
+        toggleInfo,
+        toggleMetrics,
+    };
 }
 
 export function useAlwaysOpenMetadataToggle(): MetadataToggle {
     return {
         showWidgets: true,
         showInfo: true,
+        showMetrics: true,
         toggleWidgets: () => {},
         toggleInfo: () => {},
+        toggleMetrics: () => {},
     };
 }

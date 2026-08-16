@@ -6,7 +6,7 @@ export function formatTime(time: number, n = 2) {
     return parseFloat(time.toFixed(n));
 }
 
-export function formatBytes(bytes: number) {
+export function formatBytes(bytes: number, n = 1) {
     if (bytes < 0) {
         return 'invalid';
     }
@@ -16,13 +16,13 @@ export function formatBytes(bytes: number) {
     const sizes = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const sizeIndex = Math.floor(Math.log(bytes) / Math.log(1024));
     return (
-        parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(1)) +
+        parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(n)) +
         ' ' +
         sizes[sizeIndex]
     );
 }
 
-export function formatBytesShort(bytes: number) {
+export function formatBytesShort(bytes: number, n = 1) {
     if (bytes < 0) {
         return 'invalid';
     }
@@ -32,7 +32,7 @@ export function formatBytesShort(bytes: number) {
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const sizeIndex = Math.floor(Math.log(bytes) / Math.log(1024));
     return (
-        parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(1)) +
+        parseFloat((bytes / Math.pow(1024, sizeIndex)).toFixed(n)) +
         sizes[sizeIndex]
     );
 }

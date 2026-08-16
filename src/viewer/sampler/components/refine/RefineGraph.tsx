@@ -1,8 +1,10 @@
+import { faRuler } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { WindowStatistics } from '../../../proto/spark_pb';
 import { TimeSelector } from '../../hooks/useTimeSelector';
-import GraphChart from './GraphChart';
-import GraphLegend from './GraphLegend';
+import RefineGraphChart from './RefineGraphChart';
+import RefineGraphLegend from './RefineGraphLegend';
 import { ChartDataWrapper, IGNORED_KEYS, WindowStatisticsKey } from './util';
 
 export interface GraphProps {
@@ -11,7 +13,7 @@ export interface GraphProps {
     windowStatistics: Record<number, WindowStatistics>;
 }
 
-export default function Graph({
+export default function RefineGraph({
     show,
     timeSelector,
     windowStatistics,
@@ -83,7 +85,9 @@ export default function Graph({
     return (
         <div className="graph">
             <div className="header">
-                <h2>Refine</h2>
+                <h2>
+                    <FontAwesomeIcon icon={faRuler} /> Refine
+                </h2>
                 <p>
                     The graph below shows some key metrics over the course of
                     the profile. You can drag + select with your cursor to
@@ -91,7 +95,7 @@ export default function Graph({
                 </p>
             </div>
 
-            <GraphChart
+            <RefineGraphChart
                 scale={scale}
                 data={data}
                 maxima={maxima}
@@ -103,7 +107,7 @@ export default function Graph({
                 }}
             />
 
-            <GraphLegend
+            <RefineGraphLegend
                 availableStatisticKeys={availableStatisticKeys}
                 statisticKeys={statisticKeys}
                 setStatisticKeys={setStatisticKeys}

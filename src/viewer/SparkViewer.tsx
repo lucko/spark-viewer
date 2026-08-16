@@ -140,6 +140,7 @@ export default function SparkViewer() {
                     <Health
                         data={data as HealthData}
                         metadata={metadata as HealthMetadata}
+                        setMetadata={setMetadata}
                         exportCallback={exportCallback!}
                     />
                 </Suspense>

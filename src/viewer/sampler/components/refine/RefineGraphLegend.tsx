@@ -9,7 +9,7 @@ export interface GraphLegendProps {
     setStatisticKeys: Dispatch<SetStateAction<WindowStatisticsKey[]>>;
 }
 
-export default function GraphLegend({
+export default function RefineGraphLegend({
     availableStatisticKeys,
     statisticKeys,
     setStatisticKeys,

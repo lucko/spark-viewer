@@ -1,3 +1,5 @@
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useContext } from 'react';
 import { MetadataContext } from '../../SamplerContext';
 import { HeaderProps } from './types';
@@ -12,7 +14,10 @@ export default function SourcesViewHeader({ children }: HeaderProps) {
 
     return (
         <div className="header">
-            <h2>{sourceNoun.plural} View</h2>
+            <h2>
+                <FontAwesomeIcon icon={faEye} /> Profiler - {sourceNoun.plural}{' '}
+                View
+            </h2>
             <p>
                 This view shows a filtered representation of the profile broken
                 down by {sourceNoun.singular}.
