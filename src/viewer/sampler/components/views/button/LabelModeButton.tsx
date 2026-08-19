@@ -13,11 +13,14 @@ export default function LabelModeButton({
     setLabelMode,
 }: LabelModeButtonProps) {
     const metadata = useContext(MetadataContext)!;
-    if (!metadata.numberOfTicks) {
+    const isAllocationProfile =
+        metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION;
+
+    if (!isAllocationProfile && !metadata.numberOfTicks) {
         return null;
     }
 
-    if (metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION) {
+    if (isAllocationProfile) {
         return (
             <Button
                 value={labelMode}
