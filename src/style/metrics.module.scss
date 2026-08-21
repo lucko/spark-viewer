@@ -1,0 +1,65 @@
+.metrics {
+    :global {
+        .header {
+            font-size: 16px;
+            margin: 0 10px;
+
+            > h2 {
+                max-width: 1000px;
+                margin: 0;
+            }
+        }
+
+        .description {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 10px;
+        }
+
+        .range-selector {
+            padding: 10px 30px 10px 15px;
+        }
+
+        .metrics-container {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .metric {
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            border-radius: 5px;
+
+            h1 {
+                margin: 0;
+                padding-top: 5px;
+                padding-bottom: 8px;
+                font-size: 13pt;
+                font-weight: normal;
+                color: var(--text-white);
+                text-align: center;
+
+                span {
+                    vertical-align: middle;
+                    padding-left: 6px;
+                    font-size: 11pt;
+                    color: var(--text-secondary);
+                }
+            }
+        }
+
+        .graph-container {
+            width: 450px;
+            height: 300px;
+        }
+
+        .legend {
+            line-height: 0;
+            color: white;
+        }
+    }
+}

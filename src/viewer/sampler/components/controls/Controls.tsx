@@ -13,8 +13,8 @@ import SamplerTitle from '../SamplerTitle';
 import { View } from '../views/types';
 import ExitFlameButton from './ExitFlameButton';
 import FlameButton from './FlameButton';
-import GraphButton from './GraphButton';
 import LastUpdateSpinner from './LastUpdateSpinner';
+import RefineGraphButton from './RefineGraphButton';
 import SearchBar from './SearchBar';
 import SettingsButton from './SettingsButton';
 import ToggleViewButton from './ToggleViewButton';
@@ -29,9 +29,9 @@ export interface ControlsProps {
     view: View;
     setView: Dispatch<SetStateAction<View>>;
     sourcesViewSupported: boolean;
-    graphSupported: boolean;
-    showGraph: boolean;
-    setShowGraph: Dispatch<SetStateAction<boolean>>;
+    refineGraphSupported: boolean;
+    showRefineGraph: boolean;
+    setShowRefineGraph: Dispatch<SetStateAction<boolean>>;
     socket: SocketBinding;
     showSocketInfo: boolean;
     setShowSocketInfo: Dispatch<SetStateAction<boolean>>;
@@ -50,9 +50,9 @@ export default function Controls({
     view,
     setView,
     sourcesViewSupported,
-    graphSupported,
-    showGraph,
-    setShowGraph,
+    refineGraphSupported,
+    showRefineGraph,
+    setShowRefineGraph,
     socket,
     showSocketInfo,
     setShowSocketInfo,
@@ -67,10 +67,10 @@ export default function Controls({
                 metadata={metadata}
                 metadataToggle={metadataToggle}
             />
-            <GraphButton
-                graphSupported={graphSupported}
-                showGraph={showGraph}
-                setShowGraph={setShowGraph}
+            <RefineGraphButton
+                refineGraphSupported={refineGraphSupported}
+                showRefineGraph={showRefineGraph}
+                setShowRefineGraph={setShowRefineGraph}
             />
             <SettingsButton
                 showSettings={showSettings}

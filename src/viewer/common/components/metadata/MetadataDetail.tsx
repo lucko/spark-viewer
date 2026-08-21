@@ -1,3 +1,5 @@
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMemo, useState } from 'react';
 import { SparkMetadata } from '../../../proto/guards';
 import { PlatformMetadata_Type } from '../../../proto/spark_pb';
@@ -6,15 +8,15 @@ import {
     objectMap,
     unwrapSamplerMetadata,
 } from '../../util/metadata';
-import ExtraPlatformMetadata from './ExtraPlatformMetadata';
-import GameRules from './GameRules';
-import JvmStartupArgs from './JvmStartupArgs';
-import MemoryStatistics from './MemoryStatistics';
-import NetworkStatistics from './NetworkStatistics';
-import PlatformStatistics from './PlatformStatistics';
-import PluginsModsList from './PluginsModsList';
-import ServerConfigurations from './ServerConfigurations';
-import WorldStatistics from './WorldStatistics';
+import ExtraPlatformMetadata from './tabs/ExtraPlatformMetadata';
+import GameRules from './tabs/GameRules';
+import JvmStartupArgs from './tabs/JvmStartupArgs';
+import MemoryStatistics from './tabs/MemoryStatistics';
+import NetworkStatistics from './tabs/NetworkStatistics';
+import PlatformStatistics from './tabs/PlatformStatistics';
+import PluginsModsList from './tabs/PluginsModsList';
+import ServerConfigurations from './tabs/ServerConfigurations';
+import WorldStatistics from './tabs/WorldStatistics';
 
 interface MetadataDetailProps {
     metadata: SparkMetadata;
@@ -83,16 +85,28 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
     };
 
     return (
-        <div className="textbox metadata-detail">
+        <div className="metadata-detail">
+            <div className="header">
+                <h2>
+                    <FontAwesomeIcon icon={faInfoCircle} /> Metadata
+                </h2>
+                <p>
+                    The panel below shows metadata/information about the
+                    platform, system, and world. You can switch between
+                    different views using the buttons below.
+                </p>
+            </div>
+
             <div className="metadata-detail-controls">
                 {Object.entries(views).map(([name, func]) => {
                     return (
-                        !!func() && (
+                        func() && (
                             <div
                                 key={name}
                                 onClick={() => setView(name)}
                                 className={
-                                    view === name ? 'toggled' : undefined
+                                    'textbox' +
+                                    (view === name ? ' toggled' : '')
                                 }
                             >
                                 {name}
@@ -102,7 +116,7 @@ export default function MetadataDetail({ metadata }: MetadataDetailProps) {
                 })}
             </div>
 
-            <div className="metadata-detail-content">
+            <div className="metadata-detail-content textbox">
                 {view === 'Platform' ? (
                     <PlatformStatistics
                         platform={platform!}

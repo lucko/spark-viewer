@@ -1,4 +1,4 @@
-import { SystemStatistics as SystemStatisticsProto } from '../../../proto/spark_pb';
+import { SystemStatistics as SystemStatisticsProto } from '../../../../proto/spark_pb';
 
 export interface JvmStartupArgsProps {
     systemStatistics: SystemStatisticsProto;

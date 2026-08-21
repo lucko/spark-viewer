@@ -3,6 +3,7 @@ import styles from '../../../style/metadata.module.scss';
 import { SparkMetadata } from '../../proto/guards';
 import { MetadataToggle } from '../hooks/useMetadataToggle';
 import MetadataDetail from './metadata/MetadataDetail';
+import Metrics from './metrics/Metrics';
 import Widgets from './widgets/Widgets';
 
 export interface WidgetsAndMetadataProps {
@@ -15,23 +16,30 @@ export default function WidgetsAndMetadata({
     metadataToggle,
 }: WidgetsAndMetadataProps) {
     return (
-        <div
-            className={classNames(styles.metadata, {
-                expanded: metadataToggle.showInfo,
-            })}
-            style={{
-                display: metadataToggle.showWidgets ? undefined : 'none',
-            }}
-        >
-            {!!metadata.platformStatistics && (
-                <Widgets
-                    metadata={metadata}
-                    expanded={metadataToggle.showInfo}
-                />
-            )}
-            {!!metadata.platform && metadataToggle.showInfo && (
-                <MetadataDetail metadata={metadata} />
-            )}
-        </div>
+        <>
+            <div
+                className={classNames(styles.metadata, {
+                    expanded: metadataToggle.showInfo,
+                })}
+                style={{
+                    display: metadataToggle.showWidgets ? undefined : 'none',
+                }}
+            >
+                {!!metadata.platformStatistics && (
+                    <Widgets
+                        metadata={metadata}
+                        expanded={metadataToggle.showInfo}
+                    />
+                )}
+                {!!metadata.platform && metadataToggle.showInfo && (
+                    <MetadataDetail metadata={metadata} />
+                )}
+            </div>
+            <div>
+                {!!metadata.metrics && metadataToggle.showMetrics && (
+                    <Metrics metrics={metadata.metrics!} />
+                )}
+            </div>
+        </>
     );
 }

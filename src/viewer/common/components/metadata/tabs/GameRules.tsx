@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { WorldStatistics_GameRule } from '../../../proto/spark_pb';
+import { WorldStatistics_GameRule } from '../../../../proto/spark_pb';
 
 export interface GameRulesProps {
     gameRules: WorldStatistics_GameRule[];

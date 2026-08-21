@@ -7,10 +7,10 @@ import {
     VictoryLabel,
     VictoryLine,
     VictoryScatter,
-    VictoryTheme,
     VictoryTooltip,
     VictoryVoronoiContainerProps,
 } from 'victory';
+import getTheme from '../../../common/util/victoryCharts';
 import { getAxisLabel, getColor } from './format';
 import { ChartDataWrapper } from './util';
 
@@ -21,7 +21,7 @@ export interface GraphChartProps {
     selectionCallback: (range: [number, number]) => void;
 }
 
-export default function GraphChart({
+export default function RefineGraphChart({
     scale,
     data,
     maxima,
@@ -169,16 +169,3 @@ const VictoryBrushVoronoiContainer = createContainer(
 ) as React.ComponentType<
     VictoryBrushContainerProps & VictoryVoronoiContainerProps
 >;
-
-const getTheme = () => {
-    const theme = VictoryTheme.material;
-    theme.axis!.style!.grid!.stroke = 'none';
-    // @ts-ignore
-    theme.axis!.style!.tickLabels!.fontFamily = 'JetBrains Mono';
-    // @ts-ignore
-    theme.axis!.style!.axisLabel!.fontFamily = 'JetBrains Mono';
-    theme.axis!.style!.axis!.stroke = '#888';
-    theme.axis!.style!.axisLabel!.fill = '#888';
-    theme.axis!.style!.tickLabels!.fill = '#888';
-    return theme;
-};

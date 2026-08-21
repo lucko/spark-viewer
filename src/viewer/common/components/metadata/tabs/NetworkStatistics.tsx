@@ -1,14 +1,14 @@
 import classNames from 'classnames';
-import styles from '../../../../style/widgets.module.scss';
+import styles from '../../../../../style/widgets.module.scss';
 import {
     RollingAverageValues,
     SystemStatistics as SystemStatisticsProto,
     SystemStatistics_NetInterface,
-} from '../../../proto/spark_pb';
-import { formatBytes, formatNumber } from '../../util/format';
-import { Formatter, WidgetFormat } from '../widgets/format';
-import Widget from '../widgets/Widget';
-import WidgetValue from '../widgets/WidgetValue';
+} from '../../../../proto/spark_pb';
+import { formatBytes, formatNumber } from '../../../util/format';
+import { Formatter, WidgetFormat } from '../../widgets/format';
+import Widget from '../../widgets/Widget';
+import WidgetValue from '../../widgets/WidgetValue';
 
 export interface NetworkStatisticsProps {
     systemStatistics: SystemStatisticsProto;
@@ -19,7 +19,6 @@ export default function NetworkStatistics({
 }: NetworkStatisticsProps) {
     return (
         <>
-            <h2>Network Interfaces</h2>
             <p>
                 Note: the usage tracked below is captured at a system level
                 (includes data from other processes running on the same

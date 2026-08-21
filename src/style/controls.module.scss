@@ -2,9 +2,13 @@
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    margin: 10px 0;
+    padding: 10px 0;
     flex-wrap: wrap;
     flex-basis: 1;
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-primary);
+    z-index: 10;
 
     > div,
     > input {
