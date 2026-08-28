@@ -74,21 +74,38 @@ export default function Sampler({
     const [flatViewData, setFlatViewData] = useState<FlatViewData>();
     const [sourcesViewData, setSourcesViewData] = useState<SourcesViewData>();
 
+    // views hold node ids so drop them when replacing the data
+    // otherwise the ids may resolve to nodes from the new map
+    const [previousData, setPreviousData] = useState(data);
+    if (previousData != data) {
+        setPreviousData(data);
+        setFlatViewData(undefined);
+        setSourcesViewData(undefined);
+    }
+
     // Generate flat & sources view in the background on first load
     useEffect(() => {
+        let cancelled = false;
         (async () => {
             const worker = await RemoteSamplerWorker.create(data);
 
-            if (data.sources.hasSources()) {
-                const sourcesView = await worker.generateSourcesView();
-                setSourcesViewData(sourcesView);
+            try {
+                if (data.sources.hasSources()) {
+                    const sourcesView = await worker.generateSourcesView();
+                    if (cancelled) return;
+                    setSourcesViewData(sourcesView);
+                }
+
+                const flatView = await worker.generateFlatView();
+                if (cancelled) return;
+                setFlatViewData(flatView);
+            } finally {
+                worker.close();
             }
-
-            const flatView = await worker.generateFlatView();
-            setFlatViewData(flatView);
-
-            worker.close();
         })();
+        return () => {
+            cancelled = true;
+        };
     }, [data]);
 
     // WebSocket
