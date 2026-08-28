@@ -71,17 +71,12 @@ export default function Sampler({
         false
     );
 
-    const [flatViewData, setFlatViewData] = useState<FlatViewData>();
-    const [sourcesViewData, setSourcesViewData] = useState<SourcesViewData>();
-
-    // views hold node ids so drop them when replacing the data
-    // otherwise the ids may resolve to nodes from the new map
-    const [previousData, setPreviousData] = useState(data);
-    if (previousData != data) {
-        setPreviousData(data);
-        setFlatViewData(undefined);
-        setSourcesViewData(undefined);
-    }
+    // views reference nodes by id so keep them tied to their data
+    // otherwise old ids gets resolved against the new node map
+    const [flatViewData, setFlatViewData] =
+        useState<[SamplerData, FlatViewData]>();
+    const [sourcesViewData, setSourcesViewData] =
+        useState<[SamplerData, SourcesViewData]>();
 
     // Generate flat & sources view in the background on first load
     useEffect(() => {
@@ -93,12 +88,12 @@ export default function Sampler({
                 if (data.sources.hasSources()) {
                     const sourcesView = await worker.generateSourcesView();
                     if (cancelled) return;
-                    setSourcesViewData(sourcesView);
+                    setSourcesViewData([data, sourcesView]);
                 }
 
                 const flatView = await worker.generateFlatView();
                 if (cancelled) return;
-                setFlatViewData(flatView);
+                setFlatViewData([data, flatView]);
             } finally {
                 worker.close();
             }
@@ -217,14 +212,14 @@ export default function Sampler({
                         <AllView data={data} setLabelMode={setLabelMode} />
                     ) : view === VIEW_FLAT ? (
                         <FlatView
-                            data={data}
-                            viewData={flatViewData}
+                            data={flatViewData?.[0] ?? data}
+                            viewData={flatViewData?.[1]}
                             setLabelMode={setLabelMode}
                         />
                     ) : (
                         <SourcesView
-                            data={data}
-                            viewData={sourcesViewData}
+                            data={sourcesViewData?.[0] ?? data}
+                            viewData={sourcesViewData?.[1]}
                             setLabelMode={setLabelMode}
                         />
                     )}
