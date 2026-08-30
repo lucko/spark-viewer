@@ -73,10 +73,14 @@ export default function Sampler({
 
     // views reference nodes by id so keep them tied to their data
     // otherwise old ids gets resolved against the new node map
-    const [flatViewData, setFlatViewData] =
-        useState<[SamplerData, FlatViewData]>();
-    const [sourcesViewData, setSourcesViewData] =
-        useState<[SamplerData, SourcesViewData]>();
+    const [flatViewData, setFlatViewData] = useState<{
+        data: SamplerData;
+        viewData: FlatViewData;
+    }>();
+    const [sourcesViewData, setSourcesViewData] = useState<{
+        data: SamplerData;
+        viewData: SourcesViewData;
+    }>();
 
     // Generate flat & sources view in the background on first load
     useEffect(() => {
@@ -85,15 +89,30 @@ export default function Sampler({
             const worker = await RemoteSamplerWorker.create(data);
 
             try {
+                const tasks: Promise<void>[] = [];
+
                 if (data.sources.hasSources()) {
-                    const sourcesView = await worker.generateSourcesView();
-                    if (cancelled) return;
-                    setSourcesViewData([data, sourcesView]);
+                    tasks.push(
+                        worker.generateSourcesView().then(viewData => {
+                            if (!cancelled) {
+                                setSourcesViewData({
+                                    data,
+                                    viewData,
+                                });
+                            }
+                        })
+                    );
                 }
 
-                const flatView = await worker.generateFlatView();
-                if (cancelled) return;
-                setFlatViewData([data, flatView]);
+                tasks.push(
+                    worker.generateFlatView().then(viewData => {
+                        if (!cancelled) {
+                            setFlatViewData({ data, viewData });
+                        }
+                    })
+                );
+
+                await Promise.all(tasks);
             } finally {
                 worker.close();
             }
@@ -212,14 +231,14 @@ export default function Sampler({
                         <AllView data={data} setLabelMode={setLabelMode} />
                     ) : view === VIEW_FLAT ? (
                         <FlatView
-                            data={flatViewData?.[0] ?? data}
-                            viewData={flatViewData?.[1]}
+                            data={flatViewData?.data ?? data}
+                            viewData={flatViewData?.viewData}
                             setLabelMode={setLabelMode}
                         />
                     ) : (
                         <SourcesView
-                            data={sourcesViewData?.[0] ?? data}
-                            viewData={sourcesViewData?.[1]}
+                            data={sourcesViewData?.data ?? data}
+                            viewData={sourcesViewData?.viewData}
                             setLabelMode={setLabelMode}
                         />
                     )}
