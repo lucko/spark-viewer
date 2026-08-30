@@ -71,24 +71,55 @@ export default function Sampler({
         false
     );
 
-    const [flatViewData, setFlatViewData] = useState<FlatViewData>();
-    const [sourcesViewData, setSourcesViewData] = useState<SourcesViewData>();
+    // views reference nodes by id so keep them tied to their data
+    // otherwise old ids gets resolved against the new node map
+    const [flatViewData, setFlatViewData] = useState<{
+        data: SamplerData;
+        viewData: FlatViewData;
+    }>();
+    const [sourcesViewData, setSourcesViewData] = useState<{
+        data: SamplerData;
+        viewData: SourcesViewData;
+    }>();
 
     // Generate flat & sources view in the background on first load
     useEffect(() => {
+        let cancelled = false;
         (async () => {
             const worker = await RemoteSamplerWorker.create(data);
 
-            if (data.sources.hasSources()) {
-                const sourcesView = await worker.generateSourcesView();
-                setSourcesViewData(sourcesView);
+            try {
+                const tasks: Promise<void>[] = [];
+
+                if (data.sources.hasSources()) {
+                    tasks.push(
+                        worker.generateSourcesView().then(viewData => {
+                            if (!cancelled) {
+                                setSourcesViewData({
+                                    data,
+                                    viewData,
+                                });
+                            }
+                        })
+                    );
+                }
+
+                tasks.push(
+                    worker.generateFlatView().then(viewData => {
+                        if (!cancelled) {
+                            setFlatViewData({ data, viewData });
+                        }
+                    })
+                );
+
+                await Promise.all(tasks);
+            } finally {
+                worker.close();
             }
-
-            const flatView = await worker.generateFlatView();
-            setFlatViewData(flatView);
-
-            worker.close();
         })();
+        return () => {
+            cancelled = true;
+        };
     }, [data]);
 
     // WebSocket
@@ -200,14 +231,14 @@ export default function Sampler({
                         <AllView data={data} setLabelMode={setLabelMode} />
                     ) : view === VIEW_FLAT ? (
                         <FlatView
-                            data={data}
-                            viewData={flatViewData}
+                            data={flatViewData?.data ?? data}
+                            viewData={flatViewData?.viewData}
                             setLabelMode={setLabelMode}
                         />
                     ) : (
                         <SourcesView
-                            data={data}
-                            viewData={sourcesViewData}
+                            data={sourcesViewData?.data ?? data}
+                            viewData={sourcesViewData?.viewData}
                             setLabelMode={setLabelMode}
                         />
                     )}
