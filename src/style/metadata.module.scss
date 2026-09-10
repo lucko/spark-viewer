@@ -203,6 +203,14 @@
                         padding-left: 15px;
                     }
 
+                    li > i {
+                        margin-right: 3px;
+                    }
+
+                    li > .icon-missing {
+                        padding-right: 19px; // 16 + 3 for the margin-right of the icon
+                    }
+
                     span {
                         color: var(--text-white);
                     }

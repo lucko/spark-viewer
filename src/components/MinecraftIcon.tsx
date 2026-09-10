@@ -11,7 +11,7 @@ export default function MinecraftIcon({ name }: MinecraftIconProps) {
         const iconStyle = styles[`icon-minecraft-${icon}`];
         return <i className={`${baseStyle} ${iconStyle}`}></i>;
     } else {
-        return null;
+        return <span className="icon-missing" />;
     }
 }
 
@@ -122,7 +122,7 @@ const minecarts = ['chest', 'command_block', 'furnace', 'hopper', 'tnt'];
 
 const lookup: Record<string, string | null> = {
     ...Object.fromEntries(
-        mobs.map(type => [type, `spawn-egg-${type.replace(/_/g, '-')}`])
+        mobs.map(type => [type, `mob-${type.replace(/_/g, '-')}-face`])
     ),
     ...Object.fromEntries(
         boats.map(type => [`${type}_boat`, `${type.replace(/_/g, '-')}-boat`])
@@ -158,7 +158,7 @@ const lookup: Record<string, string | null> = {
     falling_block: 'sand',
     fireball: 'fire-charge',
     firework_rocket: 'firework-rocket',
-    giant: 'spawn-egg-zombie',
+    giant: 'mob-zombie-face',
     glow_item_frame: 'glow-item-frame',
     illusioner: null,
     interaction: null,
