@@ -2,6 +2,7 @@ import {
     faClock,
     faDatabase,
     faGamepad,
+    faLock,
     faServer,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -89,6 +90,12 @@ export default function Thumbnail({ metadata, code, type }: ThumbnailProps) {
                     <p>
                         <FontAwesomeIcon fixedWidth={true} icon={faDatabase} />{' '}
                         <span>Allocation</span> (memory) profile
+                    </p>
+                )}
+                {samplerMode === SamplerMetadata_SamplerMode.LOCK && (
+                    <p>
+                        <FontAwesomeIcon fixedWidth={true} icon={faLock} />{' '}
+                        <span>Lock</span> (contention) profile
                     </p>
                 )}
                 <p>

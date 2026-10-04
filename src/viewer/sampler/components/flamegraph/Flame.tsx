@@ -2,7 +2,7 @@
 import { FlameGraph } from '@lucko/react-flame-graph';
 import { useMemo, useRef } from 'react';
 import useContainerWidth from '../../../common/hooks/useContainerWidth';
-import { formatBytesShort } from '../../../common/util/format';
+import { formatBytesShort, formatTime } from '../../../common/util/format';
 import {
     SamplerMetadata,
     SamplerMetadata_SamplerMode,
@@ -90,7 +90,7 @@ function toFlameNode(
             name = `${packageName || ''}${className}.${methodName}()`;
             const formattedValue = isAlloc
                 ? formatBytesShort(node.getTime())
-                : `${node.getTime()}ms`;
+                : `${formatTime(node.getTime())}ms`;
 
             tooltip = `${details.className}.${details.methodName}() - ${formattedValue}`;
         }

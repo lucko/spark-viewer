@@ -28,7 +28,8 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
 
     const alloc =
         metadata.samplerMode === SamplerMetadata_SamplerMode.ALLOCATION;
-    const title = alloc ? 'Memory Profile' : 'Profile';
+    const lock = metadata.samplerMode === SamplerMetadata_SamplerMode.LOCK;
+    const title = alloc ? 'Memory Profile' : lock ? 'Lock Profile' : 'Profile';
     const formattedInterval = alloc
         ? formatBytesShort(interval)
         : `${interval / 1000}ms`;
@@ -43,7 +44,8 @@ export default function SamplerTitle({ metadata }: SamplerTitleProps) {
             <span>
                 {comment}
                 <Avatar user={user} platform={metadata.platform} />
-                {user?.name} @ {startTimeStr} {startDateStr}, interval{' '}
+                {user?.name} @ {startTimeStr} {startDateStr},{' '}
+                {lock ? 'lock contention, threshold' : 'interval'}{' '}
                 {formattedInterval}
                 {ticksOver}
             </span>

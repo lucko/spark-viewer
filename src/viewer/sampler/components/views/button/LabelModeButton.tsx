@@ -20,6 +20,31 @@ export default function LabelModeButton({
         return null;
     }
 
+    const isLockProfile =
+        metadata.samplerMode === SamplerMetadata_SamplerMode.LOCK;
+
+    if (isLockProfile) {
+        return (
+            <Button
+                value={labelMode}
+                setValue={setLabelMode}
+                title="Label"
+                labelTrue="Wait time per tick"
+                labelFalse="Percentage"
+            >
+                <p>
+                    The value displayed against each frame is the average time
+                    in milliseconds spent waiting to acquire locks each tick.
+                </p>
+                <p>
+                    The value displayed against each frame is the time spent
+                    waiting to acquire locks divided by the total wait time as a
+                    percentage.
+                </p>
+            </Button>
+        );
+    }
+
     if (isAllocationProfile) {
         return (
             <Button

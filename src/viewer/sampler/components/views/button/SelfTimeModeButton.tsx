@@ -34,6 +34,26 @@ export default function SelfTimeModeButton({
                 </p>
             </Button>
         );
+    } else if (metadata.samplerMode === SamplerMetadata_SamplerMode.LOCK) {
+        return (
+            <Button
+                value={selfTimeMode}
+                setValue={setSelfTimeMode}
+                title="Sort Mode"
+                labelTrue="Self wait time"
+                labelFalse="Total wait time"
+            >
+                <p>
+                    Methods are sorted according to the time spent waiting to
+                    acquire locks directly within the method
+                </p>
+                <p>
+                    Methods are sorted according to the time spent waiting to
+                    acquire locks directly within the method as well as in
+                    sub-calls
+                </p>
+            </Button>
+        );
     } else {
         return (
             <Button
