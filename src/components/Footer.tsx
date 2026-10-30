@@ -12,10 +12,10 @@ export default function Footer() {
             <a href="https://github.com/lucko">lucko</a> &amp; other spark{' '}
             <a href="docs/misc/Credits">contributors</a>.
             <br />
-            Usage subject to our <a href="docs/legal/Terms">
-                Terms of Service
+            Usage is subject to the <a href="docs/legal/Terms">
+                terms of service
             </a>{' '}
-            and <a href="docs/legal/Privacy">Privacy Policy</a>.
+            and <a href="docs/legal/Privacy">privacy policy</a>.
         </footer>
     );
 }
